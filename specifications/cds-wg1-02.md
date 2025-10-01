@@ -10,7 +10,9 @@ This specification defines how utilities and other central entities ("Servers") 
 
 ## Copyright <a id="copyright" href="#copyright" class="permalink">🔗</a>
 
-<span style="background-color:yellow">TODO</span>
+Copyright Joint Development Foundation Projects, LLC, LF Energy Standards and Specifications Series and its contributors ("LFESS").
+All rights reserved.
+For more information, visit [https://lfess.energy/](https://lfess.energy/).
 
 ## Table of Contents <a id="table-of-contents" href="#table-of-contents" class="permalink">🔗</a>
 
@@ -46,10 +48,11 @@ This specification defines how utilities and other central entities ("Servers") 
     * [6.4. Message Related Types](#message-related-types)  
     * [6.5. Client Update Request Object Format](#client-update-request-format)  
     * [6.6. Client Grant Request Object Format](#client-grant-request-format)  
-    * [6.7. Listing Messages](#messages-list)  
-    * [6.8. Creating Messages](#messages-create)  
-    * [6.9. Retrieving Individual Messages](#messages-get)
-    * [6.10. Modifying Messages](#messages-modify)  
+    * [6.7. Message Attachment Object Format](#message-attachment-format)  
+    * [6.8. Listing Messages](#messages-list)  
+    * [6.9. Creating Messages](#messages-create)  
+    * [6.10. Retrieving Individual Messages](#messages-get)
+    * [6.11. Modifying Messages](#messages-modify)  
 * [7. Credentials API](#credentials-api)  
     * [7.1. Credentials Object Format](#credentials-format)  
     * [7.2. Credentials Types](#credentials-types)  
@@ -593,6 +596,10 @@ The Client listing request responses are formatted as JSON objects and contain t
 * `previous` - _[URL](#url) or `null`_ - Where to request the previous segment of the list of Clients.
   If no previous segment exists (i.e. the requester is at the front of the list), this value is `null`.
 
+Servers MUST support Clients adding any of the following URL parameters to the `GET` request, which will filter the list of Client objects to be the intersection of results for each of the URL parameters filters:
+
+* `client_ids` - A space-separated list of `client_id` values for which the Servers MUST filter the Client objects.
+
 Listings of Client objects MUST be ordered in reverse chronological order by `cds_modified` timestamp, where the most recently updated relevant Client MUST be first in each listing.
 
 For Client objects in the listing that are added, removed, or modified by the Server or Client after initial registration, Servers MUST add a message to the [listed Messages](#messages-list) notifiying the Client that a Client object has been added, removed, or modified.
@@ -662,6 +669,7 @@ The Messages API endpoints are authenticated using a Bearer `access_token` obtai
 
 Message objects are formatted as JSON objects and contain the following named values:
 
+* `message_id` - _[string](#string)_ - (REQUIRED) The unique identifier for the Message on the Server's system.
 * `uri` - _[URL](#url)_ - (REQUIRED) Where to retrieve or modify this specific Message object.
 * `previous_uri` - _[URL](#url) or `null`_ - (REQUIRED) Where to find the previous Message to which this Message has been created as a reply.
 * `type` - _[ClientMessageType](#message-types)_ - (REQUIRED) The type of Message.
@@ -680,12 +688,17 @@ Message objects are formatted as JSON objects and contain the following named va
   This field is required for Messages with a `type` value of `field_changes` or `server_request`.
 * `grants_requested` - _Array[[ClientGrantRequest](#client-grant-request-format)]_ - (OPTIONAL) The list of grants with their parameters that a Client has requested to be issued by the Server.
   This field is required for Messages with a `type` value of `grant_request`.
+* `attachments` - _Array[[MessageAttachment](#message-attachment-format)]_ - (OPTIONAL) A list of file attachments associated with the Message.
+  Message attachments are intended to allow Clients and Servers to attach relatively small unstructured files, such as PDF documents, to their messages that are relevant.
+  For example, a Client MAY attach a letter of authorization scanned PDF as part their `grant_request` Message.
+  Message attachments are not intended to provide a means for repeatedly transferring structured data or large amounts of data.
+  It is RECOMMNEDED that Servers prefer to share files via the [Server-Provided Files API](#server-provided-files-api) or other relevant APIs and only use Message attachments when the attachment is relatively small in size and only relevant to the Message.
 * `related_uri` - _[URL](#url) or `null`_ - (OPTIONAL) If the Message `type` is `notification` or `private_message`, this value is where the Client can find more information, if available.
   If the Message `type` is `support_request`, this value is a relevant URL for which the Client is requesting technical support.
   If the Message `type` is `field_changes`, this is where the Client can retrieve the object that has been requested to be modified.
   If the Message `type` is `payment_request`, this is where the Client can submit their payment to the Server or if paid, a link to the payment receipt.
   If the Message `type` is `server_request`, this is where the Client can find more information about what information is being requested by the Server.
-  If the Message `type` is `grant_request`, this value is a relevant Client `cds_client_uri` to which the requesting Client is requesting the Grants be assinged to if created by the Server, which MAY be a Client that is managed by the requesting Client (e.g. a "self" grant) or MAY be a completely separate Client with which the requesting Client is working (e.g. a "third-party" grant).
+  If the Message `type` is `grant_request` and `creator` is not `null`, this value is a relevant Client `cds_client_uri` to which the requesting Client is requesting the Grants be assinged to if created by the Server, which MAY be a Client that is managed by the requesting Client (e.g. a "self" grant) or MAY be a completely separate Client with which the requesting Client is working (e.g. a "third-party" grant).
 * `related_type` - _[ClientMessageRelatedType](#message-related-types)_ - (OPTIONAL) The type of object or resource linked to by the `related_uri`.
   If `related_uri` is included, this field is REQUIRED.
 * `amount` - _[decimal](#decimal)_ - (OPTIONAL) If the Message `type` is `payment_request`, this amount the Client needs to pay to satisfy the payment request.
@@ -714,9 +727,11 @@ Message object `status` values MUST be one of the following:
 
 * `complete` - For Messages with `type` values of `notification`, `private_message`, or `client_submission`, the `status` MUST be set as `complete`.
   For Messages with `type` values of `support_request`, `grant_request`, `field_changes`, `server_request`, or `payment_request`, this represents the Server has completed and approved or resolved the Client's technical support request, field changes, submission, or payment.
+  For Messages with a `type` value of `grant_request` and `status` value of `complete`, Servers MUST set the `related_type` to be `grant_list` and `related_uri` to link to Grants API [listing](#grants-list) with URL parameters that filter to only the relevant Grants.
 * `open` - For Messages with `type` values of `server_request` or `payment_request`, this represents that the Client has not yet submitted a response to the Server's submission or payment request.
 * `pending` - For Messages with `type` values of `support_request`, `grant_request`, `field_changes`, `server_request`, or `payment_request`, this represents the Server has not yet completed it's review of the Client's technical support request, field changes, submission, or payment.
-* `rejected` - For Messages with `type` values of `field_changes`, `server_request`, or `payment_request`, this represents the Server has completed and rejected the Client's requested field changes, submission, or payment.
+* `rejected` - For Messages with `type` values of `field_changes`, `server_request`, `grant_request`, or `payment_request`, this represents the Server has completed and rejected the Client's requested field changes, submission, grant, or payment.
+  When Servers create a rejected Message, the Server's created Message MUST contain information in the `description` field on why the Message that was created by the Client, typically linked by the `previous_uri` field, was rejected.
 * `errored` - For Messages with `type` values of `field_changes`, `server_request`, or `payment_request`, this represents the Server encountered an issue while processing the Client's field changes, submission, or payment.
   The Client is RECOMMENDED to submit a `support_request` Messages with the `related_uri` as the relevant errored Message's `uri`.
 
@@ -760,7 +775,15 @@ Client Grant Request objects are formatted as JSON objects and contain the follo
 * `scope` - _[string](#string)_ - (REQUIRED) The OAuth scope string being requested for the Grant.
 * `authorization_details` - _Array[[OAuth AuthorizationDetail](https://www.rfc-editor.org/rfc/rfc9396#section-7.1)]_ - (OPTIONAL) The OAuth authorization details, if any, to further specify the grant's requested scope.
 
-### 6.7. Listing Messages <a id="messages-list" href="#messages-list" class="permalink">🔗</a>
+### 6.7. Message Attachment Object Format <a id="message-attachment-format" href="#message-attachment-format" class="permalink">🔗</a>
+
+Message Attachment objects are formatted as JSON objects and contain the following named values:
+
+* `filename` - _[string](#string)_ - (REQUIRED) The attached file's name.
+* `mime_type` - _[string](#string)_ - (REQUIRED) The attached file's content type. For example, an attached PDF file would have a `mime_type` of `application/pdf`. Unknown file content types MUST have a `mime_type` value of `application/octet-stream`.
+* `data` - _[string](#string)_ - (REQUIRED) A Base-64 encoded string of the file's data.
+
+### 6.8. Listing Messages <a id="messages-list" href="#messages-list" class="permalink">🔗</a>
 
 Clients may request to list Message objects that they have access to by making an HTTPS `GET` request, authenticated with a valid Bearer `access_token` scoped to the `client_admin` scope, to the `cds_messages_api` URL included in the [Authorization Server Metadata](#auth-server-metadata-format).
 The Message listing request responses are formatted as JSON objects and contain the following named values.
@@ -781,29 +804,39 @@ The Message listing request responses are formatted as JSON objects and contain 
 * `read_previous` - _[URL](#url) or `null`_ - Where to request the previous segment of the list of read Messages.
   If no previous segment exists (i.e. the requester is at the front of the list), this value is `null`.
 
+Servers MUST support Clients adding any of the following URL parameters to the `GET` request, which will filter the list of Messages to be the intersection of results for each of the URL parameters filters:
+
+* `message_ids` - A space-separated list of `message_id` values for which the Servers MUST filter the Messages.
+
 Responses to `outstanding_next`, `outstanding_previous`, `unread_next`, `unread_previous`, `read_next`, or `read_previous` MUST be formatted the same as the initial Message listing, and MUST only include listings for the relevant next segment.
 For example, if the Client requests a `unread_next`, the Server's response MUST have `outstanding` and `read` lists be empty lists (`[]`).
 
 Listings of Message objects MUST be ordered in reverse chronological order by `modified` timestamp, where the most recently modified relevant Message MUST be first in each listing.
 
-### 6.8. Creating Messages <a id="messages-create" href="#messages-create" class="permalink">🔗</a>
+### 6.9. Creating Messages <a id="messages-create" href="#messages-create" class="permalink">🔗</a>
 
 Clients create new Messages by sending an authenticated HTTPS `POST` request to the `cds_messages_api` endpoint with the body of the request formatted a JSON object.
+
 The fields included in JSON object MUST include the following:
 
 * `previous_uri` - _[URL](#url) or `null`_ - If submitting a Message with a `type` value of `client_submission`, this value MUST be the Message `uri` that this Message is being submitted in response to (i.e. must have a `type` value of `server_request`).
   If submitting a Message with a `type` value of `support_request` or `private_message`, if the Client is responding to a previous Message, this value MUST be the Message `uri` of that Message.
   If submitting a Message with a `type` value of `support_request` or `private_message` that is not responding to another specific Message, this value MUST be `null`.
-* `type` - _[ClientMessageType](#message-types)_ - This value MUST be one of `private_message`, `support_request`, or `client_submission`.
+* `type` - _[ClientMessageType](#message-types)_ - This value MUST be one of `private_message`, `support_request`, `grant_request`, or `client_submission`.
 * `name` - _[string](#string)_ - If submitting a Message with a `type` value of `client_submission`, this value MUST be an empty string (`""`).
   If submitting a Message with a `type` value of `support_request` or `private_message`, this value MUST be the subject line of the message.
 * `description` - _[string](#string)_ - If submitting a Message with a `type` value of `client_submission`, this value MUST be an empty string (`""`).
   If submitting a Message with a `type` value of `support_request` or `private_message`, this value MUST be the body of the message.
-* `updates_requested` - _Array[[ClientUpdateRequest](#client-update-request-format)]_ - If submitting a Client Update with a `type` value of `client_submission`, this value MUST be a list of [Client Update Request](#client-update-request-format) objects with `field` values matching the `field` values in the corresponding `server_request` Client Update Request objects, and `description` or `submitted_uri` values being the Client's submission response to the Server's request for that `field`.
-* `related_uri` - _[URL](#url) or `null`_ - If submitting a Message with a `type` value of `support_request`, this value MAY be a URL to the relevant API endpoint for the support request.
-  If there is no relevant API endpoint, the Client MUST set this value as `null`.
 
-Servers MUST reject requests with a `400 Bad Request` response when a Client submits an incomplete request or the submitted values are invalid.
+The fields included in JSON object MAY include the following:
+
+* `updates_requested` - _Array[[ClientUpdateRequest](#client-update-request-format)]_ - If submitting a Client Update with a `type` value of `client_submission`, this is required and MUST be a list of [Client Update Request](#client-update-request-format) objects with `field` values matching the `field` values in the corresponding `server_request` Client Update Request objects, and `description` or `submitted_uri` values being the Client's submission response to the Server's request for that `field`.
+* `grants_requested` - _Array[[ClientGrantRequest](#client-grant-request-format)]_ - If submitting a Client Update with a `type` value of `grant_request`, this is required and MUST be a list of [Client Grant Request](#client-grant-request-format) objects.
+* `related_uri` - _[URL](#url) or `null`_ - If submitting a Message with a `type` value of `support_request`, this value MAY be a URL to the relevant API endpoint for the support request.
+  If there is no relevant API endpoint, the Client MUST not include this field.
+
+Servers MUST reject requests with a `400 Bad Request` response when a Client submits an incomplete request, the submitted values are invalid.
+Servers MUST reject requests with a `413 Content Too Large` response when a Client submits a Message with attachments that exceed the Server's submission size limit, which MUST be equal to or greater than 10 megabytes.
 For valid `POST` requests from Clients, Servers MUST respond with a `201 Created` response with a JSON object of the complete newly created Message object.
 When committing Messages created by Clients, Servers MUST populate the following fields in addition to the Client's submitted fields:
 
@@ -813,15 +846,17 @@ When committing Messages created by Clients, Servers MUST populate the following
 * `created` - _[datetime](#datetime)_ - Always set to the Server's timestamp for when the Message was created.
 * `modified` - _[datetime](#datetime)_ - Always the same as `created`.
 * `status` - _[ClientMessageStatus](#message-statuses)_ - For `type` values of `private_message` or `client_submission`, this value MUST be `complete`.
-  For `type` values of `support_request`, this value MUST be `pending`.
+  For `type` values of `support_request` and `grant_request`, this value MUST be `pending`.
 
 When Clients submit Messages with `type` value of `client_submission`, if the Message referenced in the `previous_uri` has a `status` of `open`, then the Server MUST update the `status` of that referenced Message to `pending`, which indicates that the Client has submitted a response for Server review.
 
-### 6.9. Retrieving Individual Messages <a id="messages-get" href="#messages-get" class="permalink">🔗</a>
+When Clients submit Messages with `type` value of `grant_request`, Servers MUST review `grants_requested` values and create a new Message replying to the Client with `type` value of `grant_request`, `previous_uri` value of the Clients grant request Message `uri`, and `status` of `pending` (if the Server has not yet determined whether to create the requested grants), `complete` (if the request is approved and Grants have been created), or `rejected` (if the request is rejected for any reason).
+
+### 6.10. Retrieving Individual Messages <a id="messages-get" href="#messages-get" class="permalink">🔗</a>
 
 The URL to be used to send `GET` requests for retrieving individual Message objects MUST be the Message `uri` provided in the [Message object](#message-format).
 
-### 6.10. Modifying Messages <a id="messages-modify" href="#messages-modify" class="permalink">🔗</a>
+### 6.11. Modifying Messages <a id="messages-modify" href="#messages-modify" class="permalink">🔗</a>
 
 Clients may modify fields in a Messages object by sending an authenticated HTTPS `PATCH` request to the Message `uri` endpoint with the body of the request formatted a JSON object.
 The fields included in JSON object are the fields the Client intends to modify with the submitted fields' values.
@@ -1018,6 +1053,7 @@ The Grant listing request responses are formatted as JSON objects and contain th
 
 Servers MUST support Clients adding any of the following URL parameters to the `GET` request, which will filter the list of Grants to be the intersection of results for each of the URL parameters filters:
 
+* `grant_ids` - A space-separated list of `grant_id` values for which the Servers MUST filter the Grants.
 * `statuses` - A space-separated list of `status` values for which the Servers MUST filter the Grants.
 * `client_ids` - A space-separated list of `client_id` values for which the Servers MUST filter the Grants.
 * `cds_client_uris` - A space-separated list of `cds_client_uri` values for which the Servers MUST filter the Grants.
@@ -1091,6 +1127,10 @@ The Server-Provided File listing request responses are formatted as JSON objects
   If no next segment exists (i.e. the requester is at the end of the list), this value is `null`.
 * `previous` - _[URL](#url) or `null`_ - Where to request the previous segment of the list of Server-Provided File objects.
   If no previous segment exists (i.e. the requester is at the front of the list), this value is `null`.
+
+Servers MUST support Clients adding any of the following URL parameters to the `GET` request, which will filter the list of Server-Provided Files to be the intersection of results for each of the URL parameters filters:
+
+* `file_ids` - A space-separated list of `file_id` values for which the Servers MUST filter the Server-Provided Files.
 
 Listings of Server-Provided File objects MUST be ordered in reverse chronological order by `modified` timestamp, where the most recently updated relevant Server-Provided File object MUST be first in each listing.
 
