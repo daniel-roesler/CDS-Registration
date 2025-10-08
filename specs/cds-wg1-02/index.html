@@ -236,8 +236,9 @@ For more information, visit <a href="https://lfess.energy/">https://lfess.energy
       <li><a href="#example-cds-server-metadata">11.1. CDS Server Metadata</a></li>
       <li><a href="#example-auth-server-metadata">11.2. Authorization Server Metadata</a></li>
       <li><a href="#example-client-registration">11.3. Client Registration Request</a></li>
-      <li><a href="#example-client-list">11.4. Client List</a></li>
-      <li><a href="#example-message-create">11.5. Creating a Message</a></li>
+      <li><a href="#example-admin-access-token">11.4. Client Admin Access Token</a></li>
+      <li><a href="#example-client-list">11.5. Client List</a></li>
+      <li><a href="#example-message-create">11.6. Creating a Message</a></li>
     </ul>
   </li>
   <li><a href="#security">12. Security Considerations</a>
@@ -814,6 +815,9 @@ For the initial registration response, Servers MUST set this value to the value 
 This MUST be included if <code class="language-plaintext highlighter-rouge">response_types</code> is not an empty list (i.e. authorization requests are enabled).
 For the initial registration response, Servers MUST set this to an empty list (<code class="language-plaintext highlighter-rouge">[]</code>).</li>
 </ul>
+
+<p>Servers MAY include other fields, such as required registration fields or informational fields, that the Server deems necessary for the Client to receive.
+Servers MUST describe any additional fields that may be included in their technical documentation.</p>
 
 <h3 id="52-client-statuses-">5.2. Client Statuses <a id="client-statuses" href="#client-statuses" class="permalink">🔗</a></h3>
 
@@ -1684,7 +1688,32 @@ Content-Type: application/json;charset=UTF-8
 }
 </code></pre></div></div>
 
-<h3 id="114-client-list-">11.4. Client List <a id="example-client-list" href="#example-client-list" class="permalink">🔗</a></h3>
+<h3 id="114-client-admin-access-token-">11.4. Client Admin Access Token <a id="example-admin-access-token" href="#example-admin-access-token" class="permalink">🔗</a></h3>
+
+<p>The following is a non-normative example of a Client obtaining an access token to use for authenticated API requests.</p>
+
+<p><strong>NOTE:</strong> The Authorization header Basic value is a <a href="#base64">Base64</a> encoded value of the Client’s <code class="language-plaintext highlighter-rouge">client_id</code> and <code class="language-plaintext highlighter-rouge">client_secret</code>, joined by a colon (i.e. <code class="language-plaintext highlighter-rouge">base64("{client_id}:{client_secret}")</code>).</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==Request==
+POST /oauth/token HTTP/1.1
+Host: example.com
+Authorization: Basic YWFmMDI2OTIxNzA3ZjVkNWg6UTNWcEd5N2s2TWo5WWMtRjF3dHVqdHRBcTJIaUVlbDhPMUllNXpFdzAwQXNsTnNvVVUzU016S1BlUlBaZ3FBNmRNVzNqU3ZaUV9PMGlXcFFSYTFOYVE=
+
+grant_type=client_credentials&amp;scope=client_admin
+
+==Response==
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+{
+    "access_token": "vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ",
+    "token_type": "bearer",
+    "expires_in": 3600,
+    "scope": "client_admin"
+}
+</code></pre></div></div>
+
+<h3 id="115-client-list-">11.5. Client List <a id="example-client-list" href="#example-client-list" class="permalink">🔗</a></h3>
 
 <p>The following is a non-normative example of a Client loading their list of Client objects via the <a href="#clients-api">Clients API</a>.</p>
 
@@ -1755,7 +1784,7 @@ Content-Type: application/json;charset=UTF-8
 }
 </code></pre></div></div>
 
-<h3 id="115-creating-a-message-">11.5. Creating a Message <a id="example-message-create" href="#example-message-create" class="permalink">🔗</a></h3>
+<h3 id="116-creating-a-message-">11.6. Creating a Message <a id="example-message-create" href="#example-message-create" class="permalink">🔗</a></h3>
 
 <p>The following is a non-normative example of a Client creating a Message via the <a href="#messages-api">Messages API</a>.</p>
 
