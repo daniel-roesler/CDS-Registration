@@ -217,9 +217,10 @@ For more information, visit <a href="https://lfess.energy/">https://lfess.energy
     <ul>
       <li><a href="#grant-format">8.1. Grant Object Format</a></li>
       <li><a href="#grant-statuses">8.2. Grant Statuses</a></li>
-      <li><a href="#grants-list">8.3. Listing Grants</a></li>
-      <li><a href="#grants-get">8.4. Retrieving Individual Grants</a></li>
-      <li><a href="#grants-modify">8.5. Modifying Grants</a></li>
+      <li><a href="#grant-authorization-requests">8.3. Grant Authorization Requests</a></li>
+      <li><a href="#grants-list">8.4. Listing Grants</a></li>
+      <li><a href="#grants-get">8.5. Retrieving Individual Grants</a></li>
+      <li><a href="#grants-modify">8.6. Modifying Grants</a></li>
     </ul>
   </li>
   <li><a href="#server-provided-files-api">9. Server-Provided Files API</a>
@@ -1267,10 +1268,10 @@ These APIs are authenticated using a Bearer <code class="language-plaintext high
 If this grant is not superseding any other Grants, this value is an empty list (<code class="language-plaintext highlighter-rouge">[]</code>).</li>
   <li><code class="language-plaintext highlighter-rouge">replaced_by</code> - <em>Array[<a href="#url">URL</a>]</em> - (REQUIRED) If this Grant has been superseded by other Grants, this is the list of Grant <code class="language-plaintext highlighter-rouge">uri</code> values of the superseding Grants.
 If no other Grants have superseded this Grant, this value is an empty list (<code class="language-plaintext highlighter-rouge">[]</code>).</li>
-  <li><code class="language-plaintext highlighter-rouge">parent</code> - <em><a href="#url">URL</a> or <code class="language-plaintext highlighter-rouge">null</code></em> - (REQUIRED) If this Grant represents an individual sub-authorization that is part of another Grant that required multiple authorizations, this is where to find the parent Grant.
-If this Grant is not a sub-authorization, this value is <code class="language-plaintext highlighter-rouge">null</code>.</li>
-  <li><code class="language-plaintext highlighter-rouge">children</code> - <em>Array[<a href="#url">URL</a>]</em> - (REQUIRED) If this Grant represents a parent Grant that has multiple sub-authorizations underneath it, this is a list of Grant <code class="language-plaintext highlighter-rouge">uri</code> values for where to find the sub-authorizations.
-If this Grant does not have any sub-authorizations, this value is an empty list (<code class="language-plaintext highlighter-rouge">[]</code>).</li>
+  <li><code class="language-plaintext highlighter-rouge">parent</code> - <em><a href="#string">string</a> or <code class="language-plaintext highlighter-rouge">null</code></em> - (REQUIRED) If this Grant represents an individual sub-Grant that is part of another Grant that required multiple authorizations, this is the parent Grant’s <code class="language-plaintext highlighter-rouge">grant_id</code> value.
+If this Grant is not a sub-Grant, this value is <code class="language-plaintext highlighter-rouge">null</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">children</code> - <em>Array[<a href="#string">string</a>]</em> - (REQUIRED) If this Grant represents a parent Grant that has multiple sub-Grants underneath it, this is a list of Grant <code class="language-plaintext highlighter-rouge">grant_id</code> values for each sub-Grant.
+If this Grant does not have any sub-Grants, this value is an empty list (<code class="language-plaintext highlighter-rouge">[]</code>).</li>
   <li><code class="language-plaintext highlighter-rouge">created</code> - <em><a href="#datetime">datetime</a></em> - (REQUIRED) When the Grant was created.</li>
   <li><code class="language-plaintext highlighter-rouge">modified</code> - <em><a href="#datetime">datetime</a></em> - (REQUIRED) When the Grant was most recently modified.
 If the Grant has not been modified since creation, this is the same value as <code class="language-plaintext highlighter-rouge">created</code>.</li>
@@ -1284,7 +1285,6 @@ If the Grant’s <code class="language-plaintext highlighter-rouge">status</code
 If the Grant is to continue indefinitely, this value is <code class="language-plaintext highlighter-rouge">null</code>.</li>
   <li><code class="language-plaintext highlighter-rouge">status</code> - <em><a href="#grant-status">GrantStatus</a></em> - (REQUIRED) The current <a href="#grant-status">Grant Status</a> of the Grant.</li>
   <li><code class="language-plaintext highlighter-rouge">client_id</code> - <em><a href="#string">string</a></em> - (REQUIRED) Which Client for which this Grant is issued.</li>
-  <li><code class="language-plaintext highlighter-rouge">cds_client_uri</code> - <em><a href="#url">URL</a></em> - (REQUIRED) Where to retrieve using the <a href="#clients-get">Clients API</a> the Client for which the Grant is issued.</li>
   <li><code class="language-plaintext highlighter-rouge">scope</code> - <em><a href="#string">string</a></em> - (REQUIRED) The scopes for which this Grant has issued access.</li>
   <li><code class="language-plaintext highlighter-rouge">authorization_details</code> - <em>Array[<a href="#ref-rfc9396-auth-details">OAuth AuthorizationDetail</a>]</em> - (REQUIRED) An authorization details list as defined by [<a href="#ref-rfc9396-auth-details">RFC 9396 Section 7.1</a>] which contains scopes that are granted in addition to this object’s <code class="language-plaintext highlighter-rouge">scope</code> value.
 If no authorization details scopes are configured in addition to the <code class="language-plaintext highlighter-rouge">scope</code> string, this value is an empty array (<code class="language-plaintext highlighter-rouge">[]</code>).
@@ -1297,7 +1297,6 @@ For Grants that have had their access removed (e.g. <code class="language-plaint
   <li><code class="language-plaintext highlighter-rouge">enabled_authorization_details</code> - <em>Array[<a href="#ref-rfc9396-auth-details">OAuth AuthorizationDetail</a>]</em> - (REQUIRED) For Grants where access has been partially granted, but some access is still disabled, this value is an authorization details list as defined by [<a href="#ref-rfc9396-auth-details">RFC 9396 Section 7.1</a>] that has the scopes which have been enabled by the server.
 For Grants where access has been fully granted, this value is the same as the <code class="language-plaintext highlighter-rouge">authorization_details</code> value.
 For Grants that have had their access removed (e.g. <code class="language-plaintext highlighter-rouge">disabled</code>), this value is an empty list (<code class="language-plaintext highlighter-rouge">[]</code>).</li>
-  <li><code class="language-plaintext highlighter-rouge">sub_authorization_scopes</code> - <em>Array[<a href="#string">string</a>]</em> - (REQUIRED) For Grants that require sub-authorizations where users must provide additional authorization to enable access, this is the outstanding list of <code class="language-plaintext highlighter-rouge">scope</code> values that have yet to be authorized individually by users.</li>
 </ul>
 
 <h3 id="82-grant-statuses-">8.2. Grant Statuses <a id="grant-statuses" href="#grant-statuses" class="permalink">🔗</a></h3>
@@ -1312,8 +1311,9 @@ For Grants that provide access to data APIs that are being regularly updated, th
 While a Grant’s status is <code class="language-plaintext highlighter-rouge">pending</code>, Servers MUST provide access to the granted scope’s features or data as the Server processes and the features or data becomes available.</li>
   <li><code class="language-plaintext highlighter-rouge">partial</code> - The Grant was submitted originally with the <code class="language-plaintext highlighter-rouge">scope</code> and <code class="language-plaintext highlighter-rouge">authorization_details</code> values, but the Server has limited the Client’s access a subset of the Grant’s <code class="language-plaintext highlighter-rouge">scope</code>.
 The enabled access is listed in the <code class="language-plaintext highlighter-rouge">enabled_scope</code> and <code class="language-plaintext highlighter-rouge">enabled_authorization_details</code> values.</li>
-  <li><code class="language-plaintext highlighter-rouge">needs_authorization</code> - The Grant has been created, but access is limited to the <code class="language-plaintext highlighter-rouge">enabled_scope</code> and <code class="language-plaintext highlighter-rouge">enabled_authorization_details</code> until a user authorizes the listed <code class="language-plaintext highlighter-rouge">scope</code> and <code class="language-plaintext highlighter-rouge">authorization_details</code> values using an authorization URL with a <code class="language-plaintext highlighter-rouge">cds_grant_id</code> parameter of this <code class="language-plaintext highlighter-rouge">grant_id</code>.</li>
-  <li><code class="language-plaintext highlighter-rouge">needs_sub_authorizations</code> - The Grant has been created, but access is limited to the <code class="language-plaintext highlighter-rouge">enabled_scope</code> and <code class="language-plaintext highlighter-rouge">enabled_authorization_details</code> until user sub-authorizations, listed in the <code class="language-plaintext highlighter-rouge">sub_authorization_scopes</code> value, are granted using an authorization URL with a <code class="language-plaintext highlighter-rouge">cds_parent_id</code> parameter of this <code class="language-plaintext highlighter-rouge">grant_id</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">needs_authorization</code> - The Grant has been created, but access is limited to the <code class="language-plaintext highlighter-rouge">enabled_scope</code> and <code class="language-plaintext highlighter-rouge">enabled_authorization_details</code> until a user authorizes the listed <code class="language-plaintext highlighter-rouge">scope</code> and <code class="language-plaintext highlighter-rouge">authorization_details</code> values using an authorization URL with a <code class="language-plaintext highlighter-rouge">cds_grant_id</code> parameter of this <code class="language-plaintext highlighter-rouge">grant_id</code> as described in <a href="#grant-authorization-requests">Grant Authorization Requests</a>.</li>
+  <li><code class="language-plaintext highlighter-rouge">needs_sub_grants</code> - The Grant has been created, but access is limited to the <code class="language-plaintext highlighter-rouge">enabled_scope</code> and <code class="language-plaintext highlighter-rouge">enabled_authorization_details</code> until listed <code class="language-plaintext highlighter-rouge">children</code> Grant objects’ <code class="language-plaintext highlighter-rouge">status</code> values change to an appropriate value determined by the Server for the Grant scope’s use case.
+Servers MUST include in their technical documentation which sub-Grant <code class="language-plaintext highlighter-rouge">status</code> values are sufficient to meet the critera to address this <code class="language-plaintext highlighter-rouge">needs_sub_grants</code> status for each scope’s use case.</li>
   <li><code class="language-plaintext highlighter-rouge">disabled</code> - The Grant has been indefinitely disabled by the Server, and the Client SHOULD NOT expect the Grant’s status to be updated in the future.</li>
   <li><code class="language-plaintext highlighter-rouge">suspended</code> - The Grant has been temporarily disabled by the Server or user who authorized access, and the Client SHOULD expect the Grant’s status to be updated in the future.</li>
   <li><code class="language-plaintext highlighter-rouge">revoked</code> - For Grants with scopes that can be obtained via user authorization (<code class="language-plaintext highlighter-rouge">grant_types</code> contains <code class="language-plaintext highlighter-rouge">authorization_code</code>), this status means the user has revoked access.</li>
@@ -1328,7 +1328,28 @@ Access to existing data is still available, but the Client should not expect upd
 
 <p>Grant <code class="language-plaintext highlighter-rouge">status</code> values of <code class="language-plaintext highlighter-rouge">future</code>, <code class="language-plaintext highlighter-rouge">disabled</code>, <code class="language-plaintext highlighter-rouge">suspended</code>, <code class="language-plaintext highlighter-rouge">revoked</code>, <code class="language-plaintext highlighter-rouge">closed</code>, and <code class="language-plaintext highlighter-rouge">expired</code> indicate that access to all features and data that were accessible via this Grant are no longer accessible.</p>
 
-<h3 id="83-listing-grants-">8.3. Listing Grants <a id="grants-list" href="#grants-list" class="permalink">🔗</a></h3>
+<h3 id="83-grant-authorization-requests-">8.3. Grant Authorization Requests <a id="grant-authorization-requests" href="#grant-authorization-requests" class="permalink">🔗</a></h3>
+
+<p>When a Grant <code class="language-plaintext highlighter-rouge">status</code> has a value of <code class="language-plaintext highlighter-rouge">needs_authorization</code>, the Grant needs a user authorization for the Grant to be approved.
+Clients achieved user authorization by following OAuth’s Authorization Code Grant process [<a href="#ref-rfc6749-code-grant">RFC 6749 Section 4.1</a>], with the following modifications.</p>
+
+<ul>
+  <li>In the OAuth Authorization Request [<a href="#ref-rfc6749-auth-request">RFC 6749 Section 4.1.1</a>], Clients MUST include the URL request parameter <code class="language-plaintext highlighter-rouge">cds_grant_id</code> with a value of the <code class="language-plaintext highlighter-rouge">grant_id</code> for the Grant for which the Client is requesting user authorization.</li>
+  <li>In the OAuth Authorization Request [<a href="#ref-rfc6749-auth-request">RFC 6749 Section 4.1.1</a>], Clients MAY include the URL request parameter <code class="language-plaintext highlighter-rouge">prompt</code> with a value of <code class="language-plaintext highlighter-rouge">login</code>.</li>
+  <li>Clients MAY include <code class="language-plaintext highlighter-rouge">cds_grant_id</code> and <code class="language-plaintext highlighter-rouge">prompt</code> in the Pushed Authorization Request process [<a href="#ref-rfc9126">RFC 9126</a>] to include them in the <code class="language-plaintext highlighter-rouge">request_uri</code> parameter.
+Servers MUST be able to parse <code class="language-plaintext highlighter-rouge">cds_grant_id</code> and <code class="language-plaintext highlighter-rouge">prompt</code> parameters from a received <code class="language-plaintext highlighter-rouge">request_uri</code> parameter in the authorization request.</li>
+  <li>Upon receiving an authorization request, prior to any necessary user authentication, Servers MUST evaluate any provided <code class="language-plaintext highlighter-rouge">cds_grant_id</code> parameter in relation to the other authorization request parameters and, if the <code class="language-plaintext highlighter-rouge">cds_grant_id</code> parameter is invalid (e.g. not appropriate for the requested <code class="language-plaintext highlighter-rouge">scope</code> or <code class="language-plaintext highlighter-rouge">client_id</code>), MUST reject the authorization request and redirect back to the Client’s <code class="language-plaintext highlighter-rouge">redirect_uri</code> with an <code class="language-plaintext highlighter-rouge">error</code> parameter value of <code class="language-plaintext highlighter-rouge">cds_grant_id_invalid_value</code>.
+Servers MUST evaluate other authorization request parameters first, and reject the authorization request with any appropriate errors before evaluating the <code class="language-plaintext highlighter-rouge">cds_grant_id</code> parameter.
+Servers MUST ignore empty <code class="language-plaintext highlighter-rouge">cds_grant_id</code> parameters as if it were not included in the authorization request.
+Servers MUST reject authorization requests with more than one non-empty <code class="language-plaintext highlighter-rouge">cds_grant_id</code> parameter.</li>
+  <li>Upon receiving an authorization request, if the Client included a <code class="language-plaintext highlighter-rouge">prompt=login</code> parameter, Servers MUST require the user to authenticate, even if the user is already authenticated.</li>
+  <li>Upon receiving an authorization request, after successfully completing any necessary user authentication, Servers MUST evaluate again any provided <code class="language-plaintext highlighter-rouge">cds_grant_id</code> value in relation to the other authorization request parameters and the user and, if the <code class="language-plaintext highlighter-rouge">cds_grant_id</code> parameter is invalid (e.g. not intended for the authenticated user), MUST reject the authorization request and redirect back to the Client’s <code class="language-plaintext highlighter-rouge">redirect_uri</code> with an <code class="language-plaintext highlighter-rouge">error</code> parameter value of <code class="language-plaintext highlighter-rouge">cds_grant_id_invalid_user</code>.</li>
+  <li>Upon the user authorizing the authorization request, Servers MUST update the Grant with a <code class="language-plaintext highlighter-rouge">grant_id</code> value matching the <code class="language-plaintext highlighter-rouge">cds_grant_id</code> parameter to reflect the obtained authorization.
+For example, a Grant could have its <code class="language-plaintext highlighter-rouge">status</code> value updated from <code class="language-plaintext highlighter-rouge">needs_authorization</code> to <code class="language-plaintext highlighter-rouge">active</code> or <code class="language-plaintext highlighter-rouge">pending</code>.
+Servers MUST NOT wait for the Access Token Request [<a href="#ref-rfc6749-token-request">RFC 6749 Section 4.1.3</a>] to update the Grant.</li>
+</ul>
+
+<h3 id="84-listing-grants-">8.4. Listing Grants <a id="grants-list" href="#grants-list" class="permalink">🔗</a></h3>
 
 <p>Clients may request to list Grant objects that they have access to by making an HTTPS <a href="#get">GET</a> request, authenticated with a valid Bearer <code class="language-plaintext highlighter-rouge">access_token</code> scoped to the <code class="language-plaintext highlighter-rouge">client_admin</code> scope, to the <code class="language-plaintext highlighter-rouge">cds_grants_api</code> URL included in the <a href="#auth-server-metadata-format">Authorization Server Metadata</a>.
 The Grant listing request responses are formatted as JSON objects and contain the following named values.</p>
@@ -1347,9 +1368,9 @@ If no previous segment exists (i.e. the requester is at the front of the list), 
 
 <ul>
   <li><code class="language-plaintext highlighter-rouge">grant_ids</code> - A space-separated list of <code class="language-plaintext highlighter-rouge">grant_id</code> values for which the Servers MUST filter the Grants.</li>
+  <li><code class="language-plaintext highlighter-rouge">parents</code> - A space-separated list of <code class="language-plaintext highlighter-rouge">parent</code> values for which the Servers MUST filter the Grants.</li>
   <li><code class="language-plaintext highlighter-rouge">statuses</code> - A space-separated list of <code class="language-plaintext highlighter-rouge">status</code> values for which the Servers MUST filter the Grants.</li>
   <li><code class="language-plaintext highlighter-rouge">client_ids</code> - A space-separated list of <code class="language-plaintext highlighter-rouge">client_id</code> values for which the Servers MUST filter the Grants.</li>
-  <li><code class="language-plaintext highlighter-rouge">cds_client_uris</code> - A space-separated list of <code class="language-plaintext highlighter-rouge">cds_client_uri</code> values for which the Servers MUST filter the Grants.</li>
   <li><code class="language-plaintext highlighter-rouge">scopes</code> - A space-separated list of <code class="language-plaintext highlighter-rouge">scope</code> values for which the Server MUST filter the Grants, where the included <code class="language-plaintext highlighter-rouge">scope</code> values are values within the Grant <code class="language-plaintext highlighter-rouge">scope</code> (space separated) or as a <code class="language-plaintext highlighter-rouge">type</code> value in the <code class="language-plaintext highlighter-rouge">authorization_details</code> list.</li>
   <li><code class="language-plaintext highlighter-rouge">receipt_confirmations</code> - A space-separated list of receipt confirmation codes for which the Server MUST filter the Grants.</li>
   <li><code class="language-plaintext highlighter-rouge">after</code> - A <a href="#datetime">datetime</a> for which the Server MUST filter Grants that were created after or on the datetime.</li>
@@ -1358,11 +1379,11 @@ If no previous segment exists (i.e. the requester is at the front of the list), 
 
 <p>Listings of Grant objects MUST be ordered in reverse chronological order by <code class="language-plaintext highlighter-rouge">modified</code> timestamp, where the most recently updated relevant Grant MUST be first in each listing.</p>
 
-<h3 id="84-retrieving-individual-grants-">8.4. Retrieving Individual Grants <a id="grants-get" href="#grants-get" class="permalink">🔗</a></h3>
+<h3 id="85-retrieving-individual-grants-">8.5. Retrieving Individual Grants <a id="grants-get" href="#grants-get" class="permalink">🔗</a></h3>
 
 <p>The URL to be used to send <a href="#get">GET</a> requests for retrieving individual Grant objects MUST be the Grant <code class="language-plaintext highlighter-rouge">uri</code> provided in the <a href="#grant-format">Grant object</a>.</p>
 
-<h3 id="85-modifying-grants-">8.5. Modifying Grants <a id="grants-modify" href="#grants-modify" class="permalink">🔗</a></h3>
+<h3 id="86-modifying-grants-">8.6. Modifying Grants <a id="grants-modify" href="#grants-modify" class="permalink">🔗</a></h3>
 
 <p>Clients may modify fields in the Grants API by sending an authenticated HTTPS <a href="#patch">PATCH</a> request to the Grant <code class="language-plaintext highlighter-rouge">uri</code> endpoint with the body of the request formatted a JSON object.
 The fields included in JSON object are the fields the Client intends to update with the submitted fields’ values.
@@ -1373,11 +1394,11 @@ If a field is not included in the <a href="#patch">PATCH</a> request, the Server
 <ul>
   <li><code class="language-plaintext highlighter-rouge">status</code> - Servers MUST only accept a value of <code class="language-plaintext highlighter-rouge">closed</code> from the Client.</li>
   <li><code class="language-plaintext highlighter-rouge">scope</code> - Servers MUST evaluate the updated scope for whether another user authorization is required.
-Servers MUST not require another user authorization if the updated scope is a reduction in scope of access (e.g. removal of a scope value from the scope string).
-If a new user authorization or sub-authorizations are required, the Server MUST update the <code class="language-plaintext highlighter-rouge">status</code> to one of <code class="language-plaintext highlighter-rouge">needs_authorization</code> or <code class="language-plaintext highlighter-rouge">needs_sub_authorizations</code> and update the <code class="language-plaintext highlighter-rouge">enabled_scope</code> to be the value of the current scope for which the Client is allowed access.</li>
+Servers MUST NOT require another user authorization if the updated scope is a reduction in scope of access (e.g. removal of a scope value from the scope string).
+If a new user authorization or sub-Grants are required, the Server MUST update the <code class="language-plaintext highlighter-rouge">status</code> to one of <code class="language-plaintext highlighter-rouge">needs_authorization</code> or <code class="language-plaintext highlighter-rouge">needs_sub_grants</code> and update the <code class="language-plaintext highlighter-rouge">enabled_scope</code> to be the value of the current scope for which the Client is allowed access.</li>
   <li><code class="language-plaintext highlighter-rouge">authorization_details</code> - Servers MUST evaluate the updated authorization details for whether another user authorization is required.
-Servers MUST not require another user authorization if the updated scope is a reduction in scope of access (e.g. removal of a scope value from the scope string).
-If a new user authorization or sub-authorizations are required, the Server MUST update the <code class="language-plaintext highlighter-rouge">status</code> to one of <code class="language-plaintext highlighter-rouge">needs_authorization</code> or <code class="language-plaintext highlighter-rouge">needs_sub_authorizations</code> and update the <code class="language-plaintext highlighter-rouge">enabled_authorization_details</code> to be the value of the current authorization details for which the Client is allowed access.</li>
+Servers MUST NOT require another user authorization if the updated scope is a reduction in scope of access (e.g. removal of a scope value from the scope string).
+If a new user authorization or sub-Grants are required, the Server MUST update the <code class="language-plaintext highlighter-rouge">status</code> to one of <code class="language-plaintext highlighter-rouge">needs_authorization</code> or <code class="language-plaintext highlighter-rouge">needs_sub_grants</code> and update the <code class="language-plaintext highlighter-rouge">enabled_authorization_details</code> to be the value of the current authorization details for which the Client is allowed access.</li>
 </ul>
 
 <p>Servers MUST reject requests with a <code class="language-plaintext highlighter-rouge">400 Bad Request</code> response when fields are submitted that are not able to be modified by the Client or the submitted values are invalid.
@@ -1901,6 +1922,18 @@ Additionally, Servers SHOULD configure rate limiting for unauthenticated or fail
 <p><a id="ref-rfc6749-token-endpoint" href="#ref-rfc6749-token-endpoint" class="permalink">🔗</a>
 <code class="language-plaintext highlighter-rouge">RFC 6749 Section 3.2</code> - Section 3.2: Token Endpoint, “The OAuth 2.0 Authorization Framework”, RFC 6749, Internet Engineering Task Force (IETF),<br />
 <a href="https://www.rfc-editor.org/rfc/rfc6749#section-3.2">https://www.rfc-editor.org/rfc/rfc6749#section-3.2</a></p>
+
+<p><a id="ref-rfc6749-code-grant" href="#ref-rfc6749-code-grant" class="permalink">🔗</a>
+<code class="language-plaintext highlighter-rouge">RFC 6749 Section 4.1</code> - Section 4.1. Authorization Code Grant, “The OAuth 2.0 Authorization Framework”, RFC 6749, Internet Engineering Task Force (IETF),<br />
+<a href="https://www.rfc-editor.org/rfc/rfc6749#section-4.1">https://www.rfc-editor.org/rfc/rfc6749#section-4.1</a></p>
+
+<p><a id="ref-rfc6749-auth-request" href="#ref-rfc6749-auth-request" class="permalink">🔗</a>
+<code class="language-plaintext highlighter-rouge">RFC 6749 Section 4.1.1</code> - Section 4.1.1. Authorization Request, “The OAuth 2.0 Authorization Framework”, RFC 6749, Internet Engineering Task Force (IETF),<br />
+<a href="https://www.rfc-editor.org/rfc/rfc6749#section-4.1.1">https://www.rfc-editor.org/rfc/rfc6749#section-4.1.1</a></p>
+
+<p><a id="ref-rfc6749-token-request" href="#ref-rfc6749-token-request" class="permalink">🔗</a>
+<code class="language-plaintext highlighter-rouge">RFC 6749 Section 4.1.3</code> - Section 4.1.3. Access Token Request, “The OAuth 2.0 Authorization Framework”, RFC 6749, Internet Engineering Task Force (IETF),<br />
+<a href="https://www.rfc-editor.org/rfc/rfc6749#section-4.1.3">https://www.rfc-editor.org/rfc/rfc6749#section-4.1.3</a></p>
 
 <p><a id="ref-rfc6749-client-credentials" href="#ref-rfc6749-client-credentials" class="permalink">🔗</a>
 <code class="language-plaintext highlighter-rouge">RFC 6749 Section 4.4</code> - Section 4.4. Client Credentials Grant, “The OAuth 2.0 Authorization Framework”, RFC 6749, Internet Engineering Task Force (IETF),<br />
