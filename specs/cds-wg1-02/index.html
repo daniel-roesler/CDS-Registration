@@ -1458,7 +1458,7 @@ Servers MUST authenticate this download endpoint using the same authentication r
 
 <h3 id="92-listing-server-provided-files-">9.2. Listing Server-Provided Files <a id="server-provided-files-list" href="#server-provided-files-list" class="permalink">🔗</a></h3>
 
-<p>Clients may request to list Server-Provided File objects that they have access to by making an HTTPS <a href="#get">GET</a> request, authenticated with a valid Bearer <code class="language-plaintext highlighter-rouge">access_token</code> scoped to the <code class="language-plaintext highlighter-rouge">client_admin</code> scope, to the <code class="language-plaintext highlighter-rouge">cds_server_provided_files_api</code> URL included in the <a href="#auth-server-metadata-format">Authorization Server Metadata</a>.
+<p>Clients may request to list Server-Provided File objects that they have access to by making an HTTPS <a href="#get">GET</a> request to the <code class="language-plaintext highlighter-rouge">cds_server_provided_files_api</code> URL included in the <a href="#auth-server-metadata-format">Authorization Server Metadata</a> and authenticated with a valid Bearer <code class="language-plaintext highlighter-rouge">access_token</code> scoped to the <code class="language-plaintext highlighter-rouge">grant_admin</code> scope with <code class="language-plaintext highlighter-rouge">authorizatin_details</code> entries listing <code class="language-plaintext highlighter-rouge">grant_id</code> values that are for Grants that have the <code class="language-plaintext highlighter-rouge">server_provided_files</code> scope.
 The Server-Provided File listing request responses are formatted as JSON objects and contain the following named values.</p>
 
 <ul>
@@ -1471,6 +1471,8 @@ If no next segment exists (i.e. the requester is at the end of the list), this v
 If no previous segment exists (i.e. the requester is at the front of the list), this value is <code class="language-plaintext highlighter-rouge">null</code>.</li>
 </ul>
 
+<p>Servers MUST only list Server-Provided File objects that are accessible under the <code class="language-plaintext highlighter-rouge">access_token</code>, which is always limited to specific set of Grants.</p>
+
 <p>Servers MUST support Clients adding any of the following URL parameters to the <a href="#get">GET</a> request, which will filter the list of Server-Provided Files to be the intersection of results for each of the URL parameters filters:</p>
 
 <ul>
@@ -1481,7 +1483,7 @@ If no previous segment exists (i.e. the requester is at the front of the list), 
 
 <h3 id="93-retrieving-individual-server-provided-files-">9.3. Retrieving Individual Server-Provided Files <a id="server-provided-files-get" href="#server-provided-files-get" class="permalink">🔗</a></h3>
 
-<p>The URL to be used to send <a href="#get">GET</a> requests for retrieving individual Server-Provided File objects MUST be the Server-Provided File <code class="language-plaintext highlighter-rouge">uri</code> provided in the <a href="#message-format">Message object</a>.</p>
+<p>The URL to be used to send <a href="#get">GET</a> requests for retrieving individual Server-Provided File objects MUST be the Server-Provided File <code class="language-plaintext highlighter-rouge">uri</code> provided in the <a href="#message-format">Message object</a> and authenticated with a valid Bearer <code class="language-plaintext highlighter-rouge">access_token</code> scoped to the <code class="language-plaintext highlighter-rouge">grant_admin</code> scope with <code class="language-plaintext highlighter-rouge">authorizatin_details</code> entries listing <code class="language-plaintext highlighter-rouge">grant_id</code> values that are for Grants that have the <code class="language-plaintext highlighter-rouge">server_provided_files</code> scope.</p>
 
 <h2 id="10-extensions-">10. Extensions <a id="extensions" href="#extensions" class="permalink">🔗</a></h2>
 
