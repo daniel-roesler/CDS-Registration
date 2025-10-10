@@ -228,28 +228,42 @@ For more information, visit <a href="https://lfess.energy/">https://lfess.energy
       <li><a href="#server-provided-files-format">9.1. Server-Provided Files Object Format</a></li>
       <li><a href="#server-provided-files-list">9.2. Listing Server-Provided Files</a></li>
       <li><a href="#server-provided-files-get">9.3. Retrieving Individual Server-Provided Files</a></li>
+      <li><a href="#server-provided-files-download">9.4. Downloading Server-Provided File Data</a></li>
     </ul>
   </li>
   <li><a href="#extensions">10. Extensions</a></li>
-  <li><a href="#examples">11. Examples</a>
+  <li><a href="#security">11. Security Considerations</a>
     <ul>
-      <li><a href="#example-cds-server-metadata">11.1. CDS Server Metadata</a></li>
-      <li><a href="#example-auth-server-metadata">11.2. Authorization Server Metadata</a></li>
-      <li><a href="#example-client-registration">11.3. Client Registration Request</a></li>
-      <li><a href="#example-admin-access-token">11.4. Client Admin Access Token</a></li>
-      <li><a href="#example-client-list">11.5. Client List</a></li>
-      <li><a href="#example-message-list">11.6. Message List</a></li>
-      <li><a href="#example-message-create">11.7. Creating a Message</a></li>
-      <li><a href="#example-credentials-list">11.8. Credentials List</a></li>
-      <li><a href="#example-grants-list">11.9. Grants List</a></li>
-      <li><a href="#example-server-provided-files">11.10. Server-Provided Files</a></li>
+      <li><a href="#scopes-client-management">11.1. Scopes and Client Management</a></li>
+      <li><a href="#restricted-access">11.2. Restricted Access</a></li>
+      <li><a href="#rate-limiting">11.3. Rate Limiting</a></li>
+      <li><a href="#captchas">11.4. Captchas</a></li>
     </ul>
   </li>
-  <li><a href="#security">12. Security Considerations</a>
+  <li><a href="#examples">12. Examples</a>
     <ul>
-      <li><a href="#scopes-client-management">12.1. Scopes and Client Management</a></li>
-      <li><a href="#restricted-access">12.2. Restricted Access</a></li>
-      <li><a href="#rate-limiting">12.3. Rate Limiting</a></li>
+      <li><a href="#example-cds-server-metadata">12.1. Retrieving CDS Server Metadata</a></li>
+      <li><a href="#example-auth-server-metadata">12.2. Retrieving Authorization Server Metadata</a></li>
+      <li><a href="#example-client-registration">12.3. Submitting a Client Registration Request</a></li>
+      <li><a href="#example-admin-access-token">12.4. Obtaining a Client Admin Access Token</a></li>
+      <li><a href="#example-clients-list">12.5. Retrieving a Client List</a></li>
+      <li><a href="#example-client-get">12.6. Retrieving an Individual Client</a></li>
+      <li><a href="#example-client-modify">12.7. Modifying a Client</a></li>
+      <li><a href="#example-messages-list">12.8. Retrieving a Message List</a></li>
+      <li><a href="#example-message-create">12.9. Creating a Message</a></li>
+      <li><a href="#example-message-get">12.10. Retrieving an Individual Message</a></li>
+      <li><a href="#example-message-modify">12.11. Modifying a Message</a></li>
+      <li><a href="#example-credentials-list">12.12. Retrieving a Credentials List</a></li>
+      <li><a href="#example-credentials-create">12.13. Creating a Credential</a></li>
+      <li><a href="#example-credentials-get">12.14. Retrieving an Individual Credential</a></li>
+      <li><a href="#example-credentials-modify">12.15. Modifying a Credential</a></li>
+      <li><a href="#example-grants-list">12.16. Grants List</a></li>
+      <li><a href="#example-grants-get">12.17. Retrieving an Individual Grant</a></li>
+      <li><a href="#example-grants-modify">12.18. Modifying a Grant</a></li>
+      <li><a href="#example-server-provided-files-access-token">12.19. Obtaining Server-Provided File Access via the Grant Admin Scope</a></li>
+      <li><a href="#example-server-provided-files-list">12.20. Retrieving a Server-Provided Files List</a></li>
+      <li><a href="#example-server-provided-files-get">12.21. Retrieving an Individual Server-Provided File</a></li>
+      <li><a href="#example-server-provided-files-download">12.22. Downloading Data for a Server-Provided File</a></li>
     </ul>
   </li>
   <li><a href="#references">13. References</a></li>
@@ -538,7 +552,8 @@ Servers MAY set the URL to an online publicly-available copy of this specificati
   </li>
 </ul>
 
-<p>Since Grants with the scope are only created by Servers, Client do not receive an authorization code or access token for that Grant with which they may access the files. Instead, to access the files, Clients MUST submit a <code class="language-plaintext highlighter-rouge">client_credentials</code> grant with the scope of <code class="language-plaintext highlighter-rouge">grant_admin</code> and an <code class="language-plaintext highlighter-rouge">authorization_details</code> containing the <code class="language-plaintext highlighter-rouge">client_id</code> and <code class="language-plaintext highlighter-rouge">grant_id</code> for the Grant the Client found via the <a href="#grants-api">Grants API</a>.</p>
+<p>Since Grants with the scope are only created by Servers, Client do not receive an authorization code or access token for that Grant with which they may access the files.
+Instead, to access the files, Clients MUST submit a <code class="language-plaintext highlighter-rouge">client_credentials</code> grant with the scope of <code class="language-plaintext highlighter-rouge">grant_admin</code> and an <code class="language-plaintext highlighter-rouge">authorization_details</code> containing the <code class="language-plaintext highlighter-rouge">client_id</code> and <code class="language-plaintext highlighter-rouge">grant_id</code> for the Grant the Client found via the <a href="#grants-api">Grants API</a>.</p>
 
 <h3 id="34-scope-descriptions-object-format-">3.4. Scope Descriptions Object Format <a id="scope-descriptions-format" href="#scope-descriptions-format" class="permalink">🔗</a></h3>
 
@@ -1172,6 +1187,10 @@ Severs MUST process newer Messages created by the Client as overriding the Clien
 <p>If a Client wishes to amend a previously created Message of type <code class="language-plaintext highlighter-rouge">private_message</code> or <code class="language-plaintext highlighter-rouge">support_request</code> they created, the Client MUST <a href="#messages-create">create a new Message</a> with the <code class="language-plaintext highlighter-rouge">previous_uri</code> value set as the Message <code class="language-plaintext highlighter-rouge">uri</code> for which they are wanting to amend.
 Severs MUST consider newer Messages created by the Client as amending the Client’s previous support request or message.</p>
 
+<p>Servers MUST validate the values of the submitted Message fields that are able to be modified and reject with a <code class="language-plaintext highlighter-rouge">400 Bad Response</code> Status Code if any of those fields are submitted with invalid values.
+Servers MUST ignore any fields submitted that are not able to be modified by the Client.
+If the submission is valid, Servers MUST synchronously modify the Message object and respond with a <code class="language-plaintext highlighter-rouge">200 OK</code> Status Code where the response body is the updated Message object.</p>
+
 <h2 id="7-credentials-api-">7. Credentials API <a id="credentials-api" href="#credentials-api" class="permalink">🔗</a></h2>
 
 <p>To allow Clients to manage <code class="language-plaintext highlighter-rouge">client_secret</code> values used for authentication to APIs, this specification requires that Server implement a Credentials API.
@@ -1263,8 +1282,9 @@ If a field is not included in the <a href="#patch">PATCH</a> request, the Server
 When the current value is <code class="language-plaintext highlighter-rouge">0</code>, indicating no expiration time, Severs MUST allow Clients to set a value of <code class="language-plaintext highlighter-rouge">0</code> or any timestamp greater than or equal to the current time.</li>
 </ul>
 
-<p>Servers MUST reject requests with a <code class="language-plaintext highlighter-rouge">400 Bad Request</code> Status Code when fields are submitted that are not able to be modified by the Client or the submitted values are invalid.
-If all submitted fields are valid and have been updated, the Server MUST respond with a <code class="language-plaintext highlighter-rouge">200 OK</code> Status Code.</p>
+<p>Servers MUST validate the values of the submitted Credential fields that are able to be modified and reject with a <code class="language-plaintext highlighter-rouge">400 Bad Response</code> Status Code if any of those fields are submitted with invalid values.
+Servers MUST ignore any fields submitted that are not able to be modified by the Client.
+If the submission is valid, Servers MUST synchronously modify the Credential object and respond with a <code class="language-plaintext highlighter-rouge">200 OK</code> Status Code where the response body is the updated Credential object.</p>
 
 <p>If a Client updates the <code class="language-plaintext highlighter-rouge">client_secret_expires_at</code> of a Credential to be a timestamp equal to or less than the current time, the Server MUST assume the Credential is compromised and synchronously disable the Credential’s <code class="language-plaintext highlighter-rouge">client_secret</code> from being used on the token endpoint and revoke any <code class="language-plaintext highlighter-rouge">access_token</code> or <code class="language-plaintext highlighter-rouge">refresh_token</code> values issued by the token endpoint as a result of using the now-disabled Credential.</p>
 
@@ -1422,16 +1442,17 @@ Servers MUST NOT require another user authorization if the updated scope is a re
 If a new user authorization or sub-Grants are required, the Server MUST update the <code class="language-plaintext highlighter-rouge">status</code> to one of <code class="language-plaintext highlighter-rouge">needs_authorization</code> or <code class="language-plaintext highlighter-rouge">needs_sub_grants</code> and update the <code class="language-plaintext highlighter-rouge">enabled_authorization_details</code> to be the value of the current authorization details for which the Client is allowed access.</li>
 </ul>
 
-<p>Servers MUST reject requests with a <code class="language-plaintext highlighter-rouge">400 Bad Request</code> response when fields are submitted that are not able to be modified by the Client or the submitted values are invalid.
-For valid <a href="#patch">PATCH</a> requests from Clients, Servers MUST respond with a <code class="language-plaintext highlighter-rouge">200 OK</code> Status Code with an updated JSON object of the complete current Grant object.</p>
+<p>Servers MUST validate the values of the submitted Grant fields that are able to be modified and reject with a <code class="language-plaintext highlighter-rouge">400 Bad Response</code> Status Code if any of those fields are submitted with invalid values.
+Servers MUST ignore any fields submitted that are not able to be modified by the Client.</p>
 
-<p>If a Server needs to asynchronously review and approve changes to any submitted Grant object fields that have been submitted by the Client and are different from the current values, for valid modification requests the Server MUST update the Grant’s <code class="language-plaintext highlighter-rouge">status</code> to <code class="language-plaintext highlighter-rouge">pending</code> in the response.
+<p>If a Server does not need to asynchronously review the changes, the Server MUST synchronously modify the Grant object and respond with a <code class="language-plaintext highlighter-rouge">200 OK</code> Status Code where the response body is the updated Grant object.
+If a Server needs to asynchronously review and approve changes to any submitted Grant object fields that have been submitted by the Client and are different from the current values, for valid modification requests the Server MUST update the Grant’s <code class="language-plaintext highlighter-rouge">status</code> to <code class="language-plaintext highlighter-rouge">pending</code> and respond with a <code class="language-plaintext highlighter-rouge">202 Accepted</code> Status Code where the response body is the updated Grant object.
 Additionally, if the <code class="language-plaintext highlighter-rouge">scope</code> or <code class="language-plaintext highlighter-rouge">authorization_details</code> has been updated, the Server MUST update the <code class="language-plaintext highlighter-rouge">enabled_scope</code> and <code class="language-plaintext highlighter-rouge">enabled_authorization_details</code> to reflect for what the Client currently has access while the Grant is pending.</p>
 
 <h2 id="9-server-provided-files-api-">9. Server-Provided Files API <a id="server-provided-files-api" href="#server-provided-files-api" class="permalink">🔗</a></h2>
 
 <p>This specification defines an API by which Servers MAY provide an access to arbitrary files to Clients to download.
-These APIs are authenticated using a Bearer <code class="language-plaintext highlighter-rouge">access_token</code> obtained by the Client using OAuth 2.0’s <code class="language-plaintext highlighter-rouge">client_credentials</code> grant process [<a href="#ref-rfc6749-client-credentials">RFC 6749 Section 4.4</a>], where the scope of the access token is <code class="language-plaintext highlighter-rouge">grant_admin</code> with <code class="language-plaintext highlighter-rouge">authorizatin_details</code> entries listing <code class="language-plaintext highlighter-rouge">grant_id</code> values that are for Grants that have the <code class="language-plaintext highlighter-rouge">server_provided_files</code> scope.</p>
+These APIs are authenticated using a Bearer <code class="language-plaintext highlighter-rouge">access_token</code> obtained by the Client using OAuth 2.0’s <code class="language-plaintext highlighter-rouge">client_credentials</code> grant process [<a href="#ref-rfc6749-client-credentials">RFC 6749 Section 4.4</a>], where the scope of the access token is <code class="language-plaintext highlighter-rouge">grant_admin</code> with <code class="language-plaintext highlighter-rouge">authorizatin_details</code> entries listing <code class="language-plaintext highlighter-rouge">grant_id</code> values that are for Grants that have the <a href="#scopes-server-provided-files"><code class="language-plaintext highlighter-rouge">server_provided_files</code></a> scope.</p>
 
 <p>This API is intended to provide a convenient way for Servers to provide secure ad-hoc file access to Clients, such as sharing connectivity-related files (e.g. configs, certificates, secret keys, etc.) or manually created bulk files (e.g. initial backfill raw data, analysis reports, etc.).
 This API is NOT intended to be used for automated sharing of structured data (e.g. nightly interval extracts) because the API has limited functionality to convey the appropriate metadata for automated file sharing, such as versioning or schemas.
@@ -1483,7 +1504,11 @@ If no previous segment exists (i.e. the requester is at the front of the list), 
 
 <h3 id="93-retrieving-individual-server-provided-files-">9.3. Retrieving Individual Server-Provided Files <a id="server-provided-files-get" href="#server-provided-files-get" class="permalink">🔗</a></h3>
 
-<p>The URL to be used to send <a href="#get">GET</a> requests for retrieving individual Server-Provided File objects MUST be the Server-Provided File <code class="language-plaintext highlighter-rouge">uri</code> provided in the <a href="#message-format">Message object</a> and authenticated with a valid Bearer <code class="language-plaintext highlighter-rouge">access_token</code> scoped to the <code class="language-plaintext highlighter-rouge">grant_admin</code> scope with <code class="language-plaintext highlighter-rouge">authorizatin_details</code> entries listing <code class="language-plaintext highlighter-rouge">grant_id</code> values that are for Grants that have the <code class="language-plaintext highlighter-rouge">server_provided_files</code> scope.</p>
+<p>The URL to be used to send <a href="#get">GET</a> requests for retrieving individual Server-Provided File objects MUST be the Server-Provided File <code class="language-plaintext highlighter-rouge">uri</code> provided in the <a href="#server-provided-files-format">Server-Provided File object</a> and authenticated with a valid Bearer <code class="language-plaintext highlighter-rouge">access_token</code> scoped to the <code class="language-plaintext highlighter-rouge">grant_admin</code> scope with <code class="language-plaintext highlighter-rouge">authorizatin_details</code> entries listing <code class="language-plaintext highlighter-rouge">grant_id</code> values that are for Grants that have the <code class="language-plaintext highlighter-rouge">server_provided_files</code> scope and include the relevant <code class="language-plaintext highlighter-rouge">file_id</code>.</p>
+
+<h3 id="94-downloading-server-provided-file-data-">9.4. Downloading Server-Provided File Data <a id="server-provided-files-download" href="#server-provided-files-download" class="permalink">🔗</a></h3>
+
+<p>The URL to be used to send <a href="#get">GET</a> requests for retrieving the raw data for an individual Server-Provided File MUST be the Server-Provided File <code class="language-plaintext highlighter-rouge">download_uri</code> provided in the <a href="#server-provided-files-format">Server-Provided File object</a> and authenticated with a valid Bearer <code class="language-plaintext highlighter-rouge">access_token</code> scoped to the <code class="language-plaintext highlighter-rouge">grant_admin</code> scope with <code class="language-plaintext highlighter-rouge">authorizatin_details</code> entries listing <code class="language-plaintext highlighter-rouge">grant_id</code> values that are for Grants that have the <code class="language-plaintext highlighter-rouge">server_provided_files</code> scope and include the relevant <code class="language-plaintext highlighter-rouge">file_id</code>.</p>
 
 <h2 id="10-extensions-">10. Extensions <a id="extensions" href="#extensions" class="permalink">🔗</a></h2>
 
@@ -1501,11 +1526,54 @@ When extending enumerated list, other specifications or Server documentation MUS
 The additional string MUST be specified with a description of what that string means when it is included in the relevant array.</p>
 
 <p>To facilitate forwards compatibility, Clients MUST ignore unknown or undocumented object fields and enumerated strings.
-If a Client cannot provide adequate functionality based on too many unknown or undocumented object fields or enumerated strings, the Client SHOULD refer to the Server’s technical documentation linked in the <code class="language-plaintext highlighter-rouge">documentation</code> value of the CDS Server Metadata object [[CDS-WG1-01 Section 3.2(#ref-cds-wg1-01-metadata-object)] or contact the Server’s technical support (via the <code class="language-plaintext highlighter-rouge">support</code> value in the metadata object).</p>
+If a Client cannot provide adequate functionality based on too many unknown or undocumented object fields or enumerated strings, the Client SHOULD refer to the Server’s technical documentation linked in the <code class="language-plaintext highlighter-rouge">documentation</code> value of the CDS Server Metadata object [<a href="#ref-cds-wg1-01-metadata-object">CDS-WG1-01 Section 3.2</a>] or contact the Server’s technical support linked by the <code class="language-plaintext highlighter-rouge">support</code> value in the metadata object.</p>
 
-<h2 id="11-examples-">11. Examples <a id="examples" href="#examples" class="permalink">🔗</a></h2>
+<h2 id="11-security-considerations-">11. Security Considerations <a id="security" href="#security" class="permalink">🔗</a></h2>
 
-<h3 id="111-cds-server-metadata-">11.1. CDS Server Metadata <a id="example-cds-server-metadata" href="#example-cds-server-metadata" class="permalink">🔗</a></h3>
+<p>This specification describes a protocol by which a utility or other central entity (a Server) can allow external entities (Clients) to register and obtain privileged access to the Server’s offered capabilities and data.
+Because the functionality described in this specification enables access to private Server functionality and data, Servers MUST follow industry cybersecurity best practices when securing their implementations of this specification to prevent unintended or inadvertent access to privileged functionality or data to Clients who are not authorized.
+These best practices include requiring <a href="#https">HTTPS</a> for API endpoints using the latest widely adopted encryption standards, undergoing regular security audits and penetration tests, and internally requiring security-focused process controls and data handling procedures.</p>
+
+<h3 id="111-scopes-and-client-management-">11.1. Scopes and Client Management <a id="scopes-client-management" href="#scopes-client-management" class="permalink">🔗</a></h3>
+
+<p>Because legal and regulatory requirements are highly diverse across the energy sector, Servers MUST be responsible for only offering scopes allowed by their jurisdictions.</p>
+
+<p>Servers MUST include the appropriate <code class="language-plaintext highlighter-rouge">registration_requirements</code> values in their <a href="#scope-descriptions-format">Scope Descriptions</a> for each scope’s use case and capabilities to ensure that Clients submit all required disclosures (e.g. contact information) and be appropriately informed about any required steps (e.g. manual review) or payments (e.g. registration fees).
+Servers MUST NOT impose overly burdensome registration requirements beyond what is deemed necessary by the Server’s jurisdiction requirements for the type of capabilities or data made available by an offered scope.</p>
+
+<p>Severs MUST be responsible for appropriately monitoring and reviewing the use of registered Clients as necessary for their legal and regulatory jurisdictions.</p>
+
+<h3 id="112-restricted-access-">11.2. Restricted Access <a id="restricted-access" href="#restricted-access" class="permalink">🔗</a></h3>
+
+<p>For unauthenticated endpoints (<a href="#auth-server-metadata">Authorization Server Metadata</a>, <a href="#client-registration-process">Client Registration Process</a>), while Servers can add <a href="#rate-limiting">rate limiting</a> configurations to protect their systems from being overwhelmed with requests, Servers MUST NOT add anti-bot blocking measures (e.g. captchas) that prevent automated requests from other systems.
+The functionality described in this specification is intended to be able to be integrated in other platforms to allow those platforms to automate interactions with Servers on their users’ behalf.</p>
+
+<p>If <a href="#auth-server-metadata">Authorization Server Metadata</a> is referenced in a public CDS Server Metadata Endpoint [<a href="#ref-cds-wg1-01-metadata-endpoint">CDS-WG1-01 Section 3</a>], then the <a href="#auth-server-metadata">Authorization Server Metadata</a> and <a href="#client-registration-process">Client Registration Process</a> must also be public.</p>
+
+<p>Servers that wish to restrict access of by-default unauthenticated endpoints to certain Clients MUST configure well established authentication processes for Clients to ensure that only the approved Clients may access the restricted endpoint.
+This specification does not describe specifically how Servers will authenticate Clients for by-default unauthenticated endpoints, as these restricted access protocols are context dependent.
+For example, if a Server providing a private Client Registration endpoint as part of an existing logged in portal, then they can use that logged in portal’s session cookie to authenticate Client requests to the registration endpoint.</p>
+
+<p>For authenticated endpoints (<a href="#clients-api">Clients API</a>, <a href="#messages-api">Messages API</a>, <a href="#credentials-api">Credentials API</a>, <a href="#grants-api">Grants API</a>, <a href="#server-provided-files-api">Server-Provided Files API</a>), Servers MUST authenticate requests using OAuth’s Authorization Request Header Field [<a href="#ref-rfc6750-auth-header">RFC 6750 Section 2.1</a>] with access tokens obtained using the OAuth 2.0’s Issuing an Access Token process [<a href="#ref-rfc6749-access-tokens">RFC 6749 Section 5</a>].</p>
+
+<h3 id="113-rate-limiting-">11.3. Rate Limiting <a id="rate-limiting" href="#rate-limiting" class="permalink">🔗</a></h3>
+
+<p>For unauthenticated endpoints (<a href="#auth-server-metadata">Authorization Server Metadata</a>, <a href="#client-registration-process">Client Registration Process</a>), Servers SHOULD configure rate limiting restrictions so that bots and misconfigured scripts will not flood and overwhelm the endpoints with requests, while still allowing legitimate and low-volume automated requests have access to the endpoints.</p>
+
+<p>For authenticated endpoints (<a href="#clients-api">Clients API</a>, <a href="#messages-api">Messages API</a>, <a href="#credentials-api">Credentials API</a>, <a href="#grants-api">Grants API</a>, <a href="#server-provided-files-api">Server-Provided Files API</a>), Servers SHOULD configure rate limiting by Client and Credential to ensure that individual Clients do not overwhelm Servers with authenticated API requests.
+Additionally, Servers SHOULD configure rate limiting for unauthenticated or failed authentication requests to authenticated API endpoints to prevent brute force attempts to gain access to authenticated APIs.</p>
+
+<h3 id="114-captchas-">11.4. Captchas <a id="captchas" href="#captchas" class="permalink">🔗</a></h3>
+
+<p>Because endpoints defined and referenced in this specification are intended to be used via automated tooling by Clients, Servers MUST NOT restrict endpoints (authenticated or unauthenticated) with human-only tests, such as captchas.</p>
+
+<p>Servers MAY implement human-only tests on content linked via URL if the content is only intended for consumption by humans. For example, a Server MAY implement a captcha on the manual registration interface linked via the <code class="language-plaintext highlighter-rouge">cds_human_registration</code> value in the <a href="#auth-server-metadata-format">Metadata object</a>.</p>
+
+<h2 id="12-examples-">12. Examples <a id="examples" href="#examples" class="permalink">🔗</a></h2>
+
+<p>The following are non-normative examples of requests and responses of various APIs defined in this specification.</p>
+
+<h3 id="121-retrieving-cds-server-metadata-">12.1. Retrieving CDS Server Metadata <a id="example-cds-server-metadata" href="#example-cds-server-metadata" class="permalink">🔗</a></h3>
 
 <p>The following is a non-normative example of requesting a CDS Server Metadata object that includes this specification’s <a href="#auth-server-metadata-url"><code class="language-plaintext highlighter-rouge">oauth</code> capability</a>.</p>
 
@@ -1536,7 +1604,7 @@ Content-Type: application/json;charset=UTF-8
 }
 </code></pre></div></div>
 
-<h3 id="112-authorization-server-metadata-">11.2. Authorization Server Metadata <a id="example-auth-server-metadata" href="#example-auth-server-metadata" class="permalink">🔗</a></h3>
+<h3 id="122-retrieving-authorization-server-metadata-">12.2. Retrieving Authorization Server Metadata <a id="example-auth-server-metadata" href="#example-auth-server-metadata" class="permalink">🔗</a></h3>
 
 <p>The following is a non-normative example of requesting the <a href="#auth-server-metadata-format">Authorization Server Metadata object</a>.</p>
 
@@ -1568,11 +1636,11 @@ Content-Type: application/json;charset=UTF-8
     "cds_oauth_version": "v1",
     "cds_human_registration": "https://example.com/clients/register",
     "cds_test_accounts": "https://example.com/docs/testing",
-    "cds_clients_api": "https://example.com/api/clients",
-    "cds_messages_api": "https://example.com/api/messages",
-    "cds_credentials_api": "https://example.com/api/credentials",
-    "cds_grants_api": "https://example.com/api/grants",
-    "cds_server_provided_files_api": "https://example.com/api/server-provided-files"
+    "cds_clients_api": "https://example.com/cds-api/v1/clients",
+    "cds_messages_api": "https://example.com/cds-api/v1/messages",
+    "cds_credentials_api": "https://example.com/cds-api/v1/credentials",
+    "cds_grants_api": "https://example.com/cds-api/v1/grants",
+    "cds_server_provided_files_api": "https://example.com/cds-api/v1/server-provided-files"
     "cds_scope_descriptions": {
         "client_admin": {
             "id": "client_admin",
@@ -1667,7 +1735,7 @@ Content-Type: application/json;charset=UTF-8
 }
 </code></pre></div></div>
 
-<h3 id="113-client-registration-request-">11.3. Client Registration Request <a id="example-client-registration" href="#example-client-registration" class="permalink">🔗</a></h3>
+<h3 id="123-submitting-a-client-registration-request-">12.3. Submitting a Client Registration Request <a id="example-client-registration" href="#example-client-registration" class="permalink">🔗</a></h3>
 
 <p>The following is a non-normative example of a Client submitting a <a href="#registration-request">Client Registration Request</a>.</p>
 
@@ -1699,14 +1767,14 @@ Content-Type: application/json;charset=UTF-8
     "authorization_details_types": ["client_admin"],
     "cds_created": "2022-01-01T00:00:00Z",
     "cds_modified": "2022-01-01T00:00:00Z",
-    "cds_client_uri": "https://example.com/api/clients/aaf026921707f5d5",
+    "cds_client_uri": "https://example.com/cds-api/v1/clients/aaf026921707f5d5",
     "cds_status": "production",
     "cds_status_options": ["production"],
-    "cds_server_metadata": "https://example.com/api/clients/aaf026921707f5d5/cds-server-metadata",
+    "cds_server_metadata": "https://example.com/cds-api/v1/clients/aaf026921707f5d5/cds-server-metadata",
 }
 </code></pre></div></div>
 
-<h3 id="114-client-admin-access-token-">11.4. Client Admin Access Token <a id="example-admin-access-token" href="#example-admin-access-token" class="permalink">🔗</a></h3>
+<h3 id="124-obtaining-a-client-admin-access-token-">12.4. Obtaining a Client Admin Access Token <a id="example-admin-access-token" href="#example-admin-access-token" class="permalink">🔗</a></h3>
 
 <p>The following is a non-normative example of a Client obtaining an access token to use for authenticated API requests.</p>
 
@@ -1731,12 +1799,12 @@ Content-Type: application/json;charset=UTF-8
 }
 </code></pre></div></div>
 
-<h3 id="115-client-list-">11.5. Client List <a id="example-client-list" href="#example-client-list" class="permalink">🔗</a></h3>
+<h3 id="125-retrieving-a-client-list-">12.5. Retrieving a Client List <a id="example-clients-list" href="#example-clients-list" class="permalink">🔗</a></h3>
 
 <p>The following is a non-normative example of a Client loading their list of Client objects via the <a href="#clients-api">Clients API</a>.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==Request==
-GET /api/clients HTTP/1.1
+GET /cds-api/v1/clients HTTP/1.1
 Host: example.com
 Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
 
@@ -1758,10 +1826,10 @@ Content-Type: application/json;charset=UTF-8
             "authorization_details_types": ["client_admin"],
             "cds_created": "2022-01-01T00:00:00Z",
             "cds_modified": "2022-01-01T00:00:00Z",
-            "cds_client_uri": "https://example.com/api/clients/aaf026921707f5d5",
+            "cds_client_uri": "https://example.com/cds-api/v1/clients/aaf026921707f5d5",
             "cds_status": "production",
             "cds_status_options": ["production"],
-            "cds_server_metadata": "https://example.com/api/clients/aaf026921707f5d5/cds-server-metadata",
+            "cds_server_metadata": "https://example.com/cds-api/v1/clients/aaf026921707f5d5/cds-server-metadata",
         },
         {
             "client_id": "22bb40b5b823fa8c",
@@ -1774,10 +1842,10 @@ Content-Type: application/json;charset=UTF-8
             "authorization_details_types": ["grant_admin"],
             "cds_created": "2022-01-01T00:00:00Z",
             "cds_modified": "2022-01-01T00:00:00Z",
-            "cds_client_uri": "https://example.com/api/clients/22bb40b5b823fa8c",
+            "cds_client_uri": "https://example.com/cds-api/v1/clients/22bb40b5b823fa8c",
             "cds_status": "production",
             "cds_status_options": ["production"],
-            "cds_server_metadata": "https://example.com/api/clients/22bb40b5b823fa8c/cds-server-metadata",
+            "cds_server_metadata": "https://example.com/cds-api/v1/clients/22bb40b5b823fa8c/cds-server-metadata",
         },
         {
             "client_id": "7e22b5568893c547",
@@ -1790,10 +1858,10 @@ Content-Type: application/json;charset=UTF-8
             "authorization_details_types": ["server_provided_files"],
             "cds_created": "2022-01-01T00:00:00Z",
             "cds_modified": "2022-01-01T00:00:00Z",
-            "cds_client_uri": "https://example.com/api/clients/7e22b5568893c547",
+            "cds_client_uri": "https://example.com/cds-api/v1/clients/7e22b5568893c547",
             "cds_status": "production",
             "cds_status_options": ["production"],
-            "cds_server_metadata": "https://example.com/api/clients/7e22b5568893c547/cds-server-metadata",
+            "cds_server_metadata": "https://example.com/cds-api/v1/clients/7e22b5568893c547/cds-server-metadata",
         },
         {
             "client_id": "af653d57fa364da5",
@@ -1806,10 +1874,10 @@ Content-Type: application/json;charset=UTF-8
             "authorization_details_types": ["example_custom"],
             "cds_created": "2022-01-01T00:00:00Z",
             "cds_modified": "2022-01-01T00:00:00Z",
-            "cds_client_uri": "https://example.com/api/clients/af653d57fa364da5",
+            "cds_client_uri": "https://example.com/cds-api/v1/clients/af653d57fa364da5",
             "cds_status": "sandbox",
             "cds_status_options": ["sandbox", "disabled"],
-            "cds_server_metadata": "https://example.com/api/clients/af653d57fa364da5/cds-server-metadata",
+            "cds_server_metadata": "https://example.com/cds-api/v1/clients/af653d57fa364da5/cds-server-metadata",
             "cds_default_scope": "example_custom",
             "cds_default_redirect_uri": "https://example.com/oauth/default-redirect",
             "cds_default_authorization_details": [],
@@ -1821,12 +1889,91 @@ Content-Type: application/json;charset=UTF-8
 }
 </code></pre></div></div>
 
-<h3 id="116-message-list-">11.6. Message List <a id="example-message-list" href="#example-message-list" class="permalink">🔗</a></h3>
+<h3 id="126-retrieving-an-individual-client-">12.6. Retrieving an Individual Client <a id="example-client-get" href="#example-client-get" class="permalink">🔗</a></h3>
+
+<p>The following is a non-normative example of a Client loading an individual Client object via the <a href="#clients-api">Clients API</a>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==Request==
+GET /cds-api/v1/clients/aaf026921707f5d5 HTTP/1.1
+Host: example.com
+Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+
+==Response==
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+{
+    "client_id": "aaf026921707f5d5",
+    "client_id_issued_at": 2893256800,
+    "scope": "client_admin",
+    "redirect_uris": [],
+    "response_types": [],
+    "grant_types": ["client_credentials"],
+    "token_endpoint_auth_method": "client_secret_basic",
+    "client_name": "My App Name",
+    "authorization_details_types": ["client_admin"],
+    "cds_created": "2022-01-01T00:00:00Z",
+    "cds_modified": "2022-01-01T00:00:00Z",
+    "cds_client_uri": "https://example.com/cds-api/v1/clients/aaf026921707f5d5",
+    "cds_status": "production",
+    "cds_status_options": ["production"],
+    "cds_server_metadata": "https://example.com/cds-api/v1/clients/aaf026921707f5d5/cds-server-metadata",
+}
+</code></pre></div></div>
+
+<h3 id="127-modifying-a-client-">12.7. Modifying a Client <a id="example-client-modify" href="#example-client-modify" class="permalink">🔗</a></h3>
+
+<p>The following is a non-normative example of a Client updating their list of <code class="language-plaintext highlighter-rouge">redirect_uris</code> for a Client via the <a href="#clients-api">Clients API</a>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==Request==
+PUT /cds-api/v1/clients/af653d57fa364da5 HTTP/1.1
+Host: example.com
+Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+
+{
+    "scope": "example_custom",
+    "redirect_uris": ["https://example.com/oauth/default-redirect", "https://client.example.com/my-new-redirect"],
+    "authorization_details_types": ["example_custom"],
+    "cds_status": "sandbox",
+    "cds_default_scope": "example_custom",
+    "cds_default_redirect_uri": "https://client.example.com/my-new-redirect",
+    "cds_default_authorization_details": [],
+    "cds_company_name": "My Company Name"
+}
+
+
+==Response==
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+{
+    "client_id": "af653d57fa364da5",
+    "client_id_issued_at": 2893256800,
+    "scope": "example_custom",
+    "redirect_uris": ["https://example.com/oauth/default-redirect", "https://client.example.com/my-new-redirect"],
+    "response_types": ["code"],
+    "grant_types": ["authorization_code", "refresh_token"],
+    "token_endpoint_auth_method": "client_secret_basic",
+    "authorization_details_types": ["example_custom"],
+    "cds_created": "2022-01-01T00:00:00Z",
+    "cds_modified": "2024-01-01T00:00:00Z",
+    "cds_client_uri": "https://example.com/cds-api/v1/clients/af653d57fa364da5",
+    "cds_status": "sandbox",
+    "cds_status_options": ["sandbox", "disabled"],
+    "cds_server_metadata": "https://example.com/cds-api/v1/clients/af653d57fa364da5/cds-server-metadata",
+    "cds_default_scope": "example_custom",
+    "cds_default_redirect_uri": "https://client.example.com/my-new-redirect",
+    "cds_default_authorization_details": [],
+    "cds_company_name": "My Company Name"
+}
+</code></pre></div></div>
+
+<h3 id="128-retrieving-a-message-list-">12.8. Retrieving a Message List <a id="example-messages-list" href="#example-messages-list" class="permalink">🔗</a></h3>
 
 <p>The following is a non-normative example of a Client loading their list of Message objects via the <a href="#messages-api">Messages API</a>.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==Request==
-GET /api/clients HTTP/1.1
+GET /cds-api/v1/messages HTTP/1.1
 Host: example.com
 Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
 
@@ -1837,8 +1984,8 @@ Content-Type: application/json;charset=UTF-8
 {
     "outstanding": [
         {
-            "message_id": "9047a057519c0ea4",
-            "uri": "https://example.com/api/messages/9047a057519c0ea4",
+            "message_id": "45dc9ce6b1962124",
+            "uri": "https://example.com/cds-api/v1/messages/45dc9ce6b1962124",
             "previous_uri": null,
             "type": "production_request",
             "read": true,
@@ -1848,7 +1995,7 @@ Content-Type: application/json;charset=UTF-8
             "status": "pending",
             "name": "Production access request",
             "description": "We have automatically initiated a review for production access for your registration",
-            "related_uri": "https://example.com/api/clients/af653d57fa364da5",
+            "related_uri": "https://example.com/cds-api/v1/clients/af653d57fa364da5",
             "related_type": "client"
         }
     ],
@@ -1860,7 +2007,7 @@ Content-Type: application/json;charset=UTF-8
     "unread": [
         {
             "message_id": "9047a057519c0ea4",
-            "uri": "https://example.com/api/messages/9047a057519c0ea4",
+            "uri": "https://example.com/cds-api/v1/messages/9047a057519c0ea4",
             "previous_uri": null,
             "type": "notification",
             "read": false,
@@ -1874,8 +2021,8 @@ Content-Type: application/json;charset=UTF-8
             "related_type": "documentation"
         },
         {
-            "message_id": "9047a057519c0ea4",
-            "uri": "https://example.com/api/messages/9047a057519c0ea4",
+            "message_id": "45dc9ce6b1962124",
+            "uri": "https://example.com/cds-api/v1/messages/45dc9ce6b1962124",
             "previous_uri": null,
             "type": "production_request",
             "read": false,
@@ -1885,7 +2032,7 @@ Content-Type: application/json;charset=UTF-8
             "status": "pending",
             "name": "Production access request",
             "description": "We have automatically initiated a review for production access for your registration",
-            "related_uri": "https://example.com/api/clients/af653d57fa364da5",
+            "related_uri": "https://example.com/cds-api/v1/clients/af653d57fa364da5",
             "related_type": "client"
         }
     ],
@@ -1894,12 +2041,12 @@ Content-Type: application/json;charset=UTF-8
 }
 </code></pre></div></div>
 
-<h3 id="117-creating-a-message-">11.7. Creating a Message <a id="example-message-create" href="#example-message-create" class="permalink">🔗</a></h3>
+<h3 id="129-creating-a-message-">12.9. Creating a Message <a id="example-message-create" href="#example-message-create" class="permalink">🔗</a></h3>
 
 <p>The following is a non-normative example of a Client creating a Message via the <a href="#messages-api">Messages API</a>.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==Request==
-POST /api/messages HTTP/1.1
+POST /cds-api/v1/messages HTTP/1.1
 Host: example.com
 Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
 
@@ -1916,7 +2063,7 @@ Content-Type: application/json;charset=UTF-8
 
 {
     "message_id": "00d1852055088ae7",
-    "uri": "https://example.com/api/messages/00d1852055088ae7",
+    "uri": "https://example.com/cds-api/v1/messages/00d1852055088ae7",
     "previous_uri": null,
     "type": "private_message",
     "read": true,
@@ -1929,12 +2076,77 @@ Content-Type: application/json;charset=UTF-8
 }
 </code></pre></div></div>
 
-<h3 id="118-credentials-list-">11.8. Credentials List <a id="example-credentials-list" href="#example-credentials-list" class="permalink">🔗</a></h3>
+<h3 id="1210-retrieving-an-individual-message-">12.10. Retrieving an Individual Message <a id="example-message-get" href="#example-message-get" class="permalink">🔗</a></h3>
+
+<p>The following is a non-normative example of a Client loading a specific Message object via the <a href="#messages-api">Messages API</a>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==Request==
+GET /cds-api/v1/messages/9047a057519c0ea4 HTTP/1.1
+Host: example.com
+Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+
+==Response==
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+{
+    "message_id": "9047a057519c0ea4",
+    "uri": "https://example.com/cds-api/v1/messages/9047a057519c0ea4",
+    "previous_uri": null,
+    "type": "notification",
+    "read": false,
+    "creator": null,
+    "created": "2022-01-01T00:00:00Z",
+    "modified": "2022-01-01T00:00:00Z",
+    "status": "complete",
+    "name": "Welcome!",
+    "description": "If you have any questions about our CDS Server implementation, please see our documentation or create a support request message. Thanks!",
+    "related_uri": "https://example.com/docs",
+    "related_type": "documentation"
+}
+</code></pre></div></div>
+
+<h3 id="1211-modifying-a-message-">12.11. Modifying a Message <a id="example-message-modify" href="#example-message-modify" class="permalink">🔗</a></h3>
+
+<p>The following is a non-normative example of a Client marking a specific Message as read via the <a href="#messages-api">Messages API</a>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==Request==
+PATCH /cds-api/v1/messages/9047a057519c0ea4 HTTP/1.1
+Host: example.com
+Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+
+{
+    "read": true
+}
+
+
+==Response==
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+{
+    "message_id": "9047a057519c0ea4",
+    "uri": "https://example.com/cds-api/v1/messages/9047a057519c0ea4",
+    "previous_uri": null,
+    "type": "notification",
+    "read": true,
+    "creator": null,
+    "created": "2022-01-01T00:00:00Z",
+    "modified": "2024-01-01T00:00:00Z",
+    "status": "complete",
+    "name": "Welcome!",
+    "description": "If you have any questions about our CDS Server implementation, please see our documentation or create a support request message. Thanks!",
+    "related_uri": "https://example.com/docs",
+    "related_type": "documentation"
+}
+</code></pre></div></div>
+
+<h3 id="1212-retrieving-a-credentials-list-">12.12. Retrieving a Credentials List <a id="example-credentials-list" href="#example-credentials-list" class="permalink">🔗</a></h3>
 
 <p>The following is a non-normative example of a Client loading their list of Credential objects via the <a href="#credentials-api">Credentials API</a>.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==Request==
-GET /api/credentials HTTP/1.1
+GET /cds-api/v1/credentials HTTP/1.1
 Host: example.com
 Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
 
@@ -1946,7 +2158,7 @@ Content-Type: application/json;charset=UTF-8
     "credentials": [
         {
             "credential_id": "3d0ac1c8513ba94d",
-            "uri": "https://example.com/api/credentials/3d0ac1c8513ba94d",
+            "uri": "https://example.com/cds-api/v1/credentials/3d0ac1c8513ba94d",
             "client_id": "aaf026921707f5d5",
             "created": "2022-01-01T00:00:00Z",
             "modified": "2022-01-01T00:00:00Z",
@@ -1956,7 +2168,7 @@ Content-Type: application/json;charset=UTF-8
         },
         {
             "credential_id": "034e94179b67db20",
-            "uri": "https://example.com/api/credentials/034e94179b67db20",
+            "uri": "https://example.com/cds-api/v1/credentials/034e94179b67db20",
             "client_id": "22bb40b5b823fa8c",
             "created": "2022-01-01T00:00:00Z",
             "modified": "2022-01-01T00:00:00Z",
@@ -1966,7 +2178,7 @@ Content-Type: application/json;charset=UTF-8
         },
         {
             "credential_id": "8406a1fd23d73417",
-            "uri": "https://example.com/api/credentials/8406a1fd23d73417",
+            "uri": "https://example.com/cds-api/v1/credentials/8406a1fd23d73417",
             "client_id": "af653d57fa364da5",
             "created": "2022-01-01T00:00:00Z",
             "modified": "2022-01-01T00:00:00Z",
@@ -1980,12 +2192,97 @@ Content-Type: application/json;charset=UTF-8
 }
 </code></pre></div></div>
 
-<h3 id="119-grants-list-">11.9. Grants List <a id="example-grants-list" href="#example-grants-list" class="permalink">🔗</a></h3>
+<h3 id="1213-creating-a-credential-">12.13. Creating a Credential <a id="example-credentials-create" href="#example-credentials-create" class="permalink">🔗</a></h3>
 
-<p>The following is a non-normative example of a Client loading their list of Grant objects via the <a href="#credentials-api">Credentials API</a>.</p>
+<p>The following is a non-normative example of a Client creating a new Credential object via the <a href="#credentials-api">Credentials API</a>.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==Request==
-GET /api/grants HTTP/1.1
+POST /cds-api/v1/credentials HTTP/1.1
+Host: example.com
+Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+
+{
+    "client_id": "af653d57fa364da5",
+}
+
+
+==Response==
+HTTP/1.1 201 Created
+Content-Type: application/json;charset=UTF-8
+
+{
+    "credential_id": "232582c87b83745d",
+    "uri": "https://example.com/cds-api/v1/credentials/232582c87b83745d",
+    "client_id": "af653d57fa364da5",
+    "created": "2024-01-01T00:00:00Z",
+    "modified": "2024-01-01T00:00:00Z",
+    "type": "client_secret",
+    "client_secret": "-PfL_ZrhxyZWoY9Od1M4QRdOfa3RwNl5uwcneWsA0Ba3i-kiuxBEK6tuMRubKPWZmKBhvRGqp4T3oZnDDka_Fw",
+    "client_secret_expires_at": 2893256800
+}
+</code></pre></div></div>
+
+<h3 id="1214-retrieving-an-individual-credential-">12.14. Retrieving an Individual Credential <a id="example-credentials-get" href="#example-credentials-get" class="permalink">🔗</a></h3>
+
+<p>The following is a non-normative example of a Client loading an individual Credential object via the <a href="#credentials-api">Credentials API</a>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==Request==
+GET /cds-api/v1/credentials/8406a1fd23d73417 HTTP/1.1
+Host: example.com
+Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+
+==Response==
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+{
+    "credential_id": "8406a1fd23d73417",
+    "uri": "https://example.com/cds-api/v1/credentials/8406a1fd23d73417",
+    "client_id": "af653d57fa364da5",
+    "created": "2022-01-01T00:00:00Z",
+    "modified": "2022-01-01T00:00:00Z",
+    "type": "client_secret",
+    "client_secret": "VmWa4VMBIL4rfkl_K14fjKgV9_hSpMV2brDmr2-YA-mRgRPcAfQW3WPBQxf09MPYcavCsZSwnJdmMuA9WM7RMw",
+    "client_secret_expires_at": 2893256800
+}
+</code></pre></div></div>
+
+<h3 id="1215-modifying-a-credential-">12.15. Modifying a Credential <a id="example-credentials-modify" href="#example-credentials-modify" class="permalink">🔗</a></h3>
+
+<p>The following is a non-normative example of a Client disabling a specific Credential via the <a href="#credentials-api">Credentials API</a>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==Request==
+PATCH /cds-api/v1/credentials/8406a1fd23d73417 HTTP/1.1
+Host: example.com
+Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+
+{
+    "client_secret_expires_at": 1760125049
+}
+
+
+==Response==
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+{
+    "credential_id": "8406a1fd23d73417",
+    "uri": "https://example.com/cds-api/v1/credentials/8406a1fd23d73417",
+    "client_id": "af653d57fa364da5",
+    "created": "2022-01-01T00:00:00Z",
+    "modified": "2025-10-01T00:00:00Z",
+    "type": "client_secret",
+    "client_secret": "VmWa4VMBIL4rfkl_K14fjKgV9_hSpMV2brDmr2-YA-mRgRPcAfQW3WPBQxf09MPYcavCsZSwnJdmMuA9WM7RMw",
+    "client_secret_expires_at": 1760125049
+}
+</code></pre></div></div>
+
+<h3 id="1216-grants-list-">12.16. Grants List <a id="example-grants-list" href="#example-grants-list" class="permalink">🔗</a></h3>
+
+<p>The following is a non-normative example of a Client loading their list of Grant objects via the <a href="#grants-api">Grants API</a>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==Request==
+GET /cds-api/v1/grants HTTP/1.1
 Host: example.com
 Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
 
@@ -1997,7 +2294,7 @@ Content-Type: application/json;charset=UTF-8
     "grants": [
         {
             "grant_id": "d62bdc99ff26e0b4",
-            "uri": "https://example.com/api/grants/d62bdc99ff26e0b4",
+            "uri": "https://example.com/cds-api/v1/grants/d62bdc99ff26e0b4",
             "replacing": [],
             "replaced_by": [],
             "parent": null,
@@ -2018,7 +2315,7 @@ Content-Type: application/json;charset=UTF-8
         },
         {
             "grant_id": "c644a5da13f379db",
-            "uri": "https://example.com/api/grants/c644a5da13f379db",
+            "uri": "https://example.com/cds-api/v1/grants/c644a5da13f379db",
             "replacing": [],
             "replaced_by": [],
             "parent": null,
@@ -2053,116 +2350,208 @@ Content-Type: application/json;charset=UTF-8
 }
 </code></pre></div></div>
 
-<h3 id="1110-server-provided-files-">11.10. Server-Provided Files <a id="example-server-provided-files" href="#example-server-provided-files" class="permalink">🔗</a></h3>
+<h3 id="1217-retrieving-an-individual-grant-">12.17. Retrieving an Individual Grant <a id="example-grants-get" href="#example-grants-get" class="permalink">🔗</a></h3>
 
-<p>The following is a non-normative example of a Client using their <code class="language-plaintext highlighter-rouge">grant_admin</code> Client object to obtain an <code class="language-plaintext highlighter-rouge">access_token</code> for a Server-Provided Files Grant.</p>
+<p>The following is a non-normative example of a Client loading an individual Grant object via the <a href="#grants-api">Grants API</a>.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==Request==
-POST /oauth/token HTTP/1.1
+GET /cds-api/v1/grants/c644a5da13f379db HTTP/1.1
 Host: example.com
-Authorization: Basic MjJiYjQwYjViODIzZmE4Yzp2aEZjcTE5cDVSMHFOWXlsaWJBNVVhdlBTOHNaTkZtQk10RGI3WklCZWRGdENuWldxZjJQa0FzMlR4NUFRcGJnVnJ6T2tmd0U2R1JoWmhLalI1OVdHUQ==
-
-grant_type=client_credentials&amp;scope=grant_admin&amp;authorization_details=%5B%7B%22type%22%3A%22grant_admin%22%2C%22client_id%22%3A%227e22b5568893c547%22%2C%22grant_id%22%3A%22c644a5da13f379db%22%7D%5D
+Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
 
 ==Response==
 HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 {
-    "access_token": "oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA",
-    "token_type": "bearer",
-    "expires_in": 3600,
-    "scope": "grant_admin",
+    "grant_id": "c644a5da13f379db",
+    "uri": "https://example.com/cds-api/v1/grants/c644a5da13f379db",
+    "replacing": [],
+    "replaced_by": [],
+    "parent": null,
+    "children": [],
+    "created": "2022-01-01T00:00:00Z",
+    "modified": "2022-01-01T00:00:00Z",
+    "not_before": null,
+    "not_after": null,
+    "eta": null,
+    "expires": null,
+    "status": "active",
+    "client_id": "7e22b5568893c547",
+    "scope": "server_provided_files",
     "authorization_details": [
         {
-            "type": "grant_admin",
-            "client_id": "7e22b5568893c547",
-            "grant_id": "c644a5da13f379db"
+            "type": "server_provided_files",
+            "file_id": "4fcf6831957a243c"
+        }
+    ],
+    "receipt_confirmations": [],
+    "enabled_scope": "server_provided_files",
+    "enabled_authorization_details": [
+        {
+            "type": "server_provided_files",
+            "file_id": "4fcf6831957a243c"
         }
     ]
 }
 </code></pre></div></div>
 
-<p>The following is a non-normative example of a Client loading Server-Provided File objects via the <a href="#server-provided-files-api">Server-Provided Files API</a>.</p>
+<h3 id="1218-modifying-a-grant-">12.18. Modifying a Grant <a id="example-grants-modify" href="#example-grants-modify" class="permalink">🔗</a></h3>
+
+<p>The following is a non-normative example of a Client revoking a specific Grant via the <a href="#grants-api">Grants API</a>.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==Request==
-GET /api/server-provided-files HTTP/1.1
+PATCH /cds-api/v1/grants/c644a5da13f379db HTTP/1.1
 Host: example.com
-Authorizatin: Bearer oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA
+Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+
+{
+    "status": "closed"
+}
+
 
 ==Response==
 HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 {
-    "files": [
+    "grant_id": "c644a5da13f379db",
+    "uri": "https://example.com/cds-api/v1/grants/c644a5da13f379db",
+    "replacing": [],
+    "replaced_by": [],
+    "parent": null,
+    "children": [],
+    "created": "2022-01-01T00:00:00Z",
+    "modified": "2024-01-01T00:00:00Z",
+    "not_before": null,
+    "not_after": null,
+    "eta": null,
+    "expires": null,
+    "status": "closed",
+    "client_id": "7e22b5568893c547",
+    "scope": "server_provided_files",
+    "authorization_details": [
         {
-            "file_id": "4fcf6831957a243c",
-            "uri": "https://example.com/api/server-provided-files/4fcf6831957a243c",
-            "created": "2022-01-01T00:00:00Z",
-            "modified": "2022-01-01T00:00:00Z",
-            "mime_type": "application/pdf",
-            "size": 1111111,
-            "name": "DR_API_docs_v1.0.pdf",
-            "description": "Proprietary demand response API documentation",
-            "download_uri": "https://example.com/api/server-provided-files/4fcf6831957a243c/download"
+            "type": "server_provided_files",
+            "file_id": "4fcf6831957a243c"
         }
     ],
-    "next": null,
-    "previous": null
+    "receipt_confirmations": [],
+    "enabled_scope": "server_provided_files",
+    "enabled_authorization_details": [
+        {
+            "type": "server_provided_files",
+            "file_id": "4fcf6831957a243c"
+        }
+    ]
 }
+
+### 12.19. Obtaining Server-Provided File Access via the Grant Admin Scope &lt;a id="example-server-provided-files-access-token" href="#example-server-provided-files-access-token" class="permalink"&gt;🔗&lt;/a&gt;
+
+The following is a non-normative example of a Client using their `grant_admin` Client object to obtain an `access_token` for a Server-Provided Files Grant.
+
 </code></pre></div></div>
-
-<p>The following is a non-normative example of a Client downloading a Server-Provided File.</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==Request==
-GET /api/server-provided-files/4fcf6831957a243c/download HTTP/1.1
+<p>==Request==
+POST /oauth/token HTTP/1.1
 Host: example.com
-Authorizatin: Bearer oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA
+Authorization: Basic MjJiYjQwYjViODIzZmE4Yzp2aEZjcTE5cDVSMHFOWXlsaWJBNVVhdlBTOHNaTkZtQk10RGI3WklCZWRGdENuWldxZjJQa0FzMlR4NUFRcGJnVnJ6T2tmd0U2R1JoWmhLalI1OVdHUQ==</p>
 
-==Response==
+<p>grant_type=client_credentials&amp;scope=grant_admin&amp;authorization_details=%5B%7B%22type%22%3A%22grant_admin%22%2C%22client_id%22%3A%227e22b5568893c547%22%2C%22grant_id%22%3A%22c644a5da13f379db%22%7D%5D</p>
+
+<p>==Response==
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8</p>
+
+<p>{
+    “access_token”: “oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA”,
+    “token_type”: “bearer”,
+    “expires_in”: 3600,
+    “scope”: “grant_admin”,
+    “authorization_details”: [
+        {
+            “type”: “grant_admin”,
+            “client_id”: “7e22b5568893c547”,
+            “grant_id”: “c644a5da13f379db”
+        }
+    ]
+}</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+### 12.20. Retrieving a Server-Provided Files List &lt;a id="example-server-provided-files-list" href="#example-server-provided-files-list" class="permalink"&gt;🔗&lt;/a&gt;
+
+The following is a non-normative example of a Client loading Server-Provided File objects via the [Server-Provided Files API](#server-provided-files-api).
+
+</code></pre></div></div>
+<p>==Request==
+GET /cds-api/v1/server-provided-files HTTP/1.1
+Host: example.com
+Authorizatin: Bearer oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA</p>
+
+<p>==Response==
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8</p>
+
+<p>{
+    “files”: [
+        {
+            “file_id”: “4fcf6831957a243c”,
+            “uri”: “https://example.com/cds-api/v1/server-provided-files/4fcf6831957a243c”,
+            “created”: “2022-01-01T00:00:00Z”,
+            “modified”: “2022-01-01T00:00:00Z”,
+            “mime_type”: “application/pdf”,
+            “size”: 1111111,
+            “name”: “DR_API_docs_v1.0.pdf”,
+            “description”: “Proprietary demand response API documentation”,
+            “download_uri”: “https://example.com/cds-api/v1/server-provided-files/4fcf6831957a243c/download”
+        }
+    ],
+    “next”: null,
+    “previous”: null
+}</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+### 12.21. Retrieving an Individual Server-Provided File &lt;a id="example-server-provided-files-get" href="#example-server-provided-files-get" class="permalink"&gt;🔗&lt;/a&gt;
+
+The following is a non-normative example of a Client loading an individual Server-Provided File object via the [Server-Provided Files API](#server-provided-files-api).
+
+</code></pre></div></div>
+<p>==Request==
+GET /cds-api/v1/server-provided-files/4fcf6831957a243c HTTP/1.1
+Host: example.com
+Authorizatin: Bearer oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA</p>
+
+<p>==Response==
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8</p>
+
+<p>{
+    “file_id”: “4fcf6831957a243c”,
+    “uri”: “https://example.com/cds-api/v1/server-provided-files/4fcf6831957a243c”,
+    “created”: “2022-01-01T00:00:00Z”,
+    “modified”: “2022-01-01T00:00:00Z”,
+    “mime_type”: “application/pdf”,
+    “size”: 1111111,
+    “name”: “DR_API_docs_v1.0.pdf”,
+    “description”: “Proprietary demand response API documentation”,
+    “download_uri”: “https://example.com/cds-api/v1/server-provided-files/4fcf6831957a243c/download”
+}</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+### 12.22. Downloading Data for a Server-Provided File &lt;a id="example-server-provided-files-download" href="#example-server-provided-files-download" class="permalink"&gt;🔗&lt;/a&gt;
+
+The following is a non-normative example of a Client downloading the raw data for a Server-Provided File via the [Server-Provided Files API](#server-provided-files-api)..
+
+</code></pre></div></div>
+<p>==Request==
+GET /cds-api/v1/server-provided-files/4fcf6831957a243c/download HTTP/1.1
+Host: example.com
+Authorizatin: Bearer oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA</p>
+
+<p>==Response==
 HTTP/1.1 200 OK
 Content-Type: application/pdf
 Content-Length: 1111111
-Content-Disposition: attachment; filename="DR_API_docs_v1.0.pdf"
+Content-Disposition: attachment; filename=”DR_API_docs_v1.0.pdf”</p>
 
-...the PDF data as response body...
-</code></pre></div></div>
-
-<h2 id="12-security-considerations-">12. Security Considerations <a id="security" href="#security" class="permalink">🔗</a></h2>
-
-<p>This specification describes a protocol by which a utility or other central entity (a Server) can allow external entities (Clients) to register and obtain privileged access to the Server’s offered capabilities and data.
-Because the functionality described in this specification enables access to private Server functionality and data, Servers MUST follow industry cybersecurity best practices when securing their implementations of this specification to prevent unintended or inadvertent access to privileged functionality or data to Clients who are not authorized.
-These best practices include requiring <a href="#https">HTTPS</a> for API endpoints using the latest widely adopted encryption standards, undergoing regular security audits and penetration tests, and internally requiring security-focused process controls and data handling procedures.</p>
-
-<h3 id="121-scopes-and-client-management-">12.1. Scopes and Client Management <a id="scopes-client-management" href="#scopes-client-management" class="permalink">🔗</a></h3>
-
-<p>Because legal and regulatory requirements are highly diverse across the energy sector, Servers MUST be responsible for only offering scopes allowed by their jurisdictions.</p>
-
-<p>Servers MUST include the appropriate <code class="language-plaintext highlighter-rouge">registration_requirements</code> values in their <a href="#scope-descriptions-format">Scope Descriptions</a> for each scope’s use case and capabilities to ensure that Clients submit all required disclosures (e.g. contact information) and be appropriately informed about any required steps (e.g. manual review) or payments (e.g. registration fees).
-Servers MUST NOT impose overly burdensome registration requirements beyond what is deemed necessary by the Server’s jurisdiction requirements for the type of capabilities or data made available by an offered scope.</p>
-
-<p>Severs MUST be responsible for appropriately monitoring and reviewing the use of registered Clients as necessary for their legal and regulatory jurisdictions.</p>
-
-<h3 id="122-restricted-access-">12.2. Restricted Access <a id="restricted-access" href="#restricted-access" class="permalink">🔗</a></h3>
-
-<p>For unauthenticated endpoints (<a href="#auth-server-metadata">Authorization Server Metadata</a>, <a href="#client-registration-process">Client Registration Process</a>), while Servers can add <a href="#rate-limiting">rate limiting</a> configurations to protect their systems from being overwhelmed with requests, Servers MUST NOT add anti-bot blocking measures (e.g. captchas) that prevent automated requests from other systems.
-The functionality described in this specification is intended to be able to be integrated in other platforms to allow those platforms to automate interactions with Servers on their users’ behalf.</p>
-
-<p>If <a href="#auth-server-metadata">Authorization Server Metadata</a> is referenced in a public CDS Server Metadata Endpoint [<a href="#ref-cds-wg1-01-metadata-endpoint">CDS-WG1-01 Section 3</a>], then the <a href="#auth-server-metadata">Authorization Server Metadata</a> and <a href="#client-registration-process">Client Registration Process</a> must also be public.</p>
-
-<p>Servers that wish to restrict access of by-default unauthenticated endpoints to certain Clients MUST configure well established authentication processes for Clients to ensure that only the approved Clients may access the restricted endpoint.
-This specification does not describe specifically how Servers will authenticate Clients for by-default unauthenticated endpoints, as these restricted access protocols are context dependent.
-For example, if a Server providing a private Client Registration endpoint as part of an existing logged in portal, then they can use that logged in portal’s session cookie to authenticate Client requests to the registration endpoint.</p>
-
-<p>For authenticated endpoints (<a href="#clients-api">Clients API</a>, <a href="#messages-api">Messages API</a>, <a href="#credentials-api">Credentials API</a>, <a href="#grants-api">Grants API</a>, <a href="#server-provided-files-api">Server-Provided Files API</a>), Servers MUST authenticate requests using OAuth’s Authorization Request Header Field [<a href="#ref-rfc6750-auth-header">RFC 6750 Section 2.1</a>] with access tokens obtained using the OAuth 2.0’s Issuing an Access Token process [<a href="#ref-rfc6749-access-tokens">RFC 6749 Section 5</a>].</p>
-
-<h3 id="123-rate-limiting-">12.3. Rate Limiting <a id="rate-limiting" href="#rate-limiting" class="permalink">🔗</a></h3>
-
-<p>For unauthenticated endpoints (<a href="#auth-server-metadata">Authorization Server Metadata</a>, <a href="#client-registration-process">Client Registration Process</a>), Servers SHOULD configure rate limiting restrictions so that bots and misconfigured scripts will not flood and overwhelm the endpoints with requests, while still allowing legitimate and low-volume automated requests have access to the endpoints.</p>
-
-<p>For authenticated endpoints (<a href="#clients-api">Clients API</a>, <a href="#messages-api">Messages API</a>, <a href="#credentials-api">Credentials API</a>, <a href="#grants-api">Grants API</a>, <a href="#server-provided-files-api">Server-Provided Files API</a>), Servers SHOULD configure rate limiting by Client and Credential to ensure that individual Clients do not overwhelm Servers with authenticated API requests.
-Additionally, Servers SHOULD configure rate limiting for unauthenticated or failed authentication requests to authenticated API endpoints to prevent brute force attempts to gain access to authenticated APIs.</p>
+<p>…the PDF data as response body…
+```</p>
 
 <h2 id="13-references-">13. References <a id="references" href="#references" class="permalink">🔗</a></h2>
 
@@ -2196,15 +2585,15 @@ Additionally, Servers SHOULD configure rate limiting for unauthenticated or fail
 
 <p><a id="ref-rfc3339-datetime" href="#ref-rfc3339-datetime" class="permalink">🔗</a>
 <code class="language-plaintext highlighter-rouge">RFC 3339 Section 5.6</code> - Section 5.6. Internet Date/Time Format, “Date and Time on the Internet: Timestamps”, RFC 3339, Internet Engineering Task Force (IETF),<br />
-<a href="https://datatracker.ietf.org/doc/html/rfc3339#section-5.6">https://datatracker.ietf.org/doc/html/rfc3339#section-5.6</a></p>
+<a href="https://www.rfc-editor.org/rfc/rfc3339#section-5.6">https://www.rfc-editor.org/rfc/rfc3339#section-5.6</a></p>
 
 <p><a id="ref-rfc3339-duration" href="#ref-rfc3339-duration" class="permalink">🔗</a>
 <code class="language-plaintext highlighter-rouge">RFC 3339 Appendix A</code> - Appendix A. ISO 8601 Collected ABNF, “Date and Time on the Internet: Timestamps”, RFC 3339, Internet Engineering Task Force (IETF),<br />
-<a href="https://datatracker.ietf.org/doc/html/rfc3339#appendix-A">https://datatracker.ietf.org/doc/html/rfc3339#appendix-A</a></p>
+<a href="https://www.rfc-editor.org/rfc/rfc3339#appendix-A">https://www.rfc-editor.org/rfc/rfc3339#appendix-A</a></p>
 
 <p><a id="ref-rfc3986-url" href="#ref-rfc3986-url" class="permalink">🔗</a>
 <code class="language-plaintext highlighter-rouge">RFC 3986 Section 1.1.3</code> - Section 1.1.3. URI, URL, and URN, “Uniform Resource Identifier (URI): Generic Syntax”, RFC 3986, Internet Engineering Task Force (IETF),<br />
-<a href="https://www.rfc-editor.org/rfc/rfc3986.html#section-1.1.3">https://www.rfc-editor.org/rfc/rfc3986.html#section-1.1.3</a></p>
+<a href="https://www.rfc-editor.org/rfc/rfc3986#section-1.1.3">https://www.rfc-editor.org/rfc/rfc3986#section-1.1.3</a></p>
 
 <p><a id="ref-rfc4648" href="#ref-rfc4648" class="permalink">🔗</a>
 <code class="language-plaintext highlighter-rouge">RFC 4648</code> - “The Base16, Base32, and Base64 Data Encodings”, RFC 4648, Internet Engineering Task Force (IETF),<br />
@@ -2248,7 +2637,7 @@ Additionally, Servers SHOULD configure rate limiting for unauthenticated or fail
 
 <p><a id="ref-rfc6838" href="#ref-rfc6838" class="permalink">🔗</a>
 <code class="language-plaintext highlighter-rouge">RFC 6838</code> - “Media Type Specifications and Registration Procedures”, RFC 6838, Internet Engineering Task Force (IETF),<br />
-<a href="https://datatracker.ietf.org/doc/html/rfc6838">https://datatracker.ietf.org/doc/html/rfc6838</a></p>
+<a href="https://www.rfc-editor.org/rfc/rfc6838">https://www.rfc-editor.org/rfc/rfc6838</a></p>
 
 <p><a id="ref-rfc7009" href="#ref-rfc7009" class="permalink">🔗</a>
 <code class="language-plaintext highlighter-rouge">RFC 7009</code> - “OAuth 2.0 Token Revocation”, RFC 7009, Internet Engineering Task Force (IETF),<br />
@@ -2256,7 +2645,7 @@ Additionally, Servers SHOULD configure rate limiting for unauthenticated or fail
 
 <p><a id="ref-rfc7517-pk" href="#ref-rfc7517-pk" class="permalink">🔗</a>
 <code class="language-plaintext highlighter-rouge">RFC 7517 Section 4</code> - Section 4. JSON Web Key (JWK) Format, “JSON Web Key (JWK)”, RFC 7517, Internet Engineering Task Force (IETF),<br />
-<a href="https://www.rfc-editor.org/rfc/rfc7517.html#section-4">https://www.rfc-editor.org/rfc/rfc7517.html#section-4</a></p>
+<a href="https://www.rfc-editor.org/rfc/rfc7517#section-4">https://www.rfc-editor.org/rfc/rfc7517#section-4</a></p>
 
 <p><a id="ref-rfc7591" href="#ref-rfc7591" class="permalink">🔗</a>
 <code class="language-plaintext highlighter-rouge">RFC 7591</code> - “OAuth 2.0 Dynamic Client Registration Protocol”, RFC 7591, Internet Engineering Task Force (IETF),<br />
