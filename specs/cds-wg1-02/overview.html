@@ -36,6 +36,10 @@
                 width: 0.7em;
                 fill:currentColor;
             }
+            /* Remove main column margin when printing (so content fills the full page width) */
+            @media print {
+                .container { max-width: 100% !important; }
+            }
         </style>
     </head>
     <body>
@@ -135,7 +139,7 @@ Then, once a secure connection is established, other protocols (e.g. demand resp
 
 <p>For example, a utility could deploy a Server that implements this specification where demand response providers can register, submit documents, be reviewed, approved, and get issued access tokens in a standardized and scalable manner.</p>
 
-<p>Additionally, this specification can be used and referenced by other specifications as the mean by which their protocols can initially setup a secure connection.</p>
+<p>Additionally, this specification can be used and referenced by other specifications as the means by which their protocols can initially setup a secure connection.</p>
 
 <h2 id="background-">Background <a id="background" href="#background" class="permalink">🔗</a></h2>
 
@@ -155,10 +159,10 @@ In addition to building on OAuth’s protocols, the specification also defines a
 The process for publishing Server metadata builds on both CDS’s <a href="/CDS-Registration/specs/cds-wg1-02"><code class="language-plaintext highlighter-rouge">cds-wg1-01</code></a> (“Server Metadata”) and OAuth’s <a href="https://www.rfc-editor.org/rfc/rfc8414">RFC 8414</a> (“Authorization Server Metadata”).
 It also defines how Servers can describe the functionality they offer (called “Scope Descriptions”) and disclose any requirements or steps for Client registration and onboarding (called “Registration Requirements”).</p>
 
-<p>Next, the specification defines protocol for <a href="/CDS-Registration/specs/cds-wg1-02#client-registration-process">Client registration</a> and <a href="/CDS-Registration/specs/cds-wg1-02#clients-api">Client management</a>.
+<p>Next, the specification defines protocols for <a href="/CDS-Registration/specs/cds-wg1-02#client-registration-process">Client registration</a> and <a href="/CDS-Registration/specs/cds-wg1-02#clients-api">Client management</a>.
 Client registration is based on OAuth’s <a href="https://www.rfc-editor.org/rfc/rfc7591">RFC 7591</a> (“Dynamic Client Registration Protocol”).
 The Client management protocol also defines how Servers can allow Client administrators to manage and use multiple Client objects via the <a href="/CDS-Registration/specs/cds-wg1-02#scopes-client-admin">Client Admin Scope</a> and <a href="/CDS-Registration/specs/cds-wg1-02#scopes-grant-admin">Grant Admin Scope</a>.
-These sections allow for Servers to automate and scale the management of potentially high numbers of connected Clients for a diverse set of use cases.</p>
+These protocols allow for Servers to automate and scale the management of potentially high numbers of connected Clients for a diverse set of use cases.</p>
 
 <p>Next, the specification defines a protocol for <a href="/CDS-Registration/specs/cds-wg1-02#messages-api">messaging</a> between Servers and Clients.
 This allows for Servers to securely communicate with their connected Clients in a standardized manner, as opposed to using insure and unstructured methods (e.g. e-mail) or proprietary methods (e.g. a third-party hosted vendor solution).</p>
@@ -170,132 +174,129 @@ Clients are also able to revoke and re-issue credentials, allowing for seamless 
 <p>Next, the specification defines a protocol for <a href="/CDS-Registration/specs/cds-wg1-02#grants-api">managing access grants</a>, so that Clients can see what authorizations or access they’ve been granted.
 This allows Servers to provide visibility of access to Clients, so that Clients may organize and self-manage the various grants they’ve been given in an automated manner.</p>
 
-<p>Next, the specification defines a protocol for <a href="/CDS-Registration/specs/cds-wg1-02#grants-api">managing access grants</a>, so that Clients can see what authorizations or access they’ve been granted.
-This allows Servers to provide visibility of access to Clients, so that Clients may organize and self-manage the various grants they’ve been given in an automated manner.</p>
-
 <p>Finally, the specification defines a protocol for securely sharing <a href="/CDS-Registration/specs/cds-wg1-02#server-provided-files-api">server-provided files</a>, so that Servers can securely share arbitrary use-case specific files with Clients.
-This protocol is intended to be used for ad-hoc or one-time files (e.g. sharing a certificate during the onboarding process).
-For structured datasets or regularly scheduled transfers of bulk data, Servers are recommended to use other protocols (potentially as extensions of this specification) that are more fit for purpose, since this secure file sharing protocol does not have complex bulk data features, such as versioning, folder structures, deltas, etc.</p>
+This protocol is intended to be used for ad-hoc or one-time files (e.g. sharing a certificate during a Client onboarding process).
+For structured datasets or regularly scheduled transfers of bulk data, Servers are recommended to use other protocols (that could reference this specification for establishing connectivity) that are more fit for purpose, since the included secure file sharing protocol does not have complex bulk data features, such as versioning, folder structures, deltas, etc.</p>
 
 <p>Overall, the combination of protocols defined in this specification provides an “off-the-shelf” technical solution that can be freely referenced and implemented by utilities and other central entities to meet their needs for establishing and managing secure connectivity with external entities.</p>
 
 <h2 id="api-overview-">API Overview <a id="api-overview" href="#api-overview" class="permalink">🔗</a></h2>
 
-<p>Below are the various web Application Programming Interface (“API”) endpoints defined in <a href="/CDS-Registration/specs/cds-wg1-02"><code class="language-plaintext highlighter-rouge">cds-wg1-02</code></a>.</p>
+<p>Below are the web Application Programming Interface (“API”) endpoints defined in <a href="/CDS-Registration/specs/cds-wg1-02"><code class="language-plaintext highlighter-rouge">cds-wg1-02</code></a>.</p>
 
-<p><strong>NOTE:</strong> The below URLs are examples only, and each Server may define their own URLs, which are provided in their <a href="/CDS-Registration/specs/cds-wg1-02#auth-server-metadata-format">Metadata object</a>.</p>
+<p><strong>NOTE:</strong> The below URLs are examples only, since each Server sets their own URLs for the specification’s required endpoints and includes them in their <a href="/CDS-Registration/specs/cds-wg1-02#auth-server-metadata-format">Metadata object</a>.</p>
 
 <h4 id="metadata-apis-">Metadata APIs <a id="api-metadata" href="#api-metadata" class="permalink">🔗</a></h4>
 
 <p><span class="badge bg-success">GET</span>
 <a href="/CDS-Registration/specs/cds-wg1-02#auth-server-metadata-url">/.well-known/cds-server-metadata.json</a>
 [<a href="/CDS-Registration/specs/cds-wg1-02#example-cds-server-metadata">example</a>] -
-The CDS Server Metadata endpoint (from <a href="/CDS-Registration/specs/cds-wg1-01"><code class="language-plaintext highlighter-rouge">cds-wg1-01</code></a>) that is extended to include the <code class="language-plaintext highlighter-rouge">oauth</code> capability</p>
+The CDS Server Metadata endpoint (from <a href="/CDS-Registration/specs/cds-wg1-01"><code class="language-plaintext highlighter-rouge">cds-wg1-01</code></a>) that is extended to include the <code class="language-plaintext highlighter-rouge">oauth</code> capability.</p>
 
 <p><span class="badge bg-success">GET</span>
 <a href="/CDS-Registration/specs/cds-wg1-02#auth-server-metadata-format">/.well-known/oauth-authorization-server</a>
 [<a href="/CDS-Registration/specs/cds-wg1-02#example-auth-server-metadata">example</a>] -
-The OAuth Authorization Server Metadata endpoint that is extended to include various CDS data fields</p>
+The OAuth Authorization Server Metadata endpoint that is extended to include various CDS data fields.</p>
 
 <h4 id="client-apis-">Client APIs <a id="api-clients" href="#api-clients" class="permalink">🔗</a></h4>
 
 <p><span class="badge bg-warning text-dark">POST</span>
 <a href="/CDS-Registration/specs/cds-wg1-02#registration-request">/oauth/client-registration</a>
 [<a href="/CDS-Registration/specs/cds-wg1-02#example-client-registration">example</a>] -
-Registration endpoint for Clients based on OAuth’s <a href="https://www.rfc-editor.org/rfc/rfc7591">Dynamic Client Registration Protocol</a></p>
+Registration endpoint for Clients based on OAuth’s Dynamic Client Registration Protocol.</p>
 
 <p><span class="badge bg-success">GET</span>
 <a href="/CDS-Registration/specs/cds-wg1-02#clients-list">/cds-api/v1/clients</a>
 [<a href="/CDS-Registration/specs/cds-wg1-02#example-clients-list">example</a>] -
-Lists <a href="/CDS-Registration/specs/cds-wg1-02#client-format">Client</a> objects that have been registered</p>
+Lists <a href="/CDS-Registration/specs/cds-wg1-02#client-format">Client</a> objects that have been registered.</p>
 
 <p><span class="badge bg-success">GET</span>
 <a href="/CDS-Registration/specs/cds-wg1-02#clients-get">/cds-api/v1/clients/<em>&lt;clientId&gt;</em></a>
 [<a href="/CDS-Registration/specs/cds-wg1-02#example-client-get">example</a>] -
-Returns an individual <a href="/CDS-Registration/specs/cds-wg1-02#client-format">Client</a> object</p>
+Returns an individual <a href="/CDS-Registration/specs/cds-wg1-02#client-format">Client</a> object.</p>
 
 <p><span class="badge bg-warning text-dark">PUT</span>
 <a href="/CDS-Registration/specs/cds-wg1-02#clients-modify">/cds-api/v1/clients/<em>&lt;clientId&gt;</em></a>
 [<a href="/CDS-Registration/specs/cds-wg1-02#example-client-modify">example</a>] -
-Modifies an individual <a href="/CDS-Registration/specs/cds-wg1-02#client-format">Client</a> object</p>
+Modifies an individual <a href="/CDS-Registration/specs/cds-wg1-02#client-format">Client</a> object.</p>
 
 <h4 id="messages-apis-">Messages APIs <a id="api-messages" href="#api-messages" class="permalink">🔗</a></h4>
 
 <p><span class="badge bg-success">GET</span>
 <a href="/CDS-Registration/specs/cds-wg1-02#messages-list">/cds-api/v1/messages</a>
 [<a href="/CDS-Registration/specs/cds-wg1-02#example-messages-list">example</a>] -
-Lists <a href="/CDS-Registration/specs/cds-wg1-02#message-format">Messages</a> for a Client</p>
+Lists <a href="/CDS-Registration/specs/cds-wg1-02#message-format">Messages</a> for a Client.</p>
 
 <p><span class="badge bg-warning text-dark">POST</span>
 <a href="/CDS-Registration/specs/cds-wg1-02#messages-create">/cds-api/v1/messages</a>
 [<a href="/CDS-Registration/specs/cds-wg1-02#example-message-create">example</a>] -
-Creates a new <a href="/CDS-Registration/specs/cds-wg1-02#message-format">Message</a> from the Client to the Server</p>
+Creates a new <a href="/CDS-Registration/specs/cds-wg1-02#message-format">Message</a> from the Client to the Server.</p>
 
 <p><span class="badge bg-success">GET</span>
 <a href="/CDS-Registration/specs/cds-wg1-02#messages-get">/cds-api/v1/messages/<em>&lt;messageId&gt;</em></a>
 [<a href="/CDS-Registration/specs/cds-wg1-02#example-message-get">example</a>] -
-Returns an individual <a href="/CDS-Registration/specs/cds-wg1-02#message-format">Message</a> object</p>
+Returns an individual <a href="/CDS-Registration/specs/cds-wg1-02#message-format">Message</a> object.</p>
 
 <p><span class="badge bg-warning text-dark">PATCH</span>
 <a href="/CDS-Registration/specs/cds-wg1-02#messages-modify">/cds-api/v1/messages/<em>&lt;messageId&gt;</em></a>
 [<a href="/CDS-Registration/specs/cds-wg1-02#example-message-modify">example</a>] -
-Modifies an individual <a href="/CDS-Registration/specs/cds-wg1-02#message-format">Message</a> object</p>
+Modifies an individual <a href="/CDS-Registration/specs/cds-wg1-02#message-format">Message</a> object.</p>
 
 <h4 id="credentials-apis-">Credentials APIs <a id="api-credentials" href="#api-credentials" class="permalink">🔗</a></h4>
 
 <p><span class="badge bg-success">GET</span>
 <a href="/CDS-Registration/specs/cds-wg1-02#credentials-list">/cds-api/v1/credentials</a>
 [<a href="/CDS-Registration/specs/cds-wg1-02#example-credentials-list">example</a>] -
-Lists <a href="/CDS-Registration/specs/cds-wg1-02#credentials-format">Credentials</a> for a Client</p>
+Lists <a href="/CDS-Registration/specs/cds-wg1-02#credentials-format">Credentials</a> for a Client.</p>
 
 <p><span class="badge bg-warning text-dark">POST</span>
 <a href="/CDS-Registration/specs/cds-wg1-02#credentials-create">/cds-api/v1/credentials</a>
 [<a href="/CDS-Registration/specs/cds-wg1-02#example-credentials-create">example</a>] -
-Creates a new <a href="/CDS-Registration/specs/cds-wg1-02#credentials-format">Credential</a> object</p>
+Creates a new <a href="/CDS-Registration/specs/cds-wg1-02#credentials-format">Credential</a> object.</p>
 
 <p><span class="badge bg-success">GET</span>
 <a href="/CDS-Registration/specs/cds-wg1-02#credentials-get">/cds-api/v1/credentials/<em>&lt;credentialId&gt;</em></a>
 [<a href="/CDS-Registration/specs/cds-wg1-02#example-credentials-get">example</a>] -
-Returns an individual <a href="/CDS-Registration/specs/cds-wg1-02#credentials-format">Credential</a> object</p>
+Returns an individual <a href="/CDS-Registration/specs/cds-wg1-02#credentials-format">Credential</a> object.</p>
 
 <p><span class="badge bg-warning text-dark">PATCH</span>
 <a href="/CDS-Registration/specs/cds-wg1-02#credentials-modify">/cds-api/v1/credentials/<em>&lt;credentialId&gt;</em></a>
 [<a href="/CDS-Registration/specs/cds-wg1-02#example-credentials-modify">example</a>] -
-Modifies an individual <a href="/CDS-Registration/specs/cds-wg1-02#credentials-format">Credential</a> object</p>
+Modifies an individual <a href="/CDS-Registration/specs/cds-wg1-02#credentials-format">Credential</a> object.</p>
 
 <h4 id="grants-apis-">Grants APIs <a id="api-grants" href="#api-grants" class="permalink">🔗</a></h4>
 
 <p><span class="badge bg-success">GET</span>
 <a href="/CDS-Registration/specs/cds-wg1-02#grants-list">/cds-api/v1/grants</a>
 [<a href="/CDS-Registration/specs/cds-wg1-02#example-grants-list">example</a>] -
-Lists <a href="/CDS-Registration/specs/cds-wg1-02#grant-format">Grants</a> for a Client</p>
+Lists <a href="/CDS-Registration/specs/cds-wg1-02#grant-format">Grants</a> for a Client.</p>
 
 <p><span class="badge bg-success">GET</span>
 <a href="/CDS-Registration/specs/cds-wg1-02#grants-get">/cds-api/v1/grants/<em>&lt;grantId&gt;</em></a>
 [<a href="/CDS-Registration/specs/cds-wg1-02#example-grants-get">example</a>] -
-Returns an individual <a href="/CDS-Registration/specs/cds-wg1-02#grant-format">Grant</a> object</p>
+Returns an individual <a href="/CDS-Registration/specs/cds-wg1-02#grant-format">Grant</a> object.</p>
 
 <p><span class="badge bg-warning text-dark">PATCH</span>
 <a href="/CDS-Registration/specs/cds-wg1-02#grants-modify">/cds-api/v1/grants/<em>&lt;grantId&gt;</em></a>
 [<a href="/CDS-Registration/specs/cds-wg1-02#example-grants-modify">example</a>] -
-Modifies an individual <a href="/CDS-Registration/specs/cds-wg1-02#grant-format">Grant</a> object</p>
+Modifies an individual <a href="/CDS-Registration/specs/cds-wg1-02#grant-format">Grant</a> object.</p>
 
 <h4 id="server-provided-files-apis-">Server-Provided Files APIs <a id="api-server-provided-files" href="#api-server-provided-files" class="permalink">🔗</a></h4>
 
 <p><span class="badge bg-success">GET</span>
 <a href="/CDS-Registration/specs/cds-wg1-02#server-provided-files-list">/cds-api/v1/server-provided-files</a>
 [<a href="/CDS-Registration/specs/cds-wg1-02#example-server-provided-files-list">example</a>] -
-Lists <a href="/CDS-Registration/specs/cds-wg1-02#server-provided-files-format">Server-Provided Files</a> for a Client</p>
+Lists <a href="/CDS-Registration/specs/cds-wg1-02#server-provided-files-format">Server-Provided Files</a> for a Client.</p>
 
 <p><span class="badge bg-success">GET</span>
 <a href="/CDS-Registration/specs/cds-wg1-02#server-provided-files-get">/cds-api/v1/server-provided-files/<em>&lt;fileId&gt;</em></a>
 [<a href="/CDS-Registration/specs/cds-wg1-02#example-server-provided-files-get">example</a>] -
-Returns an individual <a href="/CDS-Registration/specs/cds-wg1-02#server-provided-files-format">Server-Provided File</a> object (metadata and file details for the Server-Provided File)</p>
+Returns an individual <a href="/CDS-Registration/specs/cds-wg1-02#server-provided-files-format">Server-Provided File</a> object (metadata and file details for the Server-Provided File).</p>
 
 <p><span class="badge bg-success">GET</span>
 <a href="/CDS-Registration/specs/cds-wg1-02#server-provided-files-download">/cds-api/v1/server-provided-files/<em>&lt;fileId&gt;</em>/download</a>
 [<a href="/CDS-Registration/specs/cds-wg1-02#example-server-provided-files-download">example</a>] -
-Returns the raw data for an individual <a href="/CDS-Registration/specs/cds-wg1-02#server-provided-files-format">Server-Provided File</a> object</p>
+Returns the raw data for an individual <a href="/CDS-Registration/specs/cds-wg1-02#server-provided-files-format">Server-Provided File</a> object.</p>
 
 <h2 id="examples-">Examples <a id="examples" href="#examples" class="permalink">🔗</a></h2>
 
