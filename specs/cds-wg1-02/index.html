@@ -332,9 +332,26 @@ These entities can include, but are not limited to, carbon tracking applications
 
 <p><a id="patch" href="#patch" class="permalink">🔗</a> “PATCH” - A request method defined in [<a href="#ref-rfc5789">RFC 5789</a>].</p>
 
+<p><a id="relative-date" href="#relative-date" class="permalink">🔗</a> “relative date” - A string representation of a date relative to the current date, formatted as a <code class="language-plaintext highlighter-rouge">duration</code> from [<a href="#ref-rfc3339-duration">RFC 3339 Appendix A</a>].
+Relative dates MUST NOT use <code class="language-plaintext highlighter-rouge">H</code> (hours), <code class="language-plaintext highlighter-rouge">M</code> (minutes), or <code class="language-plaintext highlighter-rouge">S</code> (seconds) values.
+For example, <code class="language-plaintext highlighter-rouge">"P3Y"</code> represents a relative date range of 3 years from the current date.
+Another example is <code class="language-plaintext highlighter-rouge">"P0D"</code>, which represents the current date.</p>
+
+<p><a id="relative-datetime" href="#relative-datetime" class="permalink">🔗</a> “relative datetime” - A string representation of a datetime relative to the current datetime, formatted as a <code class="language-plaintext highlighter-rouge">duration</code> from [<a href="#ref-rfc3339-duration">RFC 3339 Appendix A</a>].
+For example, <code class="language-plaintext highlighter-rouge">"P30DT2H"</code> represents a relative datetime range of 30 days and 2 hours from the current datetime.
+Another example is <code class="language-plaintext highlighter-rouge">"P0S"</code>, which represents the current datetime.</p>
+
+<p><a id="relative-or-absolute-date" href="#relative-or-absolute-date" class="permalink">🔗</a> “relative or absolute date” - A <a href="#date">date</a>, <a href="#relative-date">relative date</a>, or <code class="language-plaintext highlighter-rouge">"infinite"</code> string.
+The <code class="language-plaintext highlighter-rouge">"infinite"</code> string value represents an unlimited duration from the current date.</p>
+
+<p><a id="relative-or-absolute-datetime" href="#relative-or-absolute-date" class="permalink">🔗</a> “relative or absolute datetime” - A <a href="#datetime">datetime</a>, <a href="#relative-datetime">relative datetime</a>, or <code class="language-plaintext highlighter-rouge">"infinite"</code> string.
+The <code class="language-plaintext highlighter-rouge">"infinite"</code> string value represents an unlimited duration from the current datetime.</p>
+
 <p><a id="status-code" href="#status-code" class="permalink">🔗</a> “Status Code” - A response status code defined in [<a href="#ref-rfc9110-codes">RFC 9110 Section 15</a>].</p>
 
 <p><a id="string" href="#string" class="permalink">🔗</a> “string” - A series of unicode characters as defined in [<a href="#ref-rfc8259-strings">RFC 8259 Section 7</a>].</p>
+
+<p><a id="timezone" href="#timezone" class="permalink">🔗</a> “timezone” - A timezone name string, as defined by [<a href="#ref-iana-tz">IANA TZ</a>] (e.g. “America/Chicago”, “Europe/Brussels”, etc.).</p>
 
 <p><a id="url" href="#url" class="permalink">🔗</a> “URL” - A string representing resource as defined in [<a href="#ref-rfc3986-url">RFC 3986 Section 1.1.3</a>] (e.g. “https://example.com/page1”).</p>
 
@@ -401,6 +418,7 @@ This array of values MUST be the same as <code class="language-plaintext highlig
 <ul>
   <li><code class="language-plaintext highlighter-rouge">cds_oauth_version</code> - <em><a href="#string">string</a></em> - (REQUIRED) The version of the CDS-WG1-02 Client Registration specification that the Server has implemented, which for this version of the specification is <code class="language-plaintext highlighter-rouge">v1</code></li>
   <li><code class="language-plaintext highlighter-rouge">cds_human_registration</code> - <em><a href="#url">URL</a></em> - (REQUIRED) Where Clients who do not have the technical capacity to use the <code class="language-plaintext highlighter-rouge">registration_endpoint</code> can visit to manually register a Client using a user device</li>
+  <li><code class="language-plaintext highlighter-rouge">cds_timezone</code> - <em><a href="#timezone">timezone</a></em> - (REQUIRED) The timezone the Server uses as a point of reference for relative dates and datetimes.</li>
   <li><code class="language-plaintext highlighter-rouge">cds_clients_api</code> - <em><a href="#url">URL</a></em> - (REQUIRED) The URL for the <a href="#clients-api">Clients API</a>.</li>
   <li><code class="language-plaintext highlighter-rouge">cds_messages_api</code> - <em><a href="#url">URL</a></em> - (REQUIRED) The URL for the <a href="#messages-api">Messages API</a>.</li>
   <li><code class="language-plaintext highlighter-rouge">cds_credentials_api</code> - <em><a href="#url">URL</a></em> - (REQUIRED) The URL for the <a href="#credentials-api">Credentials API</a>.</li>
@@ -416,7 +434,7 @@ This object MUST include a key for each Registration Field <code class="language
 If all <code class="language-plaintext highlighter-rouge">registration_requirements</code> lists are empty, this reference object is an empty object (<code class="language-plaintext highlighter-rouge">{}</code>).</li>
 </ul>
 
-<p>Scope functionality described by <a href="#scope-descriptions-format">Scope Description</a> objects included in the <code class="language-plaintext highlighter-rouge">cds_scope_descriptions</code> object MUST be available for all of the scope’s coverage, as described by the Scope Description’s <code class="language-plaintext highlighter-rouge">coverages_supported</code> list, up to any limits specified in the scopes authorization details, as described by the Scope Description’s <code class="language-plaintext highlighter-rouge">authorization_details_fields_supported</code> <a href="#auth-details-fields-format">Authorization Details</a> object’s <code class="language-plaintext highlighter-rouge">limit</code> values.
+<p>Scope functionality described by <a href="#scope-descriptions-format">Scope Description</a> objects included in the <code class="language-plaintext highlighter-rouge">cds_scope_descriptions</code> object MUST be available for all of the scope’s coverage, as described by the Scope Description’s <code class="language-plaintext highlighter-rouge">coverages_supported</code> list, up to any limits specified in the scopes authorization details, as described by the Scope Description’s <code class="language-plaintext highlighter-rouge">authorization_details_fields_supported</code> <a href="#auth-details-fields-format">Authorization Details</a> object’s <code class="language-plaintext highlighter-rouge">maximum</code> and <code class="language-plaintext highlighter-rouge">minimum</code> values.
 For situations where the same scope is available for multiple groups of coverages and limits, multiple Scope Description entries with different <code class="language-plaintext highlighter-rouge">id</code> values MUST be included.
 For example, if a Server offers a scope that grants access to historical customer usage data, offering 24 months of usage history for electricity service contracts and and 12 months of history for natural gas service contracts, the Server MUST include two Scope Descriptions with different <code class="language-plaintext highlighter-rouge">id</code> values that include only the coverage and limits of that scope’s functionality.</p>
 
@@ -489,9 +507,8 @@ Servers MAY set the URL to an online publicly-available copy of this specificati
           <li><code class="language-plaintext highlighter-rouge">format</code> is <code class="language-plaintext highlighter-rouge">string</code>.</li>
           <li><code class="language-plaintext highlighter-rouge">is_required</code> is <code class="language-plaintext highlighter-rouge">true</code>.</li>
           <li><code class="language-plaintext highlighter-rouge">default</code> is not included.</li>
-          <li><code class="language-plaintext highlighter-rouge">relative_date_limit</code> is not included.</li>
-          <li><code class="language-plaintext highlighter-rouge">absolute_date_limit</code> is not included.</li>
-          <li><code class="language-plaintext highlighter-rouge">limit</code> is not included.</li>
+          <li><code class="language-plaintext highlighter-rouge">maximum</code> is <code class="language-plaintext highlighter-rouge">1000</code>.</li>
+          <li><code class="language-plaintext highlighter-rouge">minimum</code> is <code class="language-plaintext highlighter-rouge">1</code>.</li>
           <li><code class="language-plaintext highlighter-rouge">choices</code> is not included.</li>
         </ul>
       </li>
@@ -505,9 +522,8 @@ Servers MAY set the URL to an online publicly-available copy of this specificati
           <li><code class="language-plaintext highlighter-rouge">format</code> is <code class="language-plaintext highlighter-rouge">string</code>.</li>
           <li><code class="language-plaintext highlighter-rouge">is_required</code> is <code class="language-plaintext highlighter-rouge">true</code>.</li>
           <li><code class="language-plaintext highlighter-rouge">default</code> is not included.</li>
-          <li><code class="language-plaintext highlighter-rouge">relative_date_limit</code> is not included.</li>
-          <li><code class="language-plaintext highlighter-rouge">absolute_date_limit</code> is not included.</li>
-          <li><code class="language-plaintext highlighter-rouge">limit</code> is not included.</li>
+          <li><code class="language-plaintext highlighter-rouge">maximum</code> is <code class="language-plaintext highlighter-rouge">1000</code>.</li>
+          <li><code class="language-plaintext highlighter-rouge">minimum</code> is <code class="language-plaintext highlighter-rouge">1</code>.</li>
           <li><code class="language-plaintext highlighter-rouge">choices</code> is not included.</li>
         </ul>
       </li>
@@ -548,9 +564,8 @@ Servers MAY set the URL to an online publicly-available copy of this specificati
       <li><code class="language-plaintext highlighter-rouge">format</code> is <code class="language-plaintext highlighter-rouge">string</code>.</li>
       <li><code class="language-plaintext highlighter-rouge">is_required</code> is <code class="language-plaintext highlighter-rouge">true</code>.</li>
       <li><code class="language-plaintext highlighter-rouge">default</code> is not included.</li>
-      <li><code class="language-plaintext highlighter-rouge">relative_date_limit</code> is not included.</li>
-      <li><code class="language-plaintext highlighter-rouge">absolute_date_limit</code> is not included.</li>
-      <li><code class="language-plaintext highlighter-rouge">limit</code> is not included.</li>
+      <li><code class="language-plaintext highlighter-rouge">maximum</code> is <code class="language-plaintext highlighter-rouge">1000</code>.</li>
+      <li><code class="language-plaintext highlighter-rouge">minimum</code> is <code class="language-plaintext highlighter-rouge">1</code>.</li>
       <li><code class="language-plaintext highlighter-rouge">choices</code> is not included.</li>
     </ul>
   </li>
@@ -672,13 +687,19 @@ If required, <code class="language-plaintext highlighter-rouge">authorization_de
   <li><code class="language-plaintext highlighter-rouge">default</code> - <em>various</em> - (OPTIONAL) If <code class="language-plaintext highlighter-rouge">is_required</code> is <code class="language-plaintext highlighter-rouge">false</code>, this is the default value that will be used in lieu of the Client submitting a value themselves.
 This is also the value that will be used if a basic OAuth <code class="language-plaintext highlighter-rouge">scope</code> string parameter is used instead of an <code class="language-plaintext highlighter-rouge">authorization_details</code> parameter.
 If <code class="language-plaintext highlighter-rouge">is_required</code> is <code class="language-plaintext highlighter-rouge">true</code>, this is not included.</li>
-  <li><code class="language-plaintext highlighter-rouge">relative_date_limit</code> - <em><a href="#integer">integer</a></em> - (OPTIONAL) If <code class="language-plaintext highlighter-rouge">format</code> is <code class="language-plaintext highlighter-rouge">relative_or_absolute_date</code> and the value is limited by the Server, this is REQUIRED and MUST be the largest relative date range that may be submitted.
-Servers MUST validate both submitted absolute dates and relative dates against the relative date limit, where when comparing to a submitted absolute date, the current Server date in the Server’s local timezone is used as the relative point of reference.
-If <code class="language-plaintext highlighter-rouge">format</code> is not <code class="language-plaintext highlighter-rouge">relative_or_absolute_date</code>, this is not included.</li>
-  <li><code class="language-plaintext highlighter-rouge">absolute_date_limit</code> - <em><a href="#integer">integer</a></em> - (OPTIONAL) If <code class="language-plaintext highlighter-rouge">format</code> is <code class="language-plaintext highlighter-rouge">relative_or_absolute_date</code> the value is limited by the Server, this is REQUIRED and MUST be the furthest away date that may be submitted.
-Servers MUST validate both submitted absolute dates and relative dates against the absolute date limit, where when comparing to a submitted relative date, the current Server date in the Server’s local timezone is used as the relative point of reference.</li>
-  <li><code class="language-plaintext highlighter-rouge">limit</code> - <em><a href="#integer">integer</a></em> - (OPTIONAL) If <code class="language-plaintext highlighter-rouge">format</code> is one of <code class="language-plaintext highlighter-rouge">int</code> or <code class="language-plaintext highlighter-rouge">decimal</code> and the value is limited by the Server, this is REQUIRED and MUST be the largest value that can be the submitted.
-If <code class="language-plaintext highlighter-rouge">format</code> is <code class="language-plaintext highlighter-rouge">string</code> and the length of the value is limited by the Server, this is REQUIRED and MUST be the maximum string length that can be the submitted.</li>
+  <li><code class="language-plaintext highlighter-rouge">maximum</code> - <em>various</em> - (OPTIONAL) The largest value acceptable for this field by the Server.
+If <code class="language-plaintext highlighter-rouge">format</code> is one of <code class="language-plaintext highlighter-rouge">int</code>, <code class="language-plaintext highlighter-rouge">decimal</code>, <code class="language-plaintext highlighter-rouge">string</code>, <code class="language-plaintext highlighter-rouge">string_or_null</code>, <code class="language-plaintext highlighter-rouge">string_list</code>, <code class="language-plaintext highlighter-rouge">relative_or_absolute_date</code>, or <code class="language-plaintext highlighter-rouge">relative_or_absolute_datetime</code>, this field is REQUIRED.
+If <code class="language-plaintext highlighter-rouge">format</code> is <code class="language-plaintext highlighter-rouge">int</code>, this field MUST be an <a href="#integer">integer</a>, representing the field’s largest possible value, or the string <code class="language-plaintext highlighter-rouge">"infinite"</code>, which represents the field’s value can be unlimited.
+If <code class="language-plaintext highlighter-rouge">format</code> is <code class="language-plaintext highlighter-rouge">decimal</code>, this field MUST be a <a href="#decimal">decimal</a>, representing the field’s largest possible value, or the string <code class="language-plaintext highlighter-rouge">"infinite"</code>, which represents the field’s value can be unlimited.
+If <code class="language-plaintext highlighter-rouge">format</code> is one of <code class="language-plaintext highlighter-rouge">string</code> or <code class="language-plaintext highlighter-rouge">string_or_null</code>, this field MUST be an <a href="#integer">integer</a>, which represents the maximum string length if the value is a string.
+If <code class="language-plaintext highlighter-rouge">format</code> is <code class="language-plaintext highlighter-rouge">string_list</code>, this field MUST be an <a href="#integer">integer</a>, representing the maximum combined length of all strings in the array of strings.
+If <code class="language-plaintext highlighter-rouge">format</code> is <code class="language-plaintext highlighter-rouge">relative_or_absolute_date</code>, this field MUST be a <a href="#relative-or-absolute-date">relative or absolute date</a>, which represents the furthest date out that may be submitted.
+If <code class="language-plaintext highlighter-rouge">format</code> is <code class="language-plaintext highlighter-rouge">relative_or_absolute_datetime</code>, this field MUST be a <a href="#relative-or-absolute-datetime">relative or absolute datetime</a>, which represents the furthest datetime out that may be submitted.
+If the authorization details field represents a negative value or historical time period (e.g. how far back of historical data to retrieve), this value represents the most negative or furthest back value that can be set.</li>
+  <li><code class="language-plaintext highlighter-rouge">minimum</code> - <em>various</em> - (OPTIONAL) The smallest value acceptable for this field by the Server.
+This field is REQUIRED if the <code class="language-plaintext highlighter-rouge">maximum</code> field is included.
+When included, this field’s value MUST be in the same format as the <code class="language-plaintext highlighter-rouge">maximum</code> value.
+If the authorization details field represents a negative value or historical time period (e.g. how far back of historical data to retrieve), this value represents the closest to zero or current time value that can be set.</li>
   <li><code class="language-plaintext highlighter-rouge">choices</code> - <em>Array[<a href="#auth-details-field-choice-format">AuthorizationDetailsFieldChoice</a>]</em> - (OPTIONAL) If <code class="language-plaintext highlighter-rouge">format</code> is <code class="language-plaintext highlighter-rouge">choice</code>, this is REQUIRED and MUST be a list of one or more available choice objects.</li>
 </ul>
 
@@ -693,13 +714,16 @@ If <code class="language-plaintext highlighter-rouge">format</code> is <code cla
   <li><code class="language-plaintext highlighter-rouge">decimal</code> - A <a href="#decimal">decimal</a> value, which can have any number of significant units, but MUST NOT be stored or handled as a float value, in order to retain the precision of the value throughout Server and Client processing.</li>
   <li><code class="language-plaintext highlighter-rouge">string</code> - A <a href="#string">string</a> value.</li>
   <li><code class="language-plaintext highlighter-rouge">string_or_null</code> - A <a href="#string">string</a> value or <code class="language-plaintext highlighter-rouge">null</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">string_list</code> - An array of <a href="#string">string</a> values.</li>
   <li><code class="language-plaintext highlighter-rouge">boolean</code> - A <a href="#boolean">boolean</a> value.</li>
-  <li><code class="language-plaintext highlighter-rouge">relative_or_absolute_date</code> - A relative or absolute date string.
-Relative dates are formatted as defined by <code class="language-plaintext highlighter-rouge">duration</code> in [<a href="#ref-rfc3339-duration">RFC 3339 Appendix A</a>].
-For example, <code class="language-plaintext highlighter-rouge">P3Y</code> represents a relative date range of 3 years.
-Absolute dates are formatted as <a href="#date">date</a> (<code class="language-plaintext highlighter-rouge">YYYY-MM-DD</code>).
-For example, <code class="language-plaintext highlighter-rouge">2024-01-02</code> represents the 2nd of January, 2024.
-Dates are defined as the date from the perspective of the Server’s local timezone.</li>
+  <li><code class="language-plaintext highlighter-rouge">relative_or_absolute_date</code> - A <a href="#relative-or-absolute-date">relative or absolute date</a> string.
+Relative dates are relative to the current date in the <code class="language-plaintext highlighter-rouge">cds_timezone</code> listed in the Server’s <a href="#auth-server-metadata-format">Metadata</a>, when the authorization was submitted to the Server.
+For authorization that use the <code class="language-plaintext highlighter-rouge">authorization_code</code> grant type, the date used is the current date when the User submitted an approval for the authorization request.
+For authorization that use the <code class="language-plaintext highlighter-rouge">client_credentials</code> grant type, the date used is the current date when the Client submitted the initial token request.</li>
+  <li><code class="language-plaintext highlighter-rouge">relative_or_absolute_datetime</code> - A <a href="#relative-or-absolute-datetime">relative or absolute datetime</a> string.
+Relative datetimes are relative to the current datetime in the <code class="language-plaintext highlighter-rouge">cds_timezone</code> listed in the Server’s <a href="#auth-server-metadata-format">Metadata</a>, when the authorization was submitted to the Server.
+For authorization that use the <code class="language-plaintext highlighter-rouge">authorization_code</code> grant type, the datetime used is the current datetime when the User submitted an approval for the authorization request.
+For authorization that use the <code class="language-plaintext highlighter-rouge">client_credentials</code> grant type, the datetime used is the current datetime when the Client submitted the initial token request.</li>
   <li><code class="language-plaintext highlighter-rouge">choice</code> - A <a href="#string">string</a> value from the <code class="language-plaintext highlighter-rouge">id</code> parameter in one of the listed available <code class="language-plaintext highlighter-rouge">choices</code> <a href="#auth-details-field-choice-format">Authorization Details Field Choice</a> objects.</li>
   <li><code class="language-plaintext highlighter-rouge">jwk_or_null</code> - A <a href="#jwk-enc">JWK Public Encryption Key</a> object or <code class="language-plaintext highlighter-rouge">null</code>.</li>
 </ul>
@@ -1678,6 +1702,8 @@ Content-Type: application/json;charset=UTF-8
                     "documentation": "https://example.com/docs/oauth/scopes#grant_admin-client_id",
                     "format": "string",
                     "is_required": true,
+                    "maximum": 1000,
+                    "minimum": 1,
                 },
                 {
                     "id": "grant_id",
@@ -1686,6 +1712,8 @@ Content-Type: application/json;charset=UTF-8
                     "documentation": "https://example.com/docs/oauth/scopes#grant_admin-grant_id",
                     "format": "string",
                     "is_required": true,
+                    "maximum": 1000,
+                    "minimum": 1,
                 }
             ]
         },
@@ -1708,6 +1736,8 @@ Content-Type: application/json;charset=UTF-8
                     "documentation": "https://example.com/docs/oauth/scopes#server_provided_files-file_id",
                     "format": "string",
                     "is_required": true,
+                    "maximum": 1000,
+                    "minimum": 1,
                 }
             ]
         },
@@ -2582,6 +2612,10 @@ Content-Disposition: attachment; filename=”DR_API_docs_v1.0.pdf”</p>
 <p><a id="ref-cds-wg1-01-coverage-entry" href="#ref-cds-wg1-01-coverage-entry" class="permalink">🔗</a>
 <code class="language-plaintext highlighter-rouge">CDS-WG1-01 Section 4.3</code> - Section 4.3. Coverage Entry Format, “Server Metadata”, CDS-WG1-01, LF Energy Standards and Specifications (LFESS),<br />
 <a href="https://cds-registration.lfenergy.org/specs/cds-wg1-01/#coverage-entry-format">https://cds-registration.lfenergy.org/specs/cds-wg1-01/#coverage-entry-format</a></p>
+
+<p><a id="ref-iana-tz" href="#ref-iana-tz" class="permalink">🔗</a>
+<code class="language-plaintext highlighter-rouge">IANA TZ</code> - “Time Zone Database”, Internet Assigned Numbers Authority (IANA),<br />
+<a href="https://www.iana.org/time-zones">https://www.iana.org/time-zones</a></p>
 
 <p><a id="ref-iso4217" href="#ref-iso4217" class="permalink">🔗</a>
 <code class="language-plaintext highlighter-rouge">ISO 4217</code> - “Currency Codes”, ISO 4217, International Organization for Standardization (ISO),<br />
