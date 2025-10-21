@@ -2479,113 +2479,113 @@ Content-Type: application/json;charset=UTF-8
         }
     ]
 }
-
-### 12.19. Obtaining Server-Provided File Access via the Grant Admin Scope &lt;a id="example-server-provided-files-access-token" href="#example-server-provided-files-access-token" class="permalink"&gt;🔗&lt;/a&gt;
-
-The following is a non-normative example of a Client using their `grant_admin` Client object to obtain an `access_token` for a Server-Provided Files Grant.
-
 </code></pre></div></div>
-<p>==Request==
+
+<h3 id="1219-obtaining-server-provided-file-access-via-the-grant-admin-scope-">12.19. Obtaining Server-Provided File Access via the Grant Admin Scope <a id="example-server-provided-files-access-token" href="#example-server-provided-files-access-token" class="permalink">🔗</a></h3>
+
+<p>The following is a non-normative example of a Client using their <code class="language-plaintext highlighter-rouge">grant_admin</code> Client object to obtain an <code class="language-plaintext highlighter-rouge">access_token</code> for a Server-Provided Files Grant.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==Request==
 POST /oauth/token HTTP/1.1
 Host: example.com
-Authorization: Basic MjJiYjQwYjViODIzZmE4Yzp2aEZjcTE5cDVSMHFOWXlsaWJBNVVhdlBTOHNaTkZtQk10RGI3WklCZWRGdENuWldxZjJQa0FzMlR4NUFRcGJnVnJ6T2tmd0U2R1JoWmhLalI1OVdHUQ==</p>
+Authorization: Basic MjJiYjQwYjViODIzZmE4Yzp2aEZjcTE5cDVSMHFOWXlsaWJBNVVhdlBTOHNaTkZtQk10RGI3WklCZWRGdENuWldxZjJQa0FzMlR4NUFRcGJnVnJ6T2tmd0U2R1JoWmhLalI1OVdHUQ==
 
-<p>grant_type=client_credentials&amp;scope=grant_admin&amp;authorization_details=%5B%7B%22type%22%3A%22grant_admin%22%2C%22client_id%22%3A%227e22b5568893c547%22%2C%22grant_id%22%3A%22c644a5da13f379db%22%7D%5D</p>
+grant_type=client_credentials&amp;scope=grant_admin&amp;authorization_details=%5B%7B%22type%22%3A%22grant_admin%22%2C%22client_id%22%3A%227e22b5568893c547%22%2C%22grant_id%22%3A%22c644a5da13f379db%22%7D%5D
 
-<p>==Response==
+==Response==
 HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8</p>
+Content-Type: application/json;charset=UTF-8
 
-<p>{
-    “access_token”: “oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA”,
-    “token_type”: “bearer”,
-    “expires_in”: 3600,
-    “scope”: “grant_admin”,
-    “authorization_details”: [
+{
+    "access_token": "oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA",
+    "token_type": "bearer",
+    "expires_in": 3600,
+    "scope": "grant_admin",
+    "authorization_details": [
         {
-            “type”: “grant_admin”,
-            “client_id”: “7e22b5568893c547”,
-            “grant_id”: “c644a5da13f379db”
+            "type": "grant_admin",
+            "client_id": "7e22b5568893c547",
+            "grant_id": "c644a5da13f379db"
         }
     ]
-}</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-### 12.20. Retrieving a Server-Provided Files List &lt;a id="example-server-provided-files-list" href="#example-server-provided-files-list" class="permalink"&gt;🔗&lt;/a&gt;
-
-The following is a non-normative example of a Client loading Server-Provided File objects via the [Server-Provided Files API](#server-provided-files-api).
-
+}
 </code></pre></div></div>
-<p>==Request==
+
+<h3 id="1220-retrieving-a-server-provided-files-list-">12.20. Retrieving a Server-Provided Files List <a id="example-server-provided-files-list" href="#example-server-provided-files-list" class="permalink">🔗</a></h3>
+
+<p>The following is a non-normative example of a Client loading Server-Provided File objects via the <a href="#server-provided-files-api">Server-Provided Files API</a>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==Request==
 GET /cds-api/v1/server-provided-files HTTP/1.1
 Host: example.com
-Authorizatin: Bearer oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA</p>
+Authorizatin: Bearer oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA
 
-<p>==Response==
+==Response==
 HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8</p>
+Content-Type: application/json;charset=UTF-8
 
-<p>{
-    “files”: [
+{
+    "files": [
         {
-            “file_id”: “4fcf6831957a243c”,
-            “uri”: “https://example.com/cds-api/v1/server-provided-files/4fcf6831957a243c”,
-            “created”: “2022-01-01T00:00:00Z”,
-            “modified”: “2022-01-01T00:00:00Z”,
-            “mime_type”: “application/pdf”,
-            “size”: 1111111,
-            “name”: “DR_API_docs_v1.0.pdf”,
-            “description”: “Proprietary demand response API documentation”,
-            “download_uri”: “https://example.com/cds-api/v1/server-provided-files/4fcf6831957a243c/download”
+            "file_id": "4fcf6831957a243c",
+            "uri": "https://example.com/cds-api/v1/server-provided-files/4fcf6831957a243c",
+            "created": "2022-01-01T00:00:00Z",
+            "modified": "2022-01-01T00:00:00Z",
+            "mime_type": "application/pdf",
+            "size": 1111111,
+            "name": "DR_API_docs_v1.0.pdf",
+            "description": "Proprietary demand response API documentation",
+            "download_uri": "https://example.com/cds-api/v1/server-provided-files/4fcf6831957a243c/download"
         }
     ],
-    “next”: null,
-    “previous”: null
-}</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-### 12.21. Retrieving an Individual Server-Provided File &lt;a id="example-server-provided-files-get" href="#example-server-provided-files-get" class="permalink"&gt;🔗&lt;/a&gt;
-
-The following is a non-normative example of a Client loading an individual Server-Provided File object via the [Server-Provided Files API](#server-provided-files-api).
-
+    "next": null,
+    "previous": null
+}
 </code></pre></div></div>
-<p>==Request==
+
+<h3 id="1221-retrieving-an-individual-server-provided-file-">12.21. Retrieving an Individual Server-Provided File <a id="example-server-provided-files-get" href="#example-server-provided-files-get" class="permalink">🔗</a></h3>
+
+<p>The following is a non-normative example of a Client loading an individual Server-Provided File object via the <a href="#server-provided-files-api">Server-Provided Files API</a>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==Request==
 GET /cds-api/v1/server-provided-files/4fcf6831957a243c HTTP/1.1
 Host: example.com
-Authorizatin: Bearer oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA</p>
+Authorizatin: Bearer oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA
 
-<p>==Response==
+==Response==
 HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8</p>
+Content-Type: application/json;charset=UTF-8
 
-<p>{
-    “file_id”: “4fcf6831957a243c”,
-    “uri”: “https://example.com/cds-api/v1/server-provided-files/4fcf6831957a243c”,
-    “created”: “2022-01-01T00:00:00Z”,
-    “modified”: “2022-01-01T00:00:00Z”,
-    “mime_type”: “application/pdf”,
-    “size”: 1111111,
-    “name”: “DR_API_docs_v1.0.pdf”,
-    “description”: “Proprietary demand response API documentation”,
-    “download_uri”: “https://example.com/cds-api/v1/server-provided-files/4fcf6831957a243c/download”
-}</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-### 12.22. Downloading Data for a Server-Provided File &lt;a id="example-server-provided-files-download" href="#example-server-provided-files-download" class="permalink"&gt;🔗&lt;/a&gt;
-
-The following is a non-normative example of a Client downloading the raw data for a Server-Provided File via the [Server-Provided Files API](#server-provided-files-api)..
-
+{
+    "file_id": "4fcf6831957a243c",
+    "uri": "https://example.com/cds-api/v1/server-provided-files/4fcf6831957a243c",
+    "created": "2022-01-01T00:00:00Z",
+    "modified": "2022-01-01T00:00:00Z",
+    "mime_type": "application/pdf",
+    "size": 1111111,
+    "name": "DR_API_docs_v1.0.pdf",
+    "description": "Proprietary demand response API documentation",
+    "download_uri": "https://example.com/cds-api/v1/server-provided-files/4fcf6831957a243c/download"
+}
 </code></pre></div></div>
-<p>==Request==
+
+<h3 id="1222-downloading-data-for-a-server-provided-file-">12.22. Downloading Data for a Server-Provided File <a id="example-server-provided-files-download" href="#example-server-provided-files-download" class="permalink">🔗</a></h3>
+
+<p>The following is a non-normative example of a Client downloading the raw data for a Server-Provided File via the <a href="#server-provided-files-api">Server-Provided Files API</a>..</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>==Request==
 GET /cds-api/v1/server-provided-files/4fcf6831957a243c/download HTTP/1.1
 Host: example.com
-Authorizatin: Bearer oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA</p>
+Authorizatin: Bearer oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA
 
-<p>==Response==
+==Response==
 HTTP/1.1 200 OK
 Content-Type: application/pdf
 Content-Length: 1111111
-Content-Disposition: attachment; filename=”DR_API_docs_v1.0.pdf”</p>
+Content-Disposition: attachment; filename="DR_API_docs_v1.0.pdf"
 
-<p>…the PDF data as response body…
-```</p>
+...the PDF data as response body...
+</code></pre></div></div>
 
 <h2 id="13-references-">13. References <a id="references" href="#references" class="permalink">🔗</a></h2>
 
