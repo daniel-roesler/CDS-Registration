@@ -1204,6 +1204,8 @@ Grant objects are formatted as JSON objects and contain the following named valu
 * `scope` - _[string](#string)_ - (REQUIRED) The scopes for which this Grant has issued access.
 * `authorization_details` - _Array[[OAuth AuthorizationDetail](#ref-rfc9396-auth-details)]_ - (REQUIRED) An authorization details list as defined by [[RFC 9396 Section 7.1](#ref-rfc9396-auth-details)] which contains scopes that are granted in addition to this object's `scope` value.
   If no authorization details scopes are configured in addition to the `scope` string, this value is an empty array (`[]`).
+* `states` - _Array[[string](#string)]_ - (REQUIRED) For Grants that were created or updated as a result from an authorization request, this is a list of the authorization requests' `state` parameters.
+  If the Grant does not have any associated authorization requests, this value is an empty array (`[]`).
 * `receipt_confirmations` - _Array[[string](#string)]_ - (REQUIRED) For Grants with scopes that can be obtained via user authorization (`grant_types` contains `authorization_code`), this is a list of receipt confirmation codes that were provided to the end users who authorized the access.
   If no receipt was provided or the Grant did not get issued via `authorization_code` then this value is an empty list (`[]`).
 * `enabled_scope` - _[string](#string)_ - (REQUIRED) For Grants where access has been partially granted, but some access is still disabled, this value is the `scope` that has been enabled by the server.
@@ -1279,6 +1281,7 @@ Servers MUST support Clients adding any of the following URL parameters to the [
 * `statuses` - A space-separated list of `status` values for which the Servers MUST filter the Grants.
 * `client_ids` - A space-separated list of `client_id` values for which the Servers MUST filter the Grants.
 * `scopes` - A space-separated list of `scope` values for which the Server MUST filter the Grants, where the included `scope` values are values within the Grant `scope` (space separated) or as a `type` value in the `authorization_details` list.
+* `states` - A space-separated list of `states` values for which the Server MUST filter the Grants.
 * `receipt_confirmations` - A space-separated list of receipt confirmation codes for which the Server MUST filter the Grants.
 * `after` - A [datetime](#datetime) for which the Server MUST filter Grants that were created after or on the datetime.
 * `before` - A [datetime](#datetime) for which the Server MUST filter Grants that were created before or on the datetime.
