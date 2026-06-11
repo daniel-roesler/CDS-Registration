@@ -316,6 +316,7 @@ Cache-optimized responses, such as “304 Not Modified”, to Client requests wi
 
 <ul>
   <li><code class="language-plaintext highlighter-rouge">ids</code> - A space-separated list of <code class="language-plaintext highlighter-rouge">id</code> values for which the Servers MUST filter the Coverage Entries.</li>
+  <li><code class="language-plaintext highlighter-rouge">entity_numbers</code> - A space-separated list of <code class="language-plaintext highlighter-rouge">entity_number</code> values for which the Servers MUST filter the Coverage Entries.</li>
 </ul>
 
 <h3 id="43-coverage-entry-format-">4.3. Coverage Entry Format <a id="coverage-entry-format" href="#coverage-entry-format" class="permalink">🔗</a></h3>
@@ -327,6 +328,8 @@ The following values are included in the default list available in coverage entr
   <li><code class="language-plaintext highlighter-rouge">id</code> - <em><a href="#string">string</a></em> - (REQUIRED) A unique identifier for the coverage entry.</li>
   <li><code class="language-plaintext highlighter-rouge">created</code> - <em><a href="#datetime">datetime</a></em> - (REQUIRED) When this coverage entry was first made available.</li>
   <li><code class="language-plaintext highlighter-rouge">updated</code> - <em><a href="#datetime">datetime</a></em> - (REQUIRED) When this coverage entry was last modified.</li>
+  <li><code class="language-plaintext highlighter-rouge">entity_number</code> - <em><a href="#string">string</a></em> - (REQUIRED)  A value that acts as a unique identifier for the Entity (e.g. “US-CA-IOU-EE&amp;E”).
+If no prior value exists to uniquely identify the entity or the Server does not know a unique identifier for the entity, the Server MUST generate an <code class="language-plaintext highlighter-rouge">entity_number</code> value that uniquely identifies the entity in the Server’s systems.</li>
   <li><code class="language-plaintext highlighter-rouge">entity_name</code> - <em><a href="#string">string</a></em> - (REQUIRED) A human readable name for the entity being covered (e.g. “Demo Gas &amp; Electric”).
 The entity name in a coverage entry MAY be different than the Server metadata <code class="language-plaintext highlighter-rouge">name</code> value in situations where the Server is operated by a parent or other entity.</li>
   <li><code class="language-plaintext highlighter-rouge">entity_abbreviation</code> - <em><code class="language-plaintext highlighter-rouge">null</code> or <a href="#string">string</a></em> - (REQUIRED) The abbreviation for the entity being covered by the coverage entry (e.g. “DG&amp;E”).
