@@ -1512,8 +1512,6 @@ If the Grant is to continue indefinitely, this value is <code class="language-pl
   <li><code class="language-plaintext highlighter-rouge">scope</code> - <em><a href="#string">string</a></em> - (REQUIRED) The scopes for which this Grant has issued access.</li>
   <li><code class="language-plaintext highlighter-rouge">authorization_details</code> - <em>Array[<a href="#ref-rfc9396-auth-details">OAuth AuthorizationDetail</a>]</em> - (REQUIRED) An authorization details list as defined by [<a href="#ref-rfc9396-auth-details">RFC 9396 Section 7.1</a>] which contains scopes that are granted in addition to this object’s <code class="language-plaintext highlighter-rouge">scope</code> value.
 If no authorization details scopes are configured in addition to the <code class="language-plaintext highlighter-rouge">scope</code> string, this value is an empty array (<code class="language-plaintext highlighter-rouge">[]</code>).</li>
-  <li><code class="language-plaintext highlighter-rouge">states</code> - <em>Array[<a href="#string">string</a>]</em> - (REQUIRED) For Grants that were created or updated as a result from an authorization request, this is a list of the authorization requests’ <code class="language-plaintext highlighter-rouge">state</code> parameters.
-If the Grant does not have any associated authorization requests, this value is an empty array (<code class="language-plaintext highlighter-rouge">[]</code>).</li>
   <li><code class="language-plaintext highlighter-rouge">receipt_confirmations</code> - <em>Array[<a href="#string">string</a>]</em> - (REQUIRED) For Grants with scopes that can be obtained via user authorization (<code class="language-plaintext highlighter-rouge">grant_types</code> contains <code class="language-plaintext highlighter-rouge">authorization_code</code>), this is a list of receipt confirmation codes that were provided to the end users who authorized the access.
 If no receipt was provided or the Grant did not get issued via <code class="language-plaintext highlighter-rouge">authorization_code</code> then this value is an empty list (<code class="language-plaintext highlighter-rouge">[]</code>).</li>
   <li><code class="language-plaintext highlighter-rouge">enabled_scope</code> - <em><a href="#string">string</a></em> - (REQUIRED) For Grants where access has been partially granted, but some access is still disabled, this value is the <code class="language-plaintext highlighter-rouge">scope</code> that has been enabled by the server.
@@ -1609,7 +1607,6 @@ If no previous segment exists (i.e. the requester is at the front of the list), 
   <li><code class="language-plaintext highlighter-rouge">statuses</code> - A space-separated list of <code class="language-plaintext highlighter-rouge">status</code> values for which the Servers MUST filter the Grants.</li>
   <li><code class="language-plaintext highlighter-rouge">client_ids</code> - A space-separated list of <code class="language-plaintext highlighter-rouge">client_id</code> values for which the Servers MUST filter the Grants.</li>
   <li><code class="language-plaintext highlighter-rouge">scopes</code> - A space-separated list of <code class="language-plaintext highlighter-rouge">scope</code> values for which the Server MUST filter the Grants, where the included <code class="language-plaintext highlighter-rouge">scope</code> values are values within the Grant <code class="language-plaintext highlighter-rouge">scope</code> (space separated) or as a <code class="language-plaintext highlighter-rouge">type</code> value in the <code class="language-plaintext highlighter-rouge">authorization_details</code> list.</li>
-  <li><code class="language-plaintext highlighter-rouge">states</code> - A space-separated list of <code class="language-plaintext highlighter-rouge">states</code> values for which the Server MUST filter the Grants.</li>
   <li><code class="language-plaintext highlighter-rouge">receipt_confirmations</code> - A space-separated list of receipt confirmation codes for which the Server MUST filter the Grants.</li>
   <li><code class="language-plaintext highlighter-rouge">after</code> - A <a href="#datetime">datetime</a> for which the Server MUST filter Grants that were created after or on the datetime.</li>
   <li><code class="language-plaintext highlighter-rouge">before</code> - A <a href="#datetime">datetime</a> for which the Server MUST filter Grants that were created before or on the datetime.</li>
@@ -2536,7 +2533,6 @@ Content-Type: application/json;charset=UTF-8
             "client_id": "aaf026921707f5d5",
             "scope": "cds_client_admin",
             "authorization_details": [],
-            "states": [],
             "receipt_confirmations": [],
             "enabled_scope": "cds_client_admin",
             "enabled_authorization_details": []
@@ -2563,7 +2559,6 @@ Content-Type: application/json;charset=UTF-8
                     "file_id": "4fcf6831957a243c"
                 }
             ],
-            "states": [],
             "receipt_confirmations": [],
             "enabled_scope": "cds_server_provided_files_01",
             "enabled_authorization_details": [
@@ -2614,7 +2609,6 @@ Content-Type: application/json;charset=UTF-8
             "file_id": "4fcf6831957a243c"
         }
     ],
-    "states": [],
     "receipt_confirmations": [],
     "enabled_scope": "cds_server_provided_files_01",
     "enabled_authorization_details": [
@@ -2666,7 +2660,6 @@ Content-Type: application/json;charset=UTF-8
             "file_id": "4fcf6831957a243c"
         }
     ],
-    "states": [],
     "receipt_confirmations": [],
     "enabled_scope": "cds_server_provided_files_01",
     "enabled_authorization_details": [
