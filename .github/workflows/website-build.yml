@@ -16,13 +16,13 @@ jobs:
     steps:
 
       - name: Checkout main branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           ref: main
           path: main-branch
 
       - name: Checkout gh-pages branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           ref: gh-pages
           path: gh-pages-branch
@@ -30,7 +30,7 @@ jobs:
       - name: Setup ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.0'
+          ruby-version: '4.0.5'
           bundler-cache: true
 
       - name: Replace placeholder files with original files
