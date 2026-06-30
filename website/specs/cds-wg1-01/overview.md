@@ -4,11 +4,11 @@ nav: specs
 title: CDS-WG1 - 01 Server Metadata - Overview
 meta_description: Linux Foundation Energy - Connected Data Specifications (CDS) - Registration Working Group (WG1) - Specifications - cds-wg1-01 - Server Metadata - Overview
 ---
-[Home]({{ "/" | relative_url }}) / [Specifications]({{ "/specs" | relative_url }}) / [`cds-wg1-01` - Server Metadata]({{ "/specs/cds-wg1-01" | relative_url }}) / Overview
+[Home]({{ "/" | relative_url }}) / [Specifications]({{ "/specs" | relative_url }}) / [`CDS-WG1-01` - Server Metadata]({{ "/specs/cds-wg1-01" | relative_url }}) / Overview
 
 # Server Metadata - Overview
 
-This is a summary overview of [`cds-wg1-01`]({{ "/specs/cds-wg1-01" | relative_url }}), which describes how utility and other central entity servers ("Servers") provide a structured reference of information about them, the functionality they offer, and how other entities ("Clients") can interoperate with them.
+This is a summary overview of [`CDS-WG1-01`]({{ "/specs/cds-wg1-01" | relative_url }}), which describes how utility and other central entity servers ("Servers") provide a structured reference of information about them, the functionality they offer, and how other entities ("Clients") can interoperate with them.
 
 **NOTE:** Utility and other central entity servers ("Servers") are not always run by utilities themselves.
 They could be other types of energy companies, such as electric retailers or community choice aggregators (CCAs).
@@ -23,7 +23,7 @@ For external entities needing to access data or functionality, an efficient mean
 ## Metadata Endpoint <a id="metadata-endpoint" href="#metadata-endpoint" class="permalink">🔗</a>
 
 Server metedata is provided under the [well-known url](https://datatracker.ietf.org/doc/html/rfc8615) `"/.well-known/cds-server-metadata.json`.
-The response is a [structured object]({{ "/specs/cds-wg1-01" | relative_url }}#metadata-object-format) containing information about the server, what functionality it offers, and how to interoperate with it.
+The response is a [structured object]({{ "/specs/cds-wg1-01/latest" | relative_url }}#metadata-object-format) containing information about the server, what functionality it offers, and how to interoperate with it.
 
 #### Metadata Example <a id="metadata-example" href="#metadata-example" class="permalink">🔗</a>
 ```
@@ -64,7 +64,7 @@ Content-Type: application/json;charset=UTF-8
 
 ## Coverage Endpoint <a id="coverage-endpoint" href="#coverage-endpoint" class="permalink">🔗</a>
 
-This specification also defines a `coverage` capability that adds the [Coverage Endpoint]({{ "/specs/cds-wg1-01" | relative_url }}#coverage-endpoint) for Servers to offer a way to list the covered geographic territories or logical groupings for which they offer the listed capabilities in a structured format.
+This specification also defines a `coverage` capability that adds the [Coverage Endpoint]({{ "/specs/cds-wg1-01/latest" | relative_url }}#coverage-endpoint) for Servers to offer a way to list the covered geographic territories or logical groupings for which they offer the listed capabilities in a structured format.
 
 #### Coverage Example <a id="coverage-example" href="#coverage-example" class="permalink">🔗</a>
 ```
@@ -116,7 +116,5 @@ Content-Type: application/json;charset=UTF-8
 
 ---
 
-# Other Drafts <a id="other-drafts" href="#other-drafts" class="permalink">🔗</a>
-
-* Maintainer's draft: [[Website](https://daniel-roesler.github.io/CDS-Registration/specs/cds-wg1-01/overview)] [[Code](https://github.com/daniel-roesler/CDS-Registration/blob/main/website/specs/cds-wg1-01/overview.md)]
+Next: [Read the specification (latest version)]({{ "/specs/cds-wg1-01/latest" | relative_url }})
 

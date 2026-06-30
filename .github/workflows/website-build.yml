@@ -16,13 +16,13 @@ jobs:
     steps:
 
       - name: Checkout main branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           ref: main
           path: main-branch
 
       - name: Checkout gh-pages branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           ref: gh-pages
           path: gh-pages-branch
@@ -30,33 +30,20 @@ jobs:
       - name: Setup ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.0'
+          ruby-version: '4.0.5'
           bundler-cache: true
 
       - name: Replace placeholder files with original files
         run: |
-          # set source and website directories
-          export WEBSITE_DIR="${{ github.workspace }}/main-branch/website/_includes/spec_copies"
-          export SOURCE_DIR="${{ github.workspace }}/main-branch/specifications"
-          
-          # remove any existing placeholder files
-          find \
-            $WEBSITE_DIR \
-            -type f \
-            -path "$WEBSITE_DIR/placeholder_*.md" \
-          | xargs -I% \
-            rm %
-          
           # copy original files to website directory
-          find \
-            $SOURCE_DIR \
-            -type f \
-            -path "$SOURCE_DIR/*.md" \
-            -not -path "*/README.md" \
-            -printf "%f\n" \
-          | xargs -I% \
-            cp $SOURCE_DIR/% $WEBSITE_DIR/placeholder_%
-          
+          cp \
+            ${{ github.workspace }}/main-branch/specifications/cds-wg1-01/dev/cds-wg1-01-dev.md \
+            ${{ github.workspace }}/main-branch/website/_includes/spec_copies/placeholder_cds-wg1-01-dev.md
+
+          cp \
+            ${{ github.workspace }}/main-branch/specifications/cds-wg1-02/dev/cds-wg1-02-dev.md \
+            ${{ github.workspace }}/main-branch/website/_includes/spec_copies/placeholder_cds-wg1-02-dev.md
+
           # update specifications source base url with current repo and branch
           echo "github_specs_base_url: \"https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/specifications\"" \
             >> ${{ github.workspace }}/main-branch/website/_config.yml

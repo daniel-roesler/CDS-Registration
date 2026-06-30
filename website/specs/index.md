@@ -10,8 +10,8 @@ meta_description: Linux Foundation Energy - Connected Data Specifications (CDS) 
 
 Below are the list of specifications this working group maintains.
 
-* `CDS-WG1-01` - Server Metadata [[Overview]({{ "/specs/cds-wg1-01/overview" | relative_url }})] [[Specification]({{ "/specs/cds-wg1-01" | relative_url }})] `(status: draft)`
-* `CDS-WG1-02` - Client Registration [[Overview]({{ "/specs/cds-wg1-02/overview" | relative_url }})] [[Specification]({{ "/specs/cds-wg1-02" | relative_url }})] `(status: draft)`
+* [`CDS-WG1-01` - Server Metadata]({{ "/specs/cds-wg1-01" | relative_url }}) `(status: draft)`
+* [`CDS-WG1-02` - Client Registration]({{ "/specs/cds-wg1-02" | relative_url }}) `(status: draft)`
 
 If you would like to contribute to these specifications, please see our docs on [Contributing]({{ "/" | relative_url }}#contributing) and [Design Principles]({{ "specs/design-principles" | relative_url }}).
 
