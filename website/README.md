@@ -19,8 +19,8 @@ cd website/
 * Copy the specifications from the base repo folder to the website include folder.
 
 ```
-cp ../specifications/cds-wg1-01.md _includes/spec_copies/placeholder_cds-wg1-01.md
-cp ../specifications/cds-wg1-02.md _includes/spec_copies/placeholder_cds-wg1-02.md
+cp ../specifications/cds-wg1-01/dev/cds-wg1-01-dev.md _includes/spec_copies/placeholder_cds-wg1-01-dev.md
+cp ../specifications/cds-wg1-02/dev/cds-wg1-02-dev.md _includes/spec_copies/placeholder_cds-wg1-02-dev.md
 ```
 
 * Run the jekyll server, which builds the website and starts serving it on https://localhost:4000/
@@ -44,13 +44,13 @@ The following is an example command line loop to run that watches for changes, t
 ```
 # via linux terminal in the repo root directory
 
-cp specifications/cds-wg1-01.md website/_includes/spec_copies/placeholder_cds-wg1-01.md
-cp specifications/cds-wg1-02.md website/_includes/spec_copies/placeholder_cds-wg1-02.md
+cp specifications/cds-wg1-01/dev/cds-wg1-01-dev.md website/_includes/spec_copies/placeholder_cds-wg1-01-dev.md
+cp specifications/cds-wg1-02/dev/cds-wg1-02-dev.md website/_includes/spec_copies/placeholder_cds-wg1-02-dev.md
 
 while true; do
-    while inotifywait -e close_write specifications/cds-wg1-01.md specifications/cds-wg1-02.md; do
-        read -p "pause" -t 0.3 || cp specifications/cds-wg1-01.md website/_includes/spec_copies/placeholder_cds-wg1-01.md;
-        read -p "pause" -t 0.3 || cp specifications/cds-wg1-02.md website/_includes/spec_copies/placeholder_cds-wg1-02.md;
+    while inotifywait --recursive --include ".+\.md" --event modify --event close_write specifications/; do
+        read -p "pause" -t 0.3 || cp specifications/cds-wg1-01/dev/cds-wg1-01-dev.md website/_includes/spec_copies/placeholder_cds-wg1-01-dev.md;
+        read -p "pause" -t 0.3 || cp specifications/cds-wg1-02/dev/cds-wg1-02-dev.md website/_includes/spec_copies/placeholder_cds-wg1-02-dev.md;
     done;
 done
 ```
