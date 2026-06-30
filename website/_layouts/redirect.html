@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
     {% if page.relative_url %}
         {% assign to_url = page.relative_url | absolute_url %}
@@ -7,11 +8,15 @@
     <head>
         <meta charset="utf-8">
         <link rel="canonical" href="{{ to_url }}">
-        <meta http-equiv="refresh" content="0;url={{ to_url }}">
-        <script>window.location.href = "{{ to_url }}";</script>
     </head>
     <body>
-        This page has moved to <a href='{{ to_url }}'>{{ to_url }}</a> (Redirecting...)
+        <noscript>
+            This page has moved to <a href='{{ to_url }}'>{{ to_url }}</a>
+        </noscript>
+        <div id="redirectMessage"></div>
+        <script>
+            document.getElementById("redirectMessage").innerHTML = "This page has moved to <a href='{{ to_url }}'>{{ to_url }}</a> (Redirecting...)";
+            window.location.href = "{{ to_url }}" + window.location.search + window.location.hash;  // include GET params and fragments
+        </script>
     </body>
 </html>
-
