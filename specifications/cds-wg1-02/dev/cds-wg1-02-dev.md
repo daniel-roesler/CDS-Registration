@@ -2482,23 +2482,23 @@ Content-Disposition: attachment; filename="DR_API_docs_v1.0.pdf"
 
 <a id="ref-cds-wg1-01" href="#ref-cds-wg1-01" class="permalink">🔗</a>
 `CDS-WG1-01` - "Server Metadata", CDS-WG1-01, LF Energy Standards and Specifications (LFESS),  
-[https://cds-registration.lfenergy.org/specs/cds-wg1-01/](https://cds-registration.lfenergy.org/specs/cds-wg1-01/)
+[https://cds-registration.lfenergy.org/specs/cds-wg1-01/latest](https://cds-registration.lfenergy.org/specs/cds-wg1-01/latest)
 
 <a id="ref-cds-wg1-01-metadata-endpoint" href="#ref-cds-wg1-01-metadata-endpoint" class="permalink">🔗</a>
 `CDS-WG1-01 Section 3` - Section 3. Metadata Endpoint, "Server Metadata", CDS-WG1-01, LF Energy Standards and Specifications (LFESS),  
-[https://cds-registration.lfenergy.org/specs/cds-wg1-01/#metadata-endpoint](https://cds-registration.lfenergy.org/specs/cds-wg1-01/#metadata-endpoint)
+[https://cds-registration.lfenergy.org/specs/cds-wg1-01/latest#metadata-endpoint](https://cds-registration.lfenergy.org/specs/cds-wg1-01/latest#metadata-endpoint)
 
 <a id="ref-cds-wg1-01-metadata-object" href="#ref-cds-wg1-01-metadata-object" class="permalink">🔗</a>
 `CDS-WG1-01 Section 3.2` - Section 3.2. Metadata Object Format, "Server Metadata", CDS-WG1-01, LF Energy Standards and Specifications (LFESS),  
-[https://cds-registration.lfenergy.org/specs/cds-wg1-01/#metadata-object-format](https://cds-registration.lfenergy.org/specs/cds-wg1-01/#metadata-object-format)
+[https://cds-registration.lfenergy.org/specs/cds-wg1-01/latest#metadata-object-format](https://cds-registration.lfenergy.org/specs/cds-wg1-01/latest#metadata-object-format)
 
 <a id="ref-cds-wg1-01-server-capabilities" href="#ref-cds-wg1-01-server-capabilities" class="permalink">🔗</a>
 `CDS-WG1-01 Section 3.4` - Section 3.4. Server Capabilities, "Server Metadata", CDS-WG1-01, LF Energy Standards and Specifications (LFESS),  
-[https://cds-registration.lfenergy.org/specs/cds-wg1-01/#server-capabilities](https://cds-registration.lfenergy.org/specs/cds-wg1-01/#server-capabilities)
+[https://cds-registration.lfenergy.org/specs/cds-wg1-01/latest#server-capabilities](https://cds-registration.lfenergy.org/specs/cds-wg1-01/latest#server-capabilities)
 
 <a id="ref-cds-wg1-01-coverage-entry" href="#ref-cds-wg1-01-coverage-entry" class="permalink">🔗</a>
 `CDS-WG1-01 Section 4.3` - Section 4.3. Coverage Entry Format, "Server Metadata", CDS-WG1-01, LF Energy Standards and Specifications (LFESS),  
-[https://cds-registration.lfenergy.org/specs/cds-wg1-01/#coverage-entry-format](https://cds-registration.lfenergy.org/specs/cds-wg1-01/#coverage-entry-format)
+[https://cds-registration.lfenergy.org/specs/cds-wg1-01/latest#coverage-entry-format](https://cds-registration.lfenergy.org/specs/cds-wg1-01/latest#coverage-entry-format)
 
 <a id="ref-iana-tz" href="#ref-iana-tz" class="permalink">🔗</a>
 `IANA TZ` - "Time Zone Database", Internet Assigned Numbers Authority (IANA),  
