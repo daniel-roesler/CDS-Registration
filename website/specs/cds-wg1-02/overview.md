@@ -2,7 +2,7 @@
 layout: base
 nav: specs
 title: CDS-WG1 - 02 Client Registration - Overview
-meta_description: Linux Foundation Energy - Connected Data Specification (CDS) - Registration Working Group (WG1) - Specifications - cds-wg1-02 - Client Registration - Overview
+meta_description: Linux Foundation Energy - Connected Data Specifications (CDS) - Registration Working Group (WG1) - Specifications - CDS-WG1-02 - Client Registration - Overview
 ---
 [Home]({{ "/" | relative_url }}) / [Specifications]({{ "/specs" | relative_url }}) / [`CDS-WG1-02` - Client Registration]({{ "/specs/cds-wg1-02" | relative_url }}) / Overview
 

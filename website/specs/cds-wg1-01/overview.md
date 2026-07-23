@@ -2,7 +2,7 @@
 layout: base
 nav: specs
 title: CDS-WG1 - 01 Server Metadata - Overview
-meta_description: Linux Foundation Energy - Connected Data Specifications (CDS) - Registration Working Group (WG1) - Specifications - cds-wg1-01 - Server Metadata - Overview
+meta_description: Linux Foundation Energy - Connected Data Specifications (CDS) - Registration Working Group (WG1) - Specifications - CDS-WG1-01 - Server Metadata - Overview
 ---
 [Home]({{ "/" | relative_url }}) / [Specifications]({{ "/specs" | relative_url }}) / [`CDS-WG1-01` - Server Metadata]({{ "/specs/cds-wg1-01" | relative_url }}) / Overview
 
