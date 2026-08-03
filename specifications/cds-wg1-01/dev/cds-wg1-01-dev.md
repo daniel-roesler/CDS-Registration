@@ -86,7 +86,7 @@ These entities can include, but are not limited to, building management applicat
 Servers supporting this specification SHALL offer one or more HTTPS URLs from which a Client can perform a GET request to retrieve Server metadata, and the Server will respond with the Server's metadata JSON object.
 
 For successful responses, Servers MUST respond with a "200 OK" Status Code and body containing a JSON object that is formatted as defined in [Metadata Object Format](#metadata-object-format).
-Cache-optimized responses, such as "304 Not Modified", to Client requests with cached value headers, such as `If-None-Match`, is also acceptable.
+Cache-optimized responses, such as "304 Not Modified", to Client requests with cached value headers, such as `If-None-Match`, are also acceptable.
 
 For invalid requests and error responses, Servers MUST respond with the appropriate Response Code for the type of issue or error (e.g. "503 Service Unavailable" if the Server is temporarily down for maintenance).
 
@@ -121,7 +121,7 @@ These organizational complexities and legal structures can make it difficult to 
 
 When utilities and other similar entities wish to publicly provide multiple metadata objects that more cleanly define the metadata and capabilities for their entity, their Server MUST publish a single metadata endpoint at the [well-known URI](metadata-well-known-uri) and within that metadata object include an array of `related_metadata` URLs that link the Client to the various subdivided or related metadata endpoints.
 
-If capabilities are available by a parent organization across a group of subsidiary utilities or entities (e.g. a holding company offers universal customer data access across many of their utility operating company territories), the parent organization MAY publish a single metatdata object with coverage entries that list the individual subsidiary utility or entity coverage entries.
+If capabilities are available by a parent organization across a group of subsidiary utilities or entities (e.g. a holding company offers universal customer data access across many of their utility operating company territories), the parent organization MAY publish a single metadata object with coverage entries that list the individual subsidiary utility or entity coverage entries.
 
 It is acceptable for the initial well-known metadata endpoint object to include a minimal or empty array of `capabilities`, as it represents the entire entity, and leave enumerating the `capabilities` to the related metadata endpoints.
 
@@ -130,8 +130,8 @@ It is acceptable for the initial well-known metadata endpoint object to include 
 Server capabilities are what specific interoperability or informational capabilities a Server is providing.
 The following list of strings are an enumerated set of capabilities that are defined by default in this specification.
 
-* `coverage` - The Server is providing coverage details related to itself as it relates the other listed capabilities.
-If included, a `coverage` value is REQUIRED in the metadata object.
+* `coverage` - The Server is providing coverage details related to itself as it relates to the other listed capabilities.
+If the `coverage` capability is included, the `coverage` field is REQUIRED in the metadata object.
 
 Other specifications that define interoperability or informational capabilities for utilities and other entities are encouraged to define an extension that adds their capability as a string to the above list.
 See the [Extensions](#Extensions) section for details on how to extend this list of Server capabilities.
@@ -187,7 +187,7 @@ The following values are included in the default list available in coverage entr
 * `map_content_type` - _[MIME type](#mime-type)_ - (OPTIONAL) Content-Type format of the `map_resource`. This field is REQUIRED if `map_resource` is provided.
 * `geojson_resource` - _[URL](#url)_ - (OPTIONAL) Link to a GeoJSON object mapping the coverage territory.
   If provided, the linked GeoJSON object MUST use the default WGS 84 coordinate system, as described in the GeoJSON specification ([Section 4](#ref-geojson-coords)).
-  If Servers want to provide shapefiles or other geometries as GeoJSON data in coordinate systems other than WSG 84, they MUST [extend](#extensions) this specification to add another field in the Coverage Entry object besides `geojson_resource` so that Clients do not misinterpret the linked GeoJSON object as being in the WSG 84 coordinate system.
+  If Servers want to provide shapefiles or other geometries as GeoJSON data in coordinate systems other than WGS 84, they MUST [extend](#extensions) this specification to add another field in the Coverage Entry object besides `geojson_resource` so that Clients do not misinterpret the linked GeoJSON object as being in the WSG 84 coordinate system.
 
 When `type` is `geographic`, one or both of `map_resource` and `geojson_resource` MUST be provided.
 
@@ -200,7 +200,7 @@ Many utilities have different geographic or logical coverage for their different
 The following list of strings are an enumerated set of coverage entry types that are valid `type` values in the coverage entry object.
 
 * `geographic` - The coverage entry represents a geographic area (e.g. electric service territory).
-* `logical` - The coverage entry represents a non-geographic logical grouping (e.g. a set of commerical customers).
+* `logical` - The coverage entry represents a non-geographic logical grouping (e.g. a set of commercial customers).
 
 ### 4.5. Capability Roles <a id="capability-roles" href="#capability-roles" class="permalink">🔗</a>
 
@@ -208,24 +208,24 @@ Capability Roles disclose the Server's role in the provision of capabilities cov
 The following list of strings are an enumerated set of role types that MAY be set as the `role` value in the coverage entry object.
 
 * `authoritative` - The Server represents the authoritative entity for the capabilities covered by the coverage entry (e.g. the utility itself is providing the capability).
-  Only one Server SHOULD mark itself as `authoritative` for the same coverage and capability, to prevent any abiguity for Clients as to a "source of truth".
-* `official` - The Server represents a contractually obligated or government mandated entity that has an official connection to the `authoritative` entity and is offering funcational capabilities for the `direct` entity in an official capacity (e.g. a state-wide data hub offering customer data access).
+  Only one Server SHOULD mark itself as `authoritative` for the same coverage and capability, to prevent any ambiguity for Clients as to a "source of truth".
+* `official` - The Server represents a contractually obligated or government mandated entity that has an official connection to the `authoritative` entity and is offering functional capabilities for the `authoritative` entity in an official capacity (e.g. a state-wide data hub offering customer data access).
   Multiple Servers could mark themselves as `official` for the same coverage and capability if the `authoritative` entity has multiple implementations of capabilities with officially designated service providers or data hubs.
-* `aggregator` - The Server represents an external entity that offers capabilities by proxy and does not have an official agreement with the `direct` entity (e.g. a service provider that aggregates many utility territory capabilities).
+* `aggregator` - The Server represents an external entity that offers capabilities by proxy and does not have an official agreement with the `authoritative` entity (e.g. a service provider that aggregates many utility territory capabilities).
 
 ### 4.6. Infrastructure Types <a id="infrastructure-types" href="#infrastructure-types" class="permalink">🔗</a>
 
 Infrastructure types are general categories of utility and energy grid entities that are likely to need to provide access to metadata and capabilities under this specification.
 The following list of strings are an enumerated set of infrastructure types that MAY be included in the `infrastructure_types` array of values in the coverage entry object.
 
-* `distribution_utility` - A electric, natural gas, and/or water utility that distributes the utility service to the end customer (e.g. "who maintains the wires to your house").
+* `distribution_utility` - An electric, natural gas, and/or water utility that distributes the utility service to the end customer (e.g. "who maintains the wires to your house").
 * `metering_provider` - An entity that maintains the utility metering infrastructure and/or reads end customer meters (e.g. "who reads your meter").
 * `supplier` - An energy supplier for the end customer (e.g. "who you buy power from").
 * `generator` - An entity that operates energy generation assets (e.g. a power plant owner and/or operator).
 * `market_operator` - An entity that operates an energy or grid market (e.g. a wholesale energy trading system).
-* `distribution_service_operator` - Commonly called a "DSO", this is a control entity manages one or more distribution grids.
-* `transmission_service_operator` - Commonly called a "TSO" or Interstate Service Operator ("ISO"), this is a control entity manages one or more distribution grids.
-* `service_provider` - An entity that provides customer, utilty, grid, or other services (e.g. a virtual power plant operator).
+* `distribution_system_operator` - Commonly called a "DSO", this is a control entity manages one or more distribution grids.
+* `transmission_system_operator` - Commonly called a "TSO", Independent System Operator ("ISO"), or Regional Transmission Organization ("RTO"), this is a control entity that manages one or more transmission grids.
+* `service_provider` - An entity that provides customer, utility, grid, or other services (e.g. a virtual power plant operator).
 
 ### 4.7. Commodity Types <a id="commodity-types" href="#commodity-types" class="permalink">🔗</a>
 
@@ -261,8 +261,8 @@ Other specifications MAY extend this specification to allow for seamless expansi
 When extending the object format, other specifications MUST reference the relevant section in this specification and denote that they are extending the object to add a new named field.
 The additional field MUST be specified with a general description, the field value's format, and whether the field is REQUIRED or OPTIONAL.
 
-The enumerated lists for valid [Server Capabilities](#server-capabilities), [Coverage Listing Filters](#coverage-listing-filters), [Coverage Entry Types](#coverage-entry-types), [Capability Roles](#capability-roles), [Infrastructure Types](#infrastructure-types), [Commodity Types](#commodity-types), and  MAY be extended by other specifications to allow for additional strings to be valid.
-When extending enumerated list, other specifications MUST reference the relevant section in this specification and denote that they are extending the list to add a new string.
+The enumerated lists for valid [Server Capabilities](#server-capabilities), [Coverage Listing Filters](#coverage-listing-filters), [Coverage Entry Types](#coverage-entry-types), [Capability Roles](#capability-roles), [Infrastructure Types](#infrastructure-types), and [Commodity Types](#commodity-types) MAY be extended by other specifications to allow for additional strings to be valid.
+When extending enumerated lists, other specifications MUST reference the relevant section in this specification and denote that they are extending the list to add a new string.
 The additional string MUST be specified with a description of what that string means when it is included in the relevant array.
 
 To facilitate forwards compatibility, Clients MUST ignore unknown or undocumented object fields and enumerated strings.
@@ -294,7 +294,7 @@ Content-Type: application/json;charset=UTF-8
     "documentation": "https://example.com/data-access/docs",
     "support": "https://example.com/developers/contact",
     "capabilities": [
-        "coverage",
+        "coverage"
     ],
 
     "coverage": "https://static.example.com/cds-coverage.json"
@@ -350,7 +350,7 @@ Content-Type: application/json;charset=UTF-8
 
 This specification involves a utility or other entity publishing details about itself.
 Server operators MUST review all material published in the metadata and coverage endpoints and make sure it is information that is allowed to be made available to Clients.
-This is especially true for [well-known metadata endpoints](#metadata-well-known-uri), as not only are these endpoints public, they are intentionally published with a URL structure that allows them to auto-discovered by Clients.
+This is especially true for [well-known metadata endpoints](#metadata-well-known-uri), as not only are these endpoints public, they are intentionally published with a URL structure that allows them to be auto-discovered by Clients.
 
 ### 8.1. Restricted Access <a id="restricted-access" href="#restricted-access" class="permalink">🔗</a>
 
@@ -362,13 +362,13 @@ For example, if a Server is providing the metadata endpoint as part of an existi
 [Well-known metadata endpoints](#metadata-well-known-uri) MUST NOT require Client authentication to access, since these metadata endpoints are intended to be published publicly.
 
 Resources provided as URLs in metadata and coverage objects MUST be accessible under at least the same level of authentication requirements as accessing the metadata or coverage objects themselves.
-For example, if a coverage entry object requires cookie-based authentication to access, then and linked the GeoJSON object must also be accessible using the same cookie-based authentication.
-Servers MAY also choose to also make those resources available publicly, where any included authentication in the request is ignored.
+For example, if a coverage entry object requires cookie-based authentication to access, then linked GeoJSON objects MUST also be accessible using the same cookie-based authentication.
+Servers MAY choose to also make those resources available publicly, where any included authentication in the request is ignored.
 If the metadata or coverage object is made available publicly, then the linked resource must also be accessible publicly.
 
 ### 8.2. Rate Limiting <a id="rate-limiting" href="#rate-limiting" class="permalink">🔗</a>
 
-For [well-known metadata endpoints](#metadata-well-known-uri) and other publicly accessible metadata and coverage endpoints, Serves SHOULD configure rate limiting restrictions so that bots and misconfigured scripts will not flood and overwhelm the endpoints with requests, while still allowing legitimate and low-volume requests have access to the endpoints.
+For [well-known metadata endpoints](#metadata-well-known-uri) and other publicly accessible metadata and coverage endpoints, Servers SHOULD configure rate limiting restrictions so that bots and misconfigured scripts will not flood and overwhelm the endpoints with requests, while still allowing legitimate and low-volume requests have access to the endpoints.
 
 ## 9. References <a id="references" href="#references" class="permalink">🔗</a>
 
@@ -417,7 +417,7 @@ For [well-known metadata endpoints](#metadata-well-known-uri) and other publicly
 [https://datatracker.ietf.org/doc/html/rfc6838](https://datatracker.ietf.org/doc/html/rfc6838)
 
 <a id="ref-iso3166" href="#ref-iso3166" class="permalink">🔗</a>
-`ISO 3166` - "Media Type Specifications and Registration Procedures", ISO 3166, International Organization for Standardization (ISO),
+`ISO 3166` - "Country Codes", ISO 3166, International Organization for Standardization (ISO),
 [https://www.iso.org/iso-3166-country-codes.html](https://www.iso.org/iso-3166-country-codes.html)
 
 <a id="ref-bcp14" href="#ref-bcp14" class="permalink">🔗</a>
