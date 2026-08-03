@@ -777,7 +777,7 @@ Client Object `cds_status` values MUST be one of the following:
 
 ### 5.3. Listing Client Objects <a id="clients-list" href="#clients-list" class="permalink">🔗</a>
 
-Clients may request to list Client Objects that they have access to by making an HTTPS [GET](#get) request, authenticated with a valid Bearer `access_token` scoped to the `cds_client_admin` scope, to the `cds_clients_api` URL included in the [Authorization Server Metadata](#auth-server-metadata-format).
+Clients MAY request to list Client Objects that they have access to by making an HTTPS [GET](#get) request, authenticated with a valid Bearer `access_token` scoped to the `cds_client_admin` scope, to the `cds_clients_api` URL included in the [Authorization Server Metadata](#auth-server-metadata-format).
 The Client Object listing request responses are formatted as JSON objects and contain the following named values.
 
 * `clients` - _Array[[Client](#client-format)]_ - (REQUIRED) A list of Client Objects to which the requesting `access_token` is scoped to have access.
@@ -996,7 +996,7 @@ Message Attachment objects are formatted as JSON objects and contain the followi
 
 ### 6.8. Listing Messages <a id="messages-list" href="#messages-list" class="permalink">🔗</a>
 
-Clients may request to list Message objects that they have access to by making an HTTPS [GET](#get) request, authenticated with a valid Bearer `access_token` scoped to the `cds_client_admin` scope, to the `cds_messages_api` URL included in the [Authorization Server Metadata](#auth-server-metadata-format).
+Clients MAY request to list Message objects that they have access to by making an HTTPS [GET](#get) request, authenticated with a valid Bearer `access_token` scoped to the `cds_client_admin` scope, to the `cds_messages_api` URL included in the [Authorization Server Metadata](#auth-server-metadata-format).
 The Message listing request responses are formatted as JSON objects and contain the following named values.
 
 * `outstanding` - _Array[[ClientMessage](#message-format)]_ - (REQUIRED) A list of Messages where the `status` is `open` or `pending`.
@@ -1079,7 +1079,7 @@ The URL to be used to send [GET](#get) requests for retrieving individual Messag
 
 ### 6.11. Modifying Messages <a id="messages-modify" href="#messages-modify" class="permalink">🔗</a>
 
-Clients may modify fields in a Messages object by sending an authenticated HTTPS [PATCH](#patch) request to the Message `uri` endpoint with the body of the request formatted a JSON object.
+Clients MAY modify fields in a Messages object by sending an authenticated HTTPS [PATCH](#patch) request to the Message `uri` endpoint with the body of the request formatted a JSON object.
 The fields included in JSON object are the fields the Client intends to modify with the submitted fields' values.
 If a field is not included in the [PATCH](#patch) request, the Server MUST leave the field unmodified from its current value.
 
@@ -1128,7 +1128,7 @@ Credential object `type` values MUST be one of the following:
 
 ### 7.3. Listing Credentials <a id="credentials-list" href="#credentials-list" class="permalink">🔗</a>
 
-Clients may request to list Credential objects that they have access to by making an HTTPS [GET](#get) request, authenticated with a valid Bearer `access_token` scoped to the `cds_client_admin` scope, to the `cds_credentials_api` URL included in the [Authorization Server Metadata](#auth-server-metadata-format).
+Clients MAY request to list Credential objects that they have access to by making an HTTPS [GET](#get) request, authenticated with a valid Bearer `access_token` scoped to the `cds_client_admin` scope, to the `cds_credentials_api` URL included in the [Authorization Server Metadata](#auth-server-metadata-format).
 The Credential listing request responses are formatted as JSON objects and contain the following named values.
 
 * `credentials` - _Array[[ScopeCredential](#credentials-format)]_ - (REQUIRED) A list of Credentials to which the requesting `access_token` is scoped to have access.
@@ -1167,7 +1167,7 @@ For valid [POST](#post) requests from Clients, Servers MUST respond with a `201 
 
 ### 7.6. Modifying Credentials <a id="credentials-modify" href="#credentials-modify" class="permalink">🔗</a>
 
-Clients may modify fields in the Credentials API by sending an authenticated HTTPS [PATCH](#patch) request to the Credential `uri` endpoint with the body of the request formatted a JSON object.
+Clients MAY modify fields in the Credentials API by sending an authenticated HTTPS [PATCH](#patch) request to the Credential `uri` endpoint with the body of the request formatted a JSON object.
 The fields included in JSON object are the fields the Client intends to update with the submitted fields' values.
 If a field is not included in the [PATCH](#patch) request, the Server MUST leave the field unmodified from its current value.
 
@@ -1292,7 +1292,7 @@ To accomplish this, this specification extends the OAuth token successful respon
 
 ### 8.5. Listing Grants <a id="grants-list" href="#grants-list" class="permalink">🔗</a>
 
-Clients may request to list Grant objects that they have access to by making an HTTPS [GET](#get) request, authenticated with a valid Bearer `access_token` scoped to the `cds_client_admin` scope, to the `cds_grants_api` URL included in the [Authorization Server Metadata](#auth-server-metadata-format).
+Clients MAY request to list Grant objects that they have access to by making an HTTPS [GET](#get) request, authenticated with a valid Bearer `access_token` scoped to the `cds_client_admin` scope, to the `cds_grants_api` URL included in the [Authorization Server Metadata](#auth-server-metadata-format).
 The Grant listing request responses are formatted as JSON objects and contain the following named values.
 
 * `grants` - _Array[[Grant](#grant-format)]_ - (REQUIRED) A list of Grants to which the requesting `access_token` is scoped to have access.
@@ -1322,7 +1322,7 @@ The URL to be used to send [GET](#get) requests for retrieving individual Grant 
 
 ### 8.7. Modifying Grants <a id="grants-modify" href="#grants-modify" class="permalink">🔗</a>
 
-Clients may modify fields in the Grants API by sending an authenticated HTTPS [PATCH](#patch) request to the Grant `uri` endpoint with the body of the request formatted a JSON object.
+Clients MAY modify fields in the Grants API by sending an authenticated HTTPS [PATCH](#patch) request to the Grant `uri` endpoint with the body of the request formatted a JSON object.
 The fields included in JSON object are the fields the Client intends to update with the submitted fields' values.
 If a field is not included in the [PATCH](#patch) request, the Server MUST leave the field unmodified from its current value.
 
@@ -1371,7 +1371,11 @@ Server-Provided File objects are metadata for arbitrary files made accessible by
 
 ### 9.2. Listing Server-Provided Files <a id="server-provided-files-list" href="#server-provided-files-list" class="permalink">🔗</a>
 
-Clients may request to list Server-Provided File objects that they have access to by making an HTTPS [GET](#get) request to the `cds_server_provided_files_api` URL included in the [Authorization Server Metadata](#auth-server-metadata-format) and authenticated with a valid Bearer `access_token` scoped to a [Grant Admin](#scopes-grant-admin) with `authorization_details` entries listing `client_id` and `grant_id` values that are for Grants that have `enabled_scope` values which are permitted to be accessed by that Grant Admin.
+Clients MAY request to list Server-Provided File objects that they have access to by making an HTTPS [GET](#get) request to the `cds_server_provided_files_api` URL included in the [Authorization Server Metadata](#auth-server-metadata-format).
+The request MUST include an `Authorization` header that has a valid Bearer `access_token` that is scoped to a [Grant Admin](#scopes-grant-admin) Grant.
+The Grant MUST have a `client_id` value that is equal to the Grantd Admin Client object that is referenced in a Server-Provided Files [Scope Description](#scope-descriptions-format) `grant_admin_scope` value.
+The Grant MUST have `enabled_authorization_details` entries listing `client_id` and `grant_id` values for Server-Provided Files Grants.
+The Server-Provided Files Grants MUST have `enabled_authorization_details` entries listing `file_id` values which specify which Server-Provided File objects are accessible by those Grants, and the list of Server-Provided File objects returned by this endpoint MUST be a subset of those objects.
 The Server-Provided File listing request responses are formatted as JSON objects and contain the following named values.
 
 * `files` - _Array[[ServerProvidedFile](#server-provided-files-format)]_ - (REQUIRED) A list of Server-Provided File objects to which the requesting `access_token` is scoped to have access.
@@ -1392,11 +1396,23 @@ Listings of Server-Provided File objects MUST be ordered in reverse chronologica
 
 ### 9.3. Retrieving Individual Server-Provided Files <a id="server-provided-files-get" href="#server-provided-files-get" class="permalink">🔗</a>
 
-The URL to be used to send [GET](#get) requests for retrieving individual Server-Provided File objects MUST be the Server-Provided File `uri` provided in the [Server-Provided File object](#server-provided-files-format) and authenticated with a valid Bearer `access_token` scoped to the `cds_grant_admin` scope with `authorization_details` entries listing `grant_id` values that are for Grants that include the relevant `file_id` and have a scope with a `type` value of `cds_server_provided_files`.
+The URL to be used to send [GET](#get) requests for retrieving individual Server-Provided File objects MUST be the Server-Provided File `uri` provided in the [Server-Provided File object](#server-provided-files-format).
+The request MUST include an `Authorization` header that has a valid Bearer `access_token` that is scoped to a [Grant Admin](#scopes-grant-admin) Grant.
+The Grant MUST have a `client_id` value that is equal to the Grantd Admin Client object that is referenced in a Server-Provided Files [Scope Description](#scope-descriptions-format) `grant_admin_scope` value.
+The Grant MUST have `enabled_authorization_details` entries listing `client_id` and `grant_id` values for Server-Provided Files Grants.
+The Server-Provided Files Grants MUST have `enabled_authorization_details` entries that include a `file_id` value that matches this individual Server-Provided File object `file_id` value.
+
+Responses for individual Server-Provided File object requests are the JSON formatted Server-Provided File object.
 
 ### 9.4. Downloading Server-Provided File Data <a id="server-provided-files-download" href="#server-provided-files-download" class="permalink">🔗</a>
 
-The URL to be used to send [GET](#get) requests for retrieving the raw data for an individual Server-Provided File MUST be the Server-Provided File `download_uri` provided in the [Server-Provided File object](#server-provided-files-format) and authenticated with a valid Bearer `access_token` scoped to the `cds_grant_admin` scope with `authorization_details` entries listing `grant_id` values that are for Grants that include the relevant `file_id` and have a scope with a `type` value of `cds_server_provided_files`.
+The URL to be used to send [GET](#get) requests for retrieving the raw data for an individual Server-Provided File MUST be the Server-Provided File `download_uri` provided in the [Server-Provided File object](#server-provided-files-format).
+The request MUST include an `Authorization` header that has a valid Bearer `access_token` that is scoped to a [Grant Admin](#scopes-grant-admin) Grant.
+The Grant MUST have a `client_id` value that is equal to the Grantd Admin Client object that is referenced in a Server-Provided Files [Scope Description](#scope-descriptions-format) `grant_admin_scope` value.
+The Grant MUST have `enabled_authorization_details` entries listing `client_id` and `grant_id` values for Server-Provided Files Grants.
+The Server-Provided Files Grants MUST have `enabled_authorization_details` entries that include a `file_id` value that matches this individual Server-Provided File object's `file_id` value.
+
+Responses for individual Server-Provided File download requests are the raw data for the Server-Provided File.
 
 ## 10. Extensions <a id="extensions" href="#extensions" class="permalink">🔗</a>
 
@@ -1438,7 +1454,7 @@ The functionality described in this specification is intended to be able to be i
 
 If [Authorization Server Metadata](#auth-server-metadata) is referenced in a public CDS Server Metadata Endpoint [[CDS-WG1-01 Section 3](#ref-cds-wg1-01-metadata-endpoint)], then the [Authorization Server Metadata](#auth-server-metadata) and [Client Registration Process](#client-registration-process) MUST also be public.
 
-Servers that wish to restrict access of by-default unauthenticated endpoints to certain Clients MUST configure well established authentication processes for Clients to ensure that only the approved Clients may access the restricted endpoint.
+Servers that wish to restrict access of by-default unauthenticated endpoints to certain Clients MUST configure well established authentication processes for Clients to ensure that only the approved Clients can access the restricted endpoint.
 This specification does not describe specifically how Servers will authenticate Clients for by-default unauthenticated endpoints, as these restricted access protocols are context dependent.
 For example, if a Server is providing a private Client Registration endpoint as part of an existing logged in portal, then they can use that logged in portal's session cookie to authenticate Client requests to the registration endpoint.
 
