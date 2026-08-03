@@ -240,9 +240,9 @@ In addition to the above additionally required set of OAuth Authorization Server
 
 * `response_types_supported` - _Array[[string](#string)]_ - (REQUIRED) The response types in this array MUST represent at least a union of all `response_types_supported` values contained in the `cds_scope_descriptions` objects.
   If there are other scopes in the `scopes_supported` list that do not have matching keys in the `cds_scope_descriptions` object, those scopes' response types MAY also be included in this list.
-* `grant_types_supported` - _Array[[string](#string)]_ - (REQUIRED) The response types in this array MUST represent at least a union of all `grant_types_supported` values contained in the `cds_scope_descriptions` objects.
+* `grant_types_supported` - _Array[[string](#string)]_ - (REQUIRED) The grant types in this array MUST represent at least a union of all `grant_types_supported` values contained in the `cds_scope_descriptions` objects.
   If there are other scopes in the `scopes_supported` list that do not have matching keys in the `cds_scope_descriptions` object, those scopes' grant types MAY also be included in this list.
-* `token_endpoint_auth_methods_supported` - _Array[[string](#string)]_ - (REQUIRED) The response types in this array MUST represent at least a union of all `token_endpoint_auth_methods_supported` values contained in the `cds_scope_descriptions` object.
+* `token_endpoint_auth_methods_supported` - _Array[[string](#string)]_ - (REQUIRED) The token endpoint authentication methods in this array MUST represent at least a union of all `token_endpoint_auth_methods_supported` values contained in the `cds_scope_descriptions` object.
   If there are other scopes in the `scopes_supported` list that do not have matching keys in the `cds_scope_descriptions` object, those scopes' token endpoint authorization methods MAY also be included in this list.
 
 In addition to OAuth capabilities included in the metadata object, this specification adds the following Connected Data Specifications (CDS) values:
@@ -266,7 +266,7 @@ In addition to OAuth capabilities included in the metadata object, this specific
 
 Scope functionality described by [Scope Description](#scope-descriptions-format) objects included in the `cds_scope_descriptions` object MUST be available for all of the scope's coverage, as described by the Scope Description's `coverages_supported` list, up to any limits specified in the scopes authorization details, as described by the Scope Description's `authorization_details_fields_supported` [Authorization Details Field Object's](#auth-details-fields-format) `maximum` and `minimum` values.
 For situations where the same scope is available for multiple groups of coverages and limits, multiple Scope Description entries with different `id` values MUST be included.
-For example, if a Server offers a scope that grants access to historical customer usage data, offering 24 months of usage history for electricity service contracts and and 12 months of history for natural gas service contracts, the Server MUST include two Scope Descriptions with different `id` values that include only the coverage and limits of that scope's functionality.
+For example, if a Server offers a scope that grants access to historical customer usage data, offering 24 months of usage history for electricity service contracts and 12 months of history for natural gas service contracts, the Server MUST include two Scope Descriptions with different `id` values that include only the coverage and limits of that scope's functionality.
 
 Other values not mentioned here but listed in specifications for the Authorization Server Metadata specification or other extensions MAY be included as described in their respective specifications.
 
@@ -277,7 +277,7 @@ This section defines scopes that MAY be included in a Server's `cds_scope_descri
 Extensions MAY define and Servers MAY include additional scopes to the below list of defined scopes, so long as they include [Scope Descriptions](#scope-descriptions-format) for the scopes in the `cds_scope_descriptions`.
 
 Extensions are RECOMMENDED to define additional scopes with their specification name or abbreviation as a prefix for the `type` and `id` values to prevent namespace collisions with other scopes defined by other extensions and Servers, such as `examplespec_*`.
-Server are RECOMMENDED to include their name or other relevant identifier as a prefix for the `type` and `id` values when adding additional scopes custom to their server, such as `examplepowercompany_*`.
+Servers are RECOMMENDED to include their name or other relevant identifier as a prefix for the `type` and `id` values when adding additional scopes custom to their server, such as `examplepowercompany_*`.
 
 Clients MUST use the `type` value, rather than `id` value when determining whether they are compatible with a scope, since `id` values can be any string.
 Clients MUST ignore any scopes in a Server's `scopes_supported` list for which the Client is not compatible.
@@ -318,7 +318,7 @@ The following are how the [Scope Descriptions](#scope-descriptions-format) field
 * `type` is `"cds_grant_admin"`.
 * `name` is `"Grant Admin"`.
 * `description` is `"This scope grants administrative access to previously created Grants."`.
-* `documentation` is a _[URL](#url)_ for the Server's documentation on the `cds_grant_admin` scope.
+* `documentation` is a _[URL](#url)_ for the Server's documentation on the Grant Admin scope.
   Servers MAY set the URL to an online publicly-available copy of this specification as adequate documentation for this scope.
 * `registration_requirements` is `[]`.
 * `registration_optional` is `[]`.
@@ -329,7 +329,7 @@ The following are how the [Scope Descriptions](#scope-descriptions-format) field
 * `coverages_supported` is `[]`.
 * `grant_admin_scope` is `null`.
 * `authorization_details_types_supported` is `["{id}"]`, where `{id}` is the Scope Description's `id` value.
-  Servers MUST treat an authorization details entries with a `type` value of the Scope Description's `id` value as overriding the Scope Description's `id` value in the token request's or Grant's `"scope"` string.
+  Servers MUST treat an authorization details entry with a `type` value of the Scope Description's `id` value as overriding the Scope Description's `id` value in the token request's or Grant's `"scope"` string.
 * `authorization_details_fields_supported` is a JSON array with the following two entries of [Authorization Details Field Objects](#auth-details-fields-format).
     * Client ID:
         * `id` is `client_id`.
@@ -337,7 +337,7 @@ The following are how the [Scope Descriptions](#scope-descriptions-format) field
         * `description` is `"The Client Object identifier for which the Grant is issued."`.
         * `documentation` is a _[URL](#url)_ for the Server's documentation on the `client_id` authorization details field.
           Servers MAY set the URL to an online publicly-available copy of this specification as adequate documentation for this authorization details field.
-        * `for_types` is `["cds_grant_admin"]`.
+        * `for_types` is `["{id}"]`, where `{id}` is the Scope Description's `id` value.
         * `format` is `string`.
         * `is_required` is `true`.
         * `default` is not included.
@@ -381,7 +381,7 @@ The following are how the [Scope Descriptions](#scope-descriptions-format) field
 * `name` is `"Server-Provided Files"` or starts with `"Server-Provided Files: "` and the Server appends a relevant name, in situations where there are multiple scopes with a `type` value of `cds_server_provided_files`.
   For example, if a Server offers two scopes where `type` value is `cds_server_provided_files`, one for security configurations and one for office paperwork pdfs, the `name` values for each scope could be `"Server-Provided Files: Security Configs"` and `"Server-Provided Files: Office Documents"`.
 * `description` is a short description of which types of files could be shared via this scope.
-  If the Server intends to share any type or arbitrary files via this scope, it is RECOMMENDED to set this value to `"This scope grants access to specific files that the Server wants make available to the Client."`.
+  If the Server intends to share any type of arbitrary files via this scope, it is RECOMMENDED to set this value to `"This scope grants access to specific files that the Server wants make available to the Client."`.
 * `documentation` is a _[URL](#url)_ for the Server's documentation on the `cds_server_provided_files` scope.
   Servers MAY set the URL to an online publicly-available copy of this specification as adequate documentation for this scope.
 * `registration_requirements` is `[]`.
@@ -393,7 +393,7 @@ The following are how the [Scope Descriptions](#scope-descriptions-format) field
 * `coverages_supported` is `[]`.
 * `grant_admin_scope` is `"{grant_admin_scope_id}"`, where `{grant_admin_scope_id}` is the scope value that can be used for issuing [Grant Admin](#scopes-grant-admin) access tokens to access Grants for this Server-Provided Files scope.
 * `authorization_details_types_supported` is `["{id}"]`, where `{id}` is the Scope Description's `id` value.
-  Servers MUST treat an authorization details entries with a `type` value of the Scope Description's `id` value as overriding the Scope Description's `id` value in the Grant's `"scope"` string.
+  Servers MUST treat an authorization details entry with a `type` value of the Scope Description's `id` value as overriding the Scope Description's `id` value in the Grant's `"scope"` string.
 * `authorization_details_fields_supported` is a JSON array with a single entry [Authorization Details Field Object](#auth-details-fields-format) with the following fields.
     * `id` is `file_id`.
     * `name` is `"File identifier"`.
@@ -409,7 +409,7 @@ The following are how the [Scope Descriptions](#scope-descriptions-format) field
     * `choices` is not included.
 
 Since Grants with this scope are only created by Servers, Clients do not receive an authorization code or access token for that Grant with which they may access the files.
-Instead, Clients MUST submit use the [Grant Admin](#scopes-grant-admin) method to issue an `access_token` that can be used for requests to the [Server-Provided Files API](#server-provided-files-api).
+Instead, Clients MUST use the [Grant Admin](#scopes-grant-admin) method to issue an `access_token` that can be used for requests to the [Server-Provided Files API](#server-provided-files-api).
 
 Servers MAY include multiple [Scope Description objects](#scope-descriptions-format) in the `cds_scope_descriptions` that have a `type` value of `cds_server_provided_files`.
 This can be useful when a Server is using different back-end systems for different types of documents, and the Server needs to use different Client Objects to provide access to each back-end system.
@@ -438,16 +438,16 @@ The following values are included in the default list available in scope descrip
   If a scope is not available for OAuth authorization requests (e.g. a `client_credentials`-only scope), this value is an empty array (`[]`).
 * `grant_types_supported` - _Array[[string](#string)]_ - (REQUIRED) The OAuth grant type values that can be used with this scope.
   This value follows the same behavior as OAuth's Authorization Server Metadata object's `grant_types_supported` field [[RFC 8414 Section 2](#ref-rfc8414-server-metadata-obj)], except that this value represents the grant types supported for this individual scope and not all scopes for the Client.
-  This array MUST contain at least one grant type.
+  If this value is an empty array (`[]`), the `grant_admin_scope` MUST NOT be `null`, meaning that Servers MUST offer the [Grant Admin](#scopes-grant-admin) method of access for this Scope.
 * `token_endpoint_auth_methods_supported` - _Array[[string](#string)]_ - (REQUIRED) The OAuth client authentication methods that can be used for granting tokens with this scope.
   This value follows the same behavior as OAuth's Authorization Server Metadata object's `token_endpoint_auth_methods_supported` field [[RFC 8414 Section 2](#ref-rfc8414-server-metadata-obj)], except that this value represents the client authentication methods supported for this individual scope and not all scopes for the Client.
-  A value of `"none"` this array indicates that the scope may be used for public application without using a client secret.
+  A value of `"none"` in this array indicates that the scope may be used for public application without using a client secret.
 * `code_challenge_methods_supported` - _Array[[string](#string)]_ - (REQUIRED) For scope descriptions where `grant_types_supported` includes the value `authorization_code`, OAuth's Proof Key for Code Exchange by OAuth Public Clients [[RFC 7636](#ref-rfc7636)] functionality is required, and Servers MUST offer `S256` and MUST NOT offer `plain` code verifier methods.
   For scope descriptions where  `grant_types_supported` does not include `authorization_code`, no authorization request is performed, so no code challenge is required and this field value is an empty list (`[]`).
 * `coverages_supported` - _Array[[string](#string)]_ - (REQUIRED) A list of CDS's Coverage Entry Object [[CDS-WG1-01 Section 4.3](#ref-cds-wg1-01-coverage-entry)] `id` values for which the scope is available by the Server.
   If the scope provides functionality unrelated to a Server's coverage entries (e.g. the `cds_client_admin` scope), this value is an empty list (`[]`).
 * `grant_admin_scope` - _[string](#string) or `null`_ - (REQUIRED) The Grant Admin `scope` value used for issuing access tokens that may access Grants containing this scope.
-  When a value is set for this field, Servers MUST also include a Scope Description for that scope that has a `type` value of `cds_grant_admin`
+  When a value is set for this field, Servers MUST also include a Scope Description for that scope that has a `type` value of `cds_grant_admin`.
   If access is not available via a Grant Admin scope, this value is `null`.
 * `authorization_details_types_supported` - _Array[[string](#string)]_ - (REQUIRED) A list of strings which may be used as the OAuth's Rich Authorization Request authorization details object `type` value [RFC 9396 Section 7.1](#ref-rfc9396-auth-details)].
 * `authorization_details_fields_supported` - _Array[[AuthorizationDetailsField](#auth-details-fields-format)]_ - (REQUIRED) A list of fields that MAY be included in OAuth's Rich Authorization Request [[RFC 9396](#ref-rfc9396)] authorization details object for this scope.
@@ -499,7 +499,7 @@ The following list of strings are an enumerated set of registration field types 
     * When payments are submitted, Servers MUST reply to the `payment_request` Message with a `request_update` Message that has a `status` value of `pending`.
     * When payments are accepted, Servers MUST reply to the `payment_request` Message with a `request_update` Message that has a `status` value of `complete`.
     * When payments are rejected, Servers MUST reply to the `payment_request` Message with a `request_update` Message that has a `status` value of `rejected`.
-    * Servers and Clients MAY, as needed, create additional Messages to communicate between each other with questions or information about the email verification process.
+    * Servers and Clients MAY, as needed, create additional Messages to communicate between each other with questions or information about the payment process.
     * Servers MAY approve the Client for production access at any point, whether or not the Client has paid using the payment form link, if the Client has met registration requirements another way, such as mailing in a check.
 
 * `email_verification` - This field indicates that the Client must verify their email before the Server will approve the Client for production use.
@@ -524,7 +524,7 @@ The following list of strings are an enumerated set of registration field types 
     * When online forms are reviewed and accepted, Servers MUST reply to the `online_form_request` Message with a `request_update` Message that has a `status` value of `complete`.
     * When online forms are reviewed and rejected, Servers MUST reply to the `online_form_request` Message with a `request_update` Message that has a `status` value of `rejected`.
     * Servers and Clients MAY, as needed, create additional Messages to communicate between each other with questions or information about the SSO process.
-    * Servers MAY approve the Client for production access at any point, whether or not the Client has completed and submitted the online form, if the Client has met registration requirements another way, such calling and providing needed information to the Server's phone support.
+    * Servers MAY approve the Client for production access at any point, whether or not the Client has completed and submitted the online form, if the Client has met registration requirements another way, such as calling and providing needed information to the Server's phone support.
 
 * `pdf_form` - This field indicates that the Client must complete one or more PDF forms in order to be approved for production use.
   For Registration Field objects with a `type` value of `pdf_form`, the following functionality is required:
@@ -549,7 +549,7 @@ The following list of strings are an enumerated set of registration field types 
     * When online forms are reviewed and accepted, Servers MUST reply to the `online_form_request` Message with a `request_update` Message that has a `status` value of `complete`.
     * When online forms are reviewed and rejected, Servers MUST reply to the `online_form_request` Message with a `request_update` Message that has a `status` value of `rejected`.
     * Servers and Clients MAY, as needed, create additional Messages to communicate between each other with questions or information about the online form process.
-    * Servers MAY approve the Client for production access at any point, whether or not the Client has completed and submitted the online form, if the Client has met registration requirements another way, such calling and providing needed information to the Servers phone technical support.
+    * Servers MAY approve the Client for production access at any point, whether or not the Client has completed and submitted the online form, if the Client has met registration requirements another way, such as calling and providing needed information to the Server's phone technical support.
 
 ### 3.7. Registration Field Formats <a id="registration-field-formats" href="#registration-field-formats" class="permalink">🔗</a>
 
@@ -567,9 +567,9 @@ The following list of strings are an enumerated set of registration field format
 * `email_or_null` - Same as `email`, only with `null` being an additional possible value.
 * `boolean` - If required, a [boolean](#boolean) value MUST be submitted.
 * `boolean_or_null` - Same as `boolean`, only with `null` being an additional possible value.
-* `image` - If required, a valid image file formatted as `image/jpeg` or `image/png` encoded as a Base64 string using MUST be submitted.
+* `image` - If required, a valid image file formatted as `image/jpeg` or `image/png` and encoded as a Base64 string MUST be submitted.
 * `image_or_null` - Same as `image`, only with `null` being an additional possible value.
-* `pdf` - If required, a valid pdf file formatted encoded as a Base64 string MUST be submitted.
+* `pdf` - If required, a valid pdf file encoded as a Base64 string MUST be submitted.
 * `pdf_or_null` - Same as `pdf`, only with `null` being an additional possible value.
 * `choice` - A [string](#string) value from the `id` parameter in one of the listed available `choices` [Choice objects](#choice-format).
 * `choice_or_null` - Same as `choice`, only with `null` being an additional possible value which indicates that no choice has been selected.
@@ -661,7 +661,7 @@ This specification requires Clients and Servers follow the process described in 
 
 * Clients MUST submit the `cds_client_admin` scope as part of their `scope` string value, which indicates to the Server that they are registering a Client following this specification.
   Clients that submit scopes that do not include the `cds_client_admin` scope are assumed to be attempting to register a Client that does not follow this specification.
-* Clients MUST only submit `scope` string values that are included in the the `cds_scope_descriptions` object, which indicates that those scopes are supported with the functionality of this specification.
+* Clients MUST only submit `scope` string values that are included in the `cds_scope_descriptions` object, which indicates that those scopes are supported with the functionality of this specification.
   Servers MUST respond to Client registration requests with a `400 Bad Request` Status Code if scopes that are not included in the `cds_scope_descriptions` object are attempting to be registered with scopes that are included.
 * Clients MAY submit additional named values that are defined as part of scope `registration_requirements` and `registration_optional` arrays in `cds_scope_descriptions` objects, using the registration field reference's `field_name` value as the submitted key in the registration request.
 * Servers MUST ignore any submitted `redirect_uris` values.
@@ -685,16 +685,16 @@ This Client Object scoped to `cds_client_admin` is returned as the main Client O
 Servers MUST also create Client Objects that are configured for any other scopes for which the Client submitted registration and the submission was accepted by the Server.
 Servers MAY combine scopes into individual Client Objects if the `response_types`, `grant_types`, and `token_endpoint_auth_method` for the scopes are the same, so that Clients MAY send authorization and token requests for multiple related scopes at the same time.
 
-If a scope is registered that has a non-null `grant_admin_scope` value in its Scope Description, Servers MUST create a Client Object with that Grand Admin scope value, so that Clients MAY access data and functionality for that scope using the [Grant Admin](#scopes-grant-admin) access method.
+If a scope is registered that has a non-null `grant_admin_scope` value in its Scope Description, Servers MUST create a Client Object with that Grant Admin scope value, so that Clients MAY access data and functionality for that scope using the [Grant Admin](#scopes-grant-admin) access method.
 
 For each Client Object created that has its `token_endpoint_auth_method` value as something other than `null`, at least one [Credential object](#credentials-format) MUST be created and made available on the [Credentials API](#credentials-api) for the Client to use.
 
-For created Client Objects that have a non-empty `response_types` list, Servers MUST create a default `redirect_uri` value and and set it as the single value in the created Client Object `redirect_uris` list.
+For created Client Objects that have a non-empty `response_types` list, Servers MUST create a default `redirect_uri` value and set it as the single value in the created Client Object `redirect_uris` list.
 The created `redirect_uri` MUST provide functionality such that if specified as part of authorization request parameters, will redirect the user to a receipt of the authorization when the authorization is submitted successfully, or show an error to the user if the authorization is declined or otherwise errors.
 This default `redirect_uri` allows Clients to request user authorization without needing to operate their own redirect endpoint.
 Clients MAY choose to update Client Object `redirect_uris` values to remove this default or add additional redirect URIs using the [Modifying Clients](#clients-modify) functionality.
 
-For created Client Objects that have a non-empty `response_types` list, Servers MUST create a Client Object that has the `sandbox` value in its `cds_status_option` list, which allows the Client to immediately begin testing their application's integration after registration.
+For created Client Objects that have a non-empty `response_types` list, Servers MUST create a Client Object that has the `sandbox` value in its `cds_status_options` list, which allows the Client to immediately begin testing their application's integration after registration.
 Servers MAY forgo creating Client Objects with a `production` value in its `cds_status_options` list when the Server has additional steps to perform, such as a manual review of the registration.
 Then, later if and when the Server decides to allow the Client access to the production environment, the Server MUST create a new Client Object with a `production` value in its `cds_status_option` list.
 Servers MUST NOT create Client Objects that have both `production` and `sandbox` values in the same `cds_status_options` list, so that the same Client Object cannot be used for both testing and production environments.
@@ -747,7 +747,7 @@ In addition to the fields defined by OAuth's Client Metadata [[RFC 7591 Section 
 * `cds_status` - _[ClientStatus](#client-statuses)_ - (REQUIRED) The current status of availability for this Client Object.
 * `cds_status_options` - _Array[[ClientStatus](#client-statuses)]_ - (REQUIRED) What `cds_status` values to which the Client MAY change the Client Object when [modifying](#clients-modify) it.
   For Client Objects that have the `cds_client_admin` scope, this list MUST NOT contain the `disabled` value, and for all other Client Objects this list MUST contain at least the `disabled` value, so that Clients MAY opt to disable Client Objects as needed.
-* `cds_server_metadata` - _[URL](#url)_ - (REQUIRED) Where Clients can find a Client Object specific version of the Servers's CDS Server Metadata [[CDS-WG1-01](#ref-cds-wg1-01)].
+* `cds_server_metadata` - _[URL](#url)_ - (REQUIRED) Where Clients can find a Client Object specific version of the Server's CDS Server Metadata [[CDS-WG1-01](#ref-cds-wg1-01)].
   If the Client Object's registered scopes have different [Scope Descriptions](#scope-descriptions-format) than what is in the publicly available `oauth_metadata` resource, such as more limited `coverages_supported` or different limits in `authorization_details_fields_supported`, then the `cds_server_metadata` MUST be to a resource that has an updated `oauth_metadata` resource with the Client Object specific values.
   If the Client Object's CDS server metadata is no different from the public CDS server metadata, Servers MAY simply link to the public URL.
   If this metadata endpoint requires authentication, Servers MUST authenticate Client requests to this endpoint via Bearer access token obtained using OAuth's `client_credentials` grant with a scope of `cds_client_admin`, and reject unauthenticated requests with a `401 Unauthorized` Status Code.
@@ -773,7 +773,7 @@ Client Object `cds_status` values MUST be one of the following:
   For scopes that require user authorization (e.g. `response_type` values of `code`), this `cds_status` indicates that the Client may request authorization from real users.
 * `sandbox` - The Client Object MAY be used to request access on the Server's test environment systems.
   For scopes that require user authorization (i.e. `response_type` values of `code`), this `cds_status` indicates that the Client may request authorization from fictional test users, as provided in the Server's `cds_test_accounts` documentation.
-* `disabled` - The Client Object is is disabled.
+* `disabled` - The Client Object is disabled.
 
 ### 5.3. Listing Client Objects <a id="clients-list" href="#clients-list" class="permalink">🔗</a>
 
@@ -804,12 +804,12 @@ If a Server has optionally implemented OAuth's Dynamic Client Registration Manag
 
 ### 5.5. Modifying Client Objects <a id="clients-modify" href="#clients-modify" class="permalink">🔗</a>
 
-This specification requires that the procedure to modify Client Objects MUST follow OAuth's Client Update Request [[RFC 7592 Section 2.2](#ref-rfc7592-client-mgmt-updates) section in Dynamic Client Registration Management Protocol [[RFC 7592](#ref-rfc7592)].
+This specification requires that the procedure to modify Client Objects MUST follow OAuth's Client Update Request [[RFC 7592 Section 2.2](#ref-rfc7592-client-updates) section in Dynamic Client Registration Management Protocol [[RFC 7592](#ref-rfc7592)].
 
 The URL to be used to send [PUT](#put) requests for updating Client Objects MUST be the `cds_client_uri` provided in the [Client Object](#client-format).
 If a Server has optionally implemented OAuth's Dynamic Client Registration Management Protocol [[RFC 7592](#ref-rfc7592)], the value of `cds_client_uri` MUST be the same as `registration_client_uri`, and access tokens issued from either a `client_credentials` grant with the scope `cds_client_admin` or the access token provided as the `registration_access_token` MUST be valid access tokens to interact with the client endpoint.
 
-Servers MUST allow Clients to intially update the following fields:
+Servers MUST allow Clients to initially update the following fields:
 
 * `redirect_uris`
 * `client_name`
@@ -841,7 +841,7 @@ Servers MUST NOT allow clients to update the following fields:
 * `cds_server_metadata` - This is a URL set by the Server.
 * `cds_status_options` - This is a list set by the Server.
 
-For other fields, the Server MUST determine the validity of the submitted Client Object fields and reject with a `400 Bad Response` Status Code if not all submitted fields are either the same as previously set, or invalid values for that field.
+For other fields, the Server MUST determine the validity of the submitted Client Object fields and reject with a `400 Bad R` Status Code if not all submitted fields are either the same as previously set, or invalid values for that field.
 
 If a Client does not include a field that is included in the Client Object, this indicates that the Client wishes to reset the value of that field to the Server default.
 
@@ -877,14 +877,14 @@ Message objects are formatted as JSON objects and contain the following named va
 * `description` - _[string](#string)_ - (REQUIRED) A human-readable description of the Message.
   If the Message `type` is `notification`, `private_message`, or `support_request`, this is the message body.
 * `updates_requested` - _Array[[ClientUpdateRequest](#client-update-request-format)]_ - (OPTIONAL) The list of values that a Client has requested to be updated.
-  This field is required for Messages with a `type` value of `field_changes` or `server_request`.
+  This field is required for Messages with a `type` value of `field_changes`, `server_request`, or `client_submission`.
 * `grants_requested` - _Array[[ClientGrantRequest](#client-grant-request-format)]_ - (OPTIONAL) The list of grants with their parameters that a Client has requested to be issued by the Server.
   This field is required for Messages with a `type` value of `grant_request`.
 * `attachments` - _Array[[MessageAttachment](#message-attachment-format)]_ - (OPTIONAL) A list of file attachments associated with the Message.
   Message attachments are intended to allow Clients and Servers to attach relatively small unstructured files, such as PDF documents, to their messages that are relevant.
   For example, a Client MAY attach a letter of authorization scanned PDF as part their `grant_request` Message.
   Message attachments are not intended to provide a means for repeatedly transferring structured data or large amounts of data.
-  It is RECOMMNEDED that Servers prefer to share files via the [Server-Provided Files API](#server-provided-files-api) or other relevant APIs and only use Message attachments when the attachment is relatively small in size and only relevant to the Message.
+  It is RECOMMENDED that Servers prefer to share files via the [Server-Provided Files API](#server-provided-files-api) or other relevant APIs and only use Message attachments when the attachment is relatively small in size and only relevant to the Message.
 * `related_uri` - _[URL](#url) or `null`_ - (OPTIONAL) If the Message `type` is `notification` or `private_message`, this value is where the Client can find more information, if available.
   If the Message `type` is `production_request`, this value is a relevant Client Object `cds_client_uri` that has the `sandbox` value in its `cds_status_options` list for which the Client is requesting an equivalent Client Object be created with `production` in the `cds_status_options` list.
   If the Message `type` is `support_request`, this value is a relevant URL for which the Client is requesting technical support.
@@ -932,11 +932,11 @@ Message object `status` values MUST be one of the following:
   For Messages with a `type` value of `grant_request` and `status` value of `complete`, Servers MUST set the `related_type` to be `grant_list` and `related_uri` to link to Grants API [listing](#grants-list) with URL parameters that filter to only the relevant Grants.
   For Messages with a `type` value of `request_update`, `status` value of `complete`, and the `related_uri` links to a Message with a `type` value of `payment_request`, Servers MUST set the `related_type` to be `payment_receipt` and `related_uri` to link to the Client's payment receipt.
 * `open` - For Messages with `type` values of `server_request`, `payment_request`, `online_form_request`, `pdf_form_request`, or `request_update`, this represents that the Client has not yet submitted a response to the Server's request.
-* `pending` - For Messages with `type` values of `production_request`, `support_request`, `grant_request`, `field_changes`, `server_request`, `payment_request`, `online_form_request`, `pdf_form_request`, or `request_update`, this represents the Server has not yet completed it's review of the Client's production or technical support request, field changes, submission, or payment.
+* `pending` - For Messages with `type` values of `production_request`, `support_request`, `grant_request`, `field_changes`, `server_request`, `payment_request`, `online_form_request`, `pdf_form_request`, or `request_update`, this represents the Server has not yet completed its review of the Client's production or technical support request, field changes, submission, or payment.
 * `rejected` - For Messages with `type` values of `field_changes`, `server_request`, `production_request`, `grant_request`, `payment_request`, `online_form_request`, `pdf_form_request`, or `request_update`, this represents the Server has completed and rejected the Client's requested production access request, field changes, submission, grant, or payment.
   When Servers create a rejected Message, the Server's created Message MUST contain information in the `description` field on why the Message that was created by the Client, typically linked by the `previous_uri` field, was rejected.
 * `errored` - For Messages with `type` values of `field_changes`, `server_request`, `payment_request`, `online_form_request`, `pdf_form_request`, or `request_update`, this represents the Server encountered an issue while processing the Client's field changes, submission, or payment.
-  The Client is RECOMMENDED to submit a `support_request` Messages with the `related_uri` as the relevant errored Message's `uri`.
+  The Client is RECOMMENDED to submit a `support_request` Message with the `related_uri` as the relevant errored Message's `uri`.
 
 ### 6.4. Message Related Types <a id="message-related-types" href="#message-related-types" class="permalink">🔗</a>
 
@@ -1048,7 +1048,7 @@ The fields included in JSON object MAY include the following:
   If submitting a Message with a `type` value of `grant_request`, this value is a relevant Client `cds_client_uri` to which the requesting Client is requesting the Grants be assigned to if created by the Server, which MAY be a Client that is managed by the requesting Client (e.g. a "self" grant) or MAY be a completely separate Client with which the requesting Client is working (e.g. a "third-party" grant).
   If there is no relevant API endpoint, the Client MUST not include this field.
 
-Servers MUST reject requests with a `400 Bad Request` Status Code when a Client submits an incomplete request, the submitted values are invalid.
+Servers MUST reject requests with a `400 Bad Request` Status Code when a Client submits an incomplete request or the submitted values are invalid.
 Servers MUST reject requests with a `413 Content Too Large` Status Code when a Client submits a Message with attachments that exceed the Server's submission size limit, which MUST be equal to or greater than 10 megabytes.
 For valid [POST](#post) requests from Clients, Servers MUST respond with a `201 Created` Status Code with a JSON object of the complete newly created Message object.
 When committing Messages created by Clients, Servers MUST populate the following fields in addition to the Client's submitted fields:
@@ -1088,12 +1088,12 @@ The following are fields that MAY be included in the [PATCH](#patch) request, an
 * `read` - Servers MUST accept values of `true` and `false` from the Client.
 
 If a Client wishes to modify a previously submitted Message of type `client_submission` they created, the Client MUST [create a new Message](#messages-create) with the same `previous_uri` value as the Message the Client is wishing to supersede.
-Severs MUST process newer Messages created by the Client as overriding the Client's previous submission.
+Servers MUST process newer Messages created by the Client as overriding the Client's previous submission.
 
 If a Client wishes to amend a previously created Message of type `private_message` or `support_request` they created, the Client MUST [create a new Message](#messages-create) with the `previous_uri` value set as the Message `uri` for which they are wanting to amend.
-Severs MUST consider newer Messages created by the Client as amending the Client's previous support request or message.
+Servers MUST consider newer Messages created by the Client as amending the Client's previous support request or message.
 
-Servers MUST validate the values of the submitted Message fields that are able to be modified and reject with a `400 Bad Response` Status Code if any of those fields are submitted with invalid values.
+Servers MUST validate the values of the submitted Message fields that are able to be modified and reject with a `400 Bad Request` Status Code if any of those fields are submitted with invalid values.
 Servers MUST ignore any fields submitted that are not able to be modified by the Client.
 If the submission is valid, Servers MUST synchronously modify the Message object and respond with a `200 OK` Status Code where the response body is the updated Message object.
 
@@ -1124,7 +1124,7 @@ Credentials objects are formatted as JSON objects and contain the following name
 
 Credential object `type` values MUST be one of the following:
 
-* `client_secret` - The Credential is a shared secret string string in the `client_secret` value on the Credential object.
+* `client_secret` - The Credential is a shared secret string in the `client_secret` value on the Credential object.
 
 ### 7.3. Listing Credentials <a id="credentials-list" href="#credentials-list" class="permalink">🔗</a>
 
@@ -1133,7 +1133,7 @@ The Credential listing request responses are formatted as JSON objects and conta
 
 * `credentials` - _Array[[ScopeCredential](#credentials-format)]_ - (REQUIRED) A list of Credentials to which the requesting `access_token` is scoped to have access.
   If no Credentials are accessible, this value is an empty list (`[]`).
-  If more than 100 sCredentials are available to be listed, Servers MAY truncate the list and use the `next` value to link to the next segment of the list of Credentials.
+  If more than 100 Credentials are available to be listed, Servers MAY truncate the list and use the `next` value to link to the next segment of the list of Credentials.
 * `next` - _[URL](#url) or `null`_ - Where to request the next segment of the list of Credentials.
   If no next segment exists (i.e. the requester is at the end of the list), this value is `null`.
 * `previous` - _[URL](#url) or `null`_ - Where to request the previous segment of the list of Credentials.
@@ -1174,9 +1174,9 @@ If a field is not included in the [PATCH](#patch) request, the Server MUST leave
 The following are fields that MAY be included in the [PATCH](#patch) request, and modification MUST be supported by Servers:
 
 * `client_secret_expires_at` - Servers MUST only accept valid timestamp values greater than or equal to the current time and less than or equal to the current value.
-  When the current value is `0`, indicating no expiration time, Severs MUST allow Clients to set a value of `0` or any timestamp greater than or equal to the current time.
+  When the current value is `0`, indicating no expiration time, Servers MUST allow Clients to set a value of `0` or any timestamp greater than or equal to the current time.
 
-Servers MUST validate the values of the submitted Credential fields that are able to be modified and reject with a `400 Bad Response` Status Code if any of those fields are submitted with invalid values.
+Servers MUST validate the values of the submitted Credential fields that are able to be modified and reject with a `400 Bad Request` Status Code if any of those fields are submitted with invalid values.
 Servers MUST ignore any fields submitted that are not able to be modified by the Client.
 If the submission is valid, Servers MUST synchronously modify the Credential object and respond with a `200 OK` Status Code where the response body is the updated Credential object.
 
@@ -1209,8 +1209,8 @@ Grant objects are formatted as JSON objects and contain the following named valu
 * `created` - _[datetime](#datetime)_ - (REQUIRED) When the Grant was created.
 * `modified` - _[datetime](#datetime)_ - (REQUIRED) When the Grant was most recently modified.
   If the Grant has not been modified since creation, this is the same value as `created`.
-* `not_before` - _[datetime](#datetime) or `null`_ - (REQUIRED) When a Grant that is for future access, Grant's `status` will be switched from `future` to another value.
-  If the Grant is not for future access and access is available immediately upon creation, this value is `null`.
+* `not_before` - _[datetime](#datetime) or `null`_ - (REQUIRED) When a Grant's `status` value is `future`, this value MUST be the datetime when the Server is expecting to update the `status` value from `future` to `active`.
+  If the Grant's `status` value is not `future`, this value MUST be `null`.
 * `not_after` - _[datetime](#datetime) or `null`_ - (REQUIRED) When a Grant has access that will expire in the future, this value indicates when the Grant's `status` will be switched to `expired`.
   If the Grant does not expire, this value is `null`.
 * `eta` - _[datetime](#datetime) or `null`_ - (REQUIRED) When a Grant has a `status` with the value `pending`, this value indicates an estimated time for when the status is expected to be switched to another value.
@@ -1226,10 +1226,12 @@ Grant objects are formatted as JSON objects and contain the following named valu
   If no receipt was provided or the Grant did not get issued via `authorization_code` then this value is an empty list (`[]`).
 * `enabled_scope` - _[string](#string)_ - (REQUIRED) For Grants where access has been partially granted, but some access is still disabled, this value is the `scope` that has been enabled by the server.
   For Grants where access has been fully granted, this value is the same as the `scope` value.
-  For Grants that have had their access removed (e.g. `disabled`), this value is an empty string (`""`).
+  For Grants that have had their access removed (e.g. the Grant's `status` value is `disabled`), this value is an empty string (`""`).
+  When a Grant's `status` value is `future`, this value MUST be the scope that will be enabled when the `status` is switched to `active` on the Grant's `not_before` datetime.
 * `enabled_authorization_details` - _Array[[OAuth AuthorizationDetail](#ref-rfc9396-auth-details)]_ - (REQUIRED) For Grants where access has been partially granted, but some access is still disabled, this value is an authorization details list as defined by [[RFC 9396 Section 7.1](#ref-rfc9396-auth-details)] that has the scopes which have been enabled by the server.
   For Grants where access has been fully granted, this value is the same as the `authorization_details` value.
-  For Grants that have had their access removed (e.g. `disabled`), this value is an empty list (`[]`).
+  For Grants that have had their access removed (e.g. the Grant's `status` value is `disabled`), this value is an empty list (`[]`).
+  When a Grant's `status` value is `future`, this value MUST be the authorization details that will be enabled when the `status` is switched to `active` on the Grant's `not_before` datetime.
 
 ### 8.2. Grant Statuses <a id="grant-statuses" href="#grant-statuses" class="permalink">🔗</a>
 
@@ -1237,10 +1239,11 @@ Grants object `status` values MUST be one of the following:
 
 * `active` - The Grant is active and access for the features and data specified in the `scope` or `authorization_details` is currently enabled.
   For Grants that provide access to data APIs that are being regularly updated, this status also indicates that the Server is currently on schedule to provide the expected ongoing data updates.
-* `future` - The Grant will be made in the future, and the Client should check the `not_before` value for when the Grant will have its status switched to `active`.
-* `pending` - The Grant has been create and is valid, but the Server is still processing or reviewing the Grant and the status will be changed to another status at approximately the time provided in the Grant's `eta` value.
+* `future` - The Grant has been created and is valid, but it is scheduled to be activated in the future.
+  When the `status` is this value, the Grant's `not_before` value MUST be set to when the `status` value is currently scheduled to be updated from `future` to `active`, and the Grant's `enabled_scope` and `enabled_authorization_details` values MUST be set to the scope that is currently scheduled to be enabled after the `not_before` datetime.
+* `pending` - The Grant has been created and is valid, but the Server is still processing or reviewing the Grant and the status will be changed to another status at approximately the time provided in the Grant's `eta` value.
   While a Grant's status is `pending`, Servers MUST provide access to the granted scope's features or data as the Server processes and the features or data becomes available.
-* `partial` - The Grant was submitted originally with the `scope` and `authorization_details` values, but the Server has limited the Client's access a subset of the Grant's `scope`.
+* `partial` - The Grant was submitted originally with the `scope` and `authorization_details` values, but the Server has limited the Client's access to a subset of the Grant's `scope`.
   The enabled access is listed in the `enabled_scope` and `enabled_authorization_details` values.
 * `needs_authorization` - The Grant has been created, but access is limited to the `enabled_scope` and `enabled_authorization_details` until a user authorizes the listed `scope` and `authorization_details` values using an authorization URL with a `cds_grant_id` parameter of this `grant_id` as described in [Grant Authorization Requests](#grant-authorization-requests).
 * `needs_sub_grants` - The Grant has been created, but access is limited to the `enabled_scope` and `enabled_authorization_details` until listed `children` Grant objects' `status` values change to an appropriate value determined by the Server for the Grant scope's use case.
@@ -1261,7 +1264,7 @@ Grant `status` values of `future`, `disabled`, `suspended`, `revoked`, `closed`,
 ### 8.3. Grant Authorization Requests <a id="grant-authorization-requests" href="#grant-authorization-requests" class="permalink">🔗</a>
 
 When a Grant `status` has a value of `needs_authorization`, the Grant needs a user authorization for the Grant to be approved.
-Clients achieved user authorization by following OAuth's Authorization Code Grant process [[RFC 6749 Section 4.1](#ref-rfc6749-code-grant)], with the following modifications.
+Clients achieve user authorization by following OAuth's Authorization Code Grant process [[RFC 6749 Section 4.1](#ref-rfc6749-code-grant)], with the following modifications.
 
 * In the OAuth Authorization Request [[RFC 6749 Section 4.1.1](#ref-rfc6749-auth-request)], Clients MUST include the URL request parameter `cds_grant_id` with a value of the `grant_id` for the Grant for which the Client is requesting user authorization.
 * In the OAuth Authorization Request [[RFC 6749 Section 4.1.1](#ref-rfc6749-auth-request)], Clients MAY include the URL request parameter `prompt` with a value of `login`.
@@ -1333,7 +1336,7 @@ The following are fields that MAY be included in the [PATCH](#patch) request bod
   Servers MUST NOT require another user authorization if the updated scope is a reduction in scope of access (e.g. removal of a scope value from the scope string).
   If a new user authorization or sub-Grants are required, the Server MUST update the `status` to one of `needs_authorization` or `needs_sub_grants` and update the `enabled_authorization_details` to be the value of the current authorization details for which the Client is allowed access.
 
-Servers MUST validate the values of the submitted Grant fields that are able to be modified and reject with a `400 Bad Response` Status Code if any of those fields are submitted with invalid values.
+Servers MUST validate the values of the submitted Grant fields that are able to be modified and reject with a `400 Bad Request` Status Code if any of those fields are submitted with invalid values.
 Servers MUST ignore any fields submitted that are not able to be modified by the Client.
 
 If a Server does not need to asynchronously review the changes, the Server MUST synchronously modify the Grant object and respond with a `200 OK` Status Code where the response body is the updated Grant object.
@@ -1342,8 +1345,8 @@ Additionally, if the `scope` or `authorization_details` has been updated, the Se
 
 ## 9. Server-Provided Files API <a id="server-provided-files-api" href="#server-provided-files-api" class="permalink">🔗</a>
 
-This specification defines an API by which Servers MAY provide an access to arbitrary files to Clients to download.
-These APIs are authenticated using a Bearer `access_token` obtained by the Client using OAuth 2.0's `client_credentials` grant process [[RFC 6749 Section 4.4](#ref-rfc6749-client-credentials)], where the scope of the access token is a [Grant Admin scope](#scopes-grant-admin) with `authorizatin_details` entries listing `grant_id` values that are for Grants that have the [`cds_server_provided_files`](#scopes-server-provided-files) scope type.
+This specification defines an API by which Servers MAY provide access to arbitrary files to Clients to download.
+These APIs are authenticated using a Bearer `access_token` obtained by the Client using OAuth 2.0's `client_credentials` grant process [[RFC 6749 Section 4.4](#ref-rfc6749-client-credentials)], where the scope of the access token is a [Grant Admin scope](#scopes-grant-admin) with `authorization_details` entries listing `grant_id` values that are for Grants that have the [`cds_server_provided_files`](#scopes-server-provided-files) scope type.
 
 This API is intended to provide a convenient way for Servers to provide secure ad-hoc file access to Clients, such as sharing connectivity-related files (e.g. configs, certificates, secret keys, etc.) or manually created bulk files (e.g. initial backfill raw data, analysis reports, etc.).
 This API is NOT intended to be used for automated sharing of structured data (e.g. nightly interval extracts) because the API has limited functionality to convey the appropriate metadata for automated file sharing, such as versioning or schemas.
@@ -1368,7 +1371,7 @@ Server-Provided File objects are metadata for arbitrary files made accessible by
 
 ### 9.2. Listing Server-Provided Files <a id="server-provided-files-list" href="#server-provided-files-list" class="permalink">🔗</a>
 
-Clients may request to list Server-Provided File objects that they have access to by making an HTTPS [GET](#get) request to the `cds_server_provided_files_api` URL included in the [Authorization Server Metadata](#auth-server-metadata-format) and authenticated with a valid Bearer `access_token` scoped to the `cds_grant_admin` scope with `authorizatin_details` entries listing `grant_id` values that are for Grants that have the `cds_server_provided_files` scope type.
+Clients may request to list Server-Provided File objects that they have access to by making an HTTPS [GET](#get) request to the `cds_server_provided_files_api` URL included in the [Authorization Server Metadata](#auth-server-metadata-format) and authenticated with a valid Bearer `access_token` scoped to a [Grant Admin](#scopes-grant-admin) with `authorization_details` entries listing `client_id` and `grant_id` values that are for Grants that have `enabled_scope` values which are permitted to be accessed by that Grant Admin.
 The Server-Provided File listing request responses are formatted as JSON objects and contain the following named values.
 
 * `files` - _Array[[ServerProvidedFile](#server-provided-files-format)]_ - (REQUIRED) A list of Server-Provided File objects to which the requesting `access_token` is scoped to have access.
@@ -1389,15 +1392,15 @@ Listings of Server-Provided File objects MUST be ordered in reverse chronologica
 
 ### 9.3. Retrieving Individual Server-Provided Files <a id="server-provided-files-get" href="#server-provided-files-get" class="permalink">🔗</a>
 
-The URL to be used to send [GET](#get) requests for retrieving individual Server-Provided File objects MUST be the Server-Provided File `uri` provided in the [Server-Provided File object](#server-provided-files-format) and authenticated with a valid Bearer `access_token` scoped to the `cds_grant_admin` scope with `authorizatin_details` entries listing `grant_id` values that are for Grants that include the relevant `file_id` and have a scope with a `type` value of `cds_server_provided_files`.
+The URL to be used to send [GET](#get) requests for retrieving individual Server-Provided File objects MUST be the Server-Provided File `uri` provided in the [Server-Provided File object](#server-provided-files-format) and authenticated with a valid Bearer `access_token` scoped to the `cds_grant_admin` scope with `authorization_details` entries listing `grant_id` values that are for Grants that include the relevant `file_id` and have a scope with a `type` value of `cds_server_provided_files`.
 
 ### 9.4. Downloading Server-Provided File Data <a id="server-provided-files-download" href="#server-provided-files-download" class="permalink">🔗</a>
 
-The URL to be used to send [GET](#get) requests for retrieving the raw data for an individual Server-Provided File MUST be the Server-Provided File `download_uri` provided in the [Server-Provided File object](#server-provided-files-format) and authenticated with a valid Bearer `access_token` scoped to the `cds_grant_admin` scope with `authorizatin_details` entries listing `grant_id` values that are for Grants that include the relevant `file_id` and have a scope with a `type` value of `cds_server_provided_files`.
+The URL to be used to send [GET](#get) requests for retrieving the raw data for an individual Server-Provided File MUST be the Server-Provided File `download_uri` provided in the [Server-Provided File object](#server-provided-files-format) and authenticated with a valid Bearer `access_token` scoped to the `cds_grant_admin` scope with `authorization_details` entries listing `grant_id` values that are for Grants that include the relevant `file_id` and have a scope with a `type` value of `cds_server_provided_files`.
 
 ## 10. Extensions <a id="extensions" href="#extensions" class="permalink">🔗</a>
 
-Other specifications and Servers MAY extend this specification to as necessary to address their use cases.
+Other specifications and Servers MAY extend this specification as necessary to address their use cases.
 Other specifications and Servers MUST NOT remove required parts of this specification in their specifications or implementations.
 
 [Scopes Supported](#scopes) MAY be extended to add additional scope values and definitions, according to the requirements listed in [Section 3.3](#scopes).
@@ -1426,18 +1429,18 @@ Because legal and regulatory requirements are highly diverse across the energy s
 Servers MUST include the appropriate `registration_requirements` values in their [Scope Descriptions](#scope-descriptions-format) for each scope's use case and capabilities to ensure that Clients submit all required disclosures (e.g. contact information) and be appropriately informed about any required steps (e.g. manual review) or payments (e.g. registration fees).
 Servers MUST NOT impose overly burdensome registration requirements beyond what is deemed necessary by the Server's jurisdiction requirements for the type of capabilities or data made available by an offered scope.
 
-Severs MUST be responsible for appropriately monitoring and reviewing the use of registered Clients as necessary for their legal and regulatory jurisdictions.
+Servers MUST be responsible for appropriately monitoring and reviewing the use of registered Clients as necessary for their legal and regulatory jurisdictions.
 
 ### 11.2. Restricted Access <a id="restricted-access" href="#restricted-access" class="permalink">🔗</a>
 
 For unauthenticated endpoints ([Authorization Server Metadata](#auth-server-metadata), [Client Registration Process](#client-registration-process)), while Servers can add [rate limiting](#rate-limiting) configurations to protect their systems from being overwhelmed with requests, Servers MUST NOT add anti-bot blocking measures (e.g. captchas) that prevent automated requests from other systems.
 The functionality described in this specification is intended to be able to be integrated in other platforms to allow those platforms to automate interactions with Servers on their users' behalf.
 
-If [Authorization Server Metadata](#auth-server-metadata) is referenced in a public CDS Server Metadata Endpoint [[CDS-WG1-01 Section 3](#ref-cds-wg1-01-metadata-endpoint)], then the [Authorization Server Metadata](#auth-server-metadata) and [Client Registration Process](#client-registration-process) must also be public.
+If [Authorization Server Metadata](#auth-server-metadata) is referenced in a public CDS Server Metadata Endpoint [[CDS-WG1-01 Section 3](#ref-cds-wg1-01-metadata-endpoint)], then the [Authorization Server Metadata](#auth-server-metadata) and [Client Registration Process](#client-registration-process) MUST also be public.
 
 Servers that wish to restrict access of by-default unauthenticated endpoints to certain Clients MUST configure well established authentication processes for Clients to ensure that only the approved Clients may access the restricted endpoint.
 This specification does not describe specifically how Servers will authenticate Clients for by-default unauthenticated endpoints, as these restricted access protocols are context dependent.
-For example, if a Server providing a private Client Registration endpoint as part of an existing logged in portal, then they can use that logged in portal's session cookie to authenticate Client requests to the registration endpoint.
+For example, if a Server is providing a private Client Registration endpoint as part of an existing logged in portal, then they can use that logged in portal's session cookie to authenticate Client requests to the registration endpoint.
 
 For authenticated endpoints ([Clients API](#clients-api), [Messages API](#messages-api), [Credentials API](#credentials-api), [Grants API](#grants-api), [Server-Provided Files API](#server-provided-files-api)), Servers MUST authenticate requests using OAuth's Authorization Request Header Field [[RFC 6750 Section 2.1](#ref-rfc6750-auth-header)] with access tokens obtained using the OAuth 2.0's Issuing an Access Token process [[RFC 6749 Section 5](#ref-rfc6749-access-tokens)].
 
@@ -1536,7 +1539,7 @@ Content-Type: application/json;charset=UTF-8
     "cds_messages_api": "https://example.com/cds-api/v1/messages",
     "cds_credentials_api": "https://example.com/cds-api/v1/credentials",
     "cds_grants_api": "https://example.com/cds-api/v1/grants",
-    "cds_server_provided_files_api": "https://example.com/cds-api/v1/server-provided-files"
+    "cds_server_provided_files_api": "https://example.com/cds-api/v1/server-provided-files",
     "cds_scope_descriptions": {
         "cds_client_admin": {
             "id": "cds_client_admin",
@@ -1574,7 +1577,7 @@ Content-Type: application/json;charset=UTF-8
                     "name": "Client Object identifier",
                     "description": "The Client Object identifier for which the Grant is issued.",
                     "documentation": "https://example.com/docs/oauth/scopes#cds_grant_admin-client_id",
-                    "for_types": ["cds_grant_admin_1"]
+                    "for_types": ["cds_grant_admin_1"],
                     "format": "string",
                     "is_required": true,
                     "maximum": 1000,
@@ -1585,7 +1588,7 @@ Content-Type: application/json;charset=UTF-8
                     "name": "Grant identifier",
                     "description": "The Grant identifier for which the returned access_token will be given access.",
                     "documentation": "https://example.com/docs/oauth/scopes#cds_grant_admin-grant_id",
-                    "for_types": ["cds_grant_admin_1"]
+                    "for_types": ["cds_grant_admin_1"],
                     "format": "string",
                     "is_required": true,
                     "maximum": 1000,
@@ -1726,7 +1729,7 @@ The following is a non-normative example of a Client loading their list of Clien
 ==Request==
 GET /cds-api/v1/clients HTTP/1.1
 Host: example.com
-Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+Authorization: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
 
 ==Response==
 HTTP/1.1 200 OK
@@ -1817,7 +1820,7 @@ The following is a non-normative example of a Client loading an individual Clien
 ==Request==
 GET /cds-api/v1/clients/aaf026921707f5d5 HTTP/1.1
 Host: example.com
-Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+Authorization: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
 
 ==Response==
 HTTP/1.1 200 OK
@@ -1850,7 +1853,7 @@ The following is a non-normative example of a Client updating their list of `red
 ==Request==
 PUT /cds-api/v1/clients/af653d57fa364da5 HTTP/1.1
 Host: example.com
-Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+Authorization: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
 
 {
     "scope": "example_custom",
@@ -1898,7 +1901,7 @@ The following is a non-normative example of a Client loading their list of Messa
 ==Request==
 GET /cds-api/v1/messages HTTP/1.1
 Host: example.com
-Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+Authorization: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
 
 ==Response==
 HTTP/1.1 200 OK
@@ -1972,7 +1975,7 @@ The following is a non-normative example of a Client creating a Message via the 
 ==Request==
 POST /cds-api/v1/messages HTTP/1.1
 Host: example.com
-Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+Authorization: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
 
 {
     "type": "private_message",
@@ -2008,7 +2011,7 @@ The following is a non-normative example of a Client loading a specific Message 
 ==Request==
 GET /cds-api/v1/messages/9047a057519c0ea4 HTTP/1.1
 Host: example.com
-Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+Authorization: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
 
 ==Response==
 HTTP/1.1 200 OK
@@ -2039,7 +2042,7 @@ The following is a non-normative example of a Client marking a specific Message 
 ==Request==
 PATCH /cds-api/v1/messages/9047a057519c0ea4 HTTP/1.1
 Host: example.com
-Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+Authorization: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
 
 {
     "read": true
@@ -2075,7 +2078,7 @@ The following is a non-normative example of a Client loading their list of Crede
 ==Request==
 GET /cds-api/v1/credentials HTTP/1.1
 Host: example.com
-Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+Authorization: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
 
 ==Response==
 HTTP/1.1 200 OK
@@ -2127,7 +2130,7 @@ The following is a non-normative example of a Client creating a new Credential o
 ==Request==
 POST /cds-api/v1/credentials HTTP/1.1
 Host: example.com
-Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+Authorization: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
 
 {
     "client_id": "af653d57fa364da5",
@@ -2158,7 +2161,7 @@ The following is a non-normative example of a Client loading an individual Crede
 ==Request==
 GET /cds-api/v1/credentials/8406a1fd23d73417 HTTP/1.1
 Host: example.com
-Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+Authorization: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
 
 ==Response==
 HTTP/1.1 200 OK
@@ -2184,7 +2187,7 @@ The following is a non-normative example of a Client disabling a specific Creden
 ==Request==
 PATCH /cds-api/v1/credentials/8406a1fd23d73417 HTTP/1.1
 Host: example.com
-Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+Authorization: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
 
 {
     "client_secret_expires_at": 1760125049
@@ -2215,7 +2218,7 @@ The following is a non-normative example of a Client loading their list of Grant
 ==Request==
 GET /cds-api/v1/grants HTTP/1.1
 Host: example.com
-Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+Authorization: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
 
 ==Response==
 HTTP/1.1 200 OK
@@ -2289,7 +2292,7 @@ The following is a non-normative example of a Client loading an individual Grant
 ==Request==
 GET /cds-api/v1/grants/c644a5da13f379db HTTP/1.1
 Host: example.com
-Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+Authorization: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
 
 ==Response==
 HTTP/1.1 200 OK
@@ -2336,7 +2339,7 @@ The following is a non-normative example of a Client revoking a specific Grant v
 ==Request==
 PATCH /cds-api/v1/grants/c644a5da13f379db HTTP/1.1
 Host: example.com
-Authorizatin: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
+Authorization: Bearer vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ
 
 {
     "status": "closed"
@@ -2370,13 +2373,8 @@ Content-Type: application/json;charset=UTF-8
         }
     ],
     "receipt_confirmations": [],
-    "enabled_scope": "cds_server_provided_files_01",
-    "enabled_authorization_details": [
-        {
-            "type": "cds_server_provided_files_01",
-            "file_id": "4fcf6831957a243c"
-        }
-    ]
+    "enabled_scope": "",
+    "enabled_authorization_details": []
 }
 ```
 
@@ -2420,7 +2418,7 @@ The following is a non-normative example of a Client loading Server-Provided Fil
 ==Request==
 GET /cds-api/v1/server-provided-files HTTP/1.1
 Host: example.com
-Authorizatin: Bearer oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA
+Authorization: Bearer oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA
 
 ==Response==
 HTTP/1.1 200 OK
@@ -2453,7 +2451,7 @@ The following is a non-normative example of a Client loading an individual Serve
 ==Request==
 GET /cds-api/v1/server-provided-files/4fcf6831957a243c HTTP/1.1
 Host: example.com
-Authorizatin: Bearer oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA
+Authorization: Bearer oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA
 
 ==Response==
 HTTP/1.1 200 OK
@@ -2480,7 +2478,7 @@ The following is a non-normative example of a Client downloading the raw data fo
 ==Request==
 GET /cds-api/v1/server-provided-files/4fcf6831957a243c/download HTTP/1.1
 Host: example.com
-Authorizatin: Bearer oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA
+Authorization: Bearer oeatueF_TdVjcygl3REDApTtYDDqapwEaYEO9djPDvq1V3aLAlAOHt5k-wO6fwxcCheXPmq_f8x1nYYtSGqKRA
 
 ==Response==
 HTTP/1.1 200 OK
