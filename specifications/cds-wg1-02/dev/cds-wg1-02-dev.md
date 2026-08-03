@@ -32,7 +32,7 @@ For more information, visit [https://lfess.energy/](https://lfess.energy/).
     * [3.7. Registration Field Formats](#registration-field-formats)  
     * [3.8. Authorization Details Field Object Format](#auth-details-fields-format)  
     * [3.9. Authorization Details Field Formats](#auth-details-field-formats)  
-    * [3.10. Authorization Details Field Choice Object Format](#auth-details-field-choice-format)  
+    * [3.10. Choice Object Format](#choice-format)  
 * [4. Client Registration Process](#client-registration-process)  
     * [4.1. Client Registration Request](#registration-request)  
     * [4.2. Client Registration Response](#registration-response)  
@@ -65,9 +65,10 @@ For more information, visit [https://lfess.energy/](https://lfess.energy/).
     * [8.1. Grant Object Format](#grant-format)  
     * [8.2. Grant Statuses](#grant-statuses)  
     * [8.3. Grant Authorization Requests](#grant-authorization-requests)  
-    * [8.4. Listing Grants](#grants-list)  
-    * [8.5. Retrieving Individual Grants](#grants-get)  
-    * [8.6. Modifying Grants](#grants-modify) 
+    * [8.4. Grants in Token Responses](#grant-token-responses)  
+    * [8.5. Listing Grants](#grants-list)  
+    * [8.6. Retrieving Individual Grants](#grants-get)  
+    * [8.7. Modifying Grants](#grants-modify)  
 * [9. Server-Provided Files API](#server-provided-files-api)  
     * [9.1. Server-Provided Files Object Format](#server-provided-files-format)  
     * [9.2. Listing Server-Provided Files](#server-provided-files-list)  
@@ -140,6 +141,9 @@ These entities can include, but are not limited to, utility vendors, enterprise 
 <a id="datetime" href="#datetime" class="permalink">🔗</a> "datetime" - A string representing date and time in the format of `date-time` as defined by [[RFC 3339 Section 5.6](#ref-rfc3339-datetime)] (e.g. "2024-01-01T00:00:00Z").
 
 <a id="decimal" href="#decimal" class="permalink">🔗</a> "decimal" - A decimal value as defined by `number` in [[RFC 8259 Section 6](#ref-rfc8259-numbers)].
+Decimal values MAY have any number of significant digits after the decimal point.
+When storing a decimal value, Servers MUST preserve the decimal precision of the value exactly.
+This means Servers MUST NOT store a decimal value as a float, since that format does not preserve the significant figures of the decimal value.
 
 <a id="get" href="#get" class="permalink">🔗</a> "GET" - A request method defined in [[RFC 9110 Section 9](#ref-rfc9110-methods)].
 
@@ -461,12 +465,14 @@ The following values are included in the default list available in registration 
 * `documentation` - _[URL](#url)_ - (REQUIRED) Where developers can find more information about this registration field.
 * `field_name` - _[string](#string)_ - (OPTIONAL) If type is `registration_field`, this is the name of the field to submit in the [Client Registration Request](#registration-request) and MUST start with `cds_`.
 * `format` - _[RegistrationFieldFormats](#registration-field-formats)_ - (OPTIONAL) If type is `registration_field`, this is the data format that MUST be used in the value of the field.
-* `default` - _various_ - (OPTIONAL) If type is `registration_field` and the field is optional, this is the default value that will be used in lieu of the Client submitting a value themselves.
-  Including this `default` value in the object indicates the registration field is optional.
+* `default` - _various_ - (OPTIONAL) If type is `registration_field` and the field's `id` value is listed in the `registration_optional` list of a Scope Description object, this is the default value that will be used in lieu of the Client submitting a value themselves.
 * `max_length` - _[integer](#integer)_ - (OPTIONAL) If format is one of `string`, `string_or_null`, `url`, `url_or_null`, `email`, or `email_or_null`, this is the maximum length of the submitted value, if not `null`.
 * `max_size` - _[integer](#integer)_ - (OPTIONAL) If format is one of `image`, `image_or_null`, `pdf`, or `pdf_or_null`, this is the maximum file size of the submitted value before Base64 encoding, if not `null`.
 * `amount` - _[decimal](#decimal)_ - (OPTIONAL) If type is `payment_required`, this is the amount in `currency` that will be required to complete registration.
 * `currency` - _[string](#string)_ - (OPTIONAL) If type is `payment_required`, this is the monetary currency in [[ISO 4217](#ref-iso4217)] currency code.
+* `choices` - _Array[[Choice](#choice-format)]_ - (OPTIONAL) If `format` is `choice`, `choice_list`, or `choice_list_or_null`, this is REQUIRED.
+  If `format` is `choice` or `choice_list`, this MUST be a list of one or more available Choice objects.
+  If `format` is `choice_or_null` or `choice_list_or_null`, this MAY be an empty list (`[]`) if the only available choice is `null`.
 
 ### 3.6. Registration Field Types <a id="registration-field-types" href="#registration-field-types" class="permalink">🔗</a>
 
@@ -553,6 +559,8 @@ The following list of strings are an enumerated set of registration field format
 
 * `string` - If required, a [string](#string) value MUST be submitted.
 * `string_or_null` - Same as `string`, only with `null` being an additional possible value.
+* `string_list` - A non-empty array of [string](#string) values.
+* `string_list_or_null` - Same as `string_list`, only with `null` being an additional possible value which indicates that an empty set of strings is provided.
 * `url` - If required, a [URL](#url) value MUST be submitted.
 * `url_or_null` - Same as `url`, only with `null` being an additional possible value.
 * `email` - If required, a valid email address string MUST be submitted.
@@ -563,6 +571,10 @@ The following list of strings are an enumerated set of registration field format
 * `image_or_null` - Same as `image`, only with `null` being an additional possible value.
 * `pdf` - If required, a valid pdf file formatted encoded as a Base64 string MUST be submitted.
 * `pdf_or_null` - Same as `pdf`, only with `null` being an additional possible value.
+* `choice` - A [string](#string) value from the `id` parameter in one of the listed available `choices` [Choice objects](#choice-format).
+* `choice_or_null` - Same as `choice`, only with `null` being an additional possible value which indicates that no choice has been selected.
+* `choice_list` - A non-empty array of [string](#string) values that match `id` values present in the listed available `choices` [Choice objects](#choice-format).
+* `choice_list_or_null` - Same as `choice_list`, only with `null` being an additional possible value which indicates that no choices have been selected.
 
 ### 3.8. Authorization Details Field Object Format <a id="auth-details-fields-format" href="#auth-details-fields-format" class="permalink">🔗</a>
 
@@ -583,11 +595,11 @@ The following values are included in the default list available in authorization
   This is also the value that will be used if a basic OAuth `scope` string parameter is used instead of an `authorization_details` parameter.
   If `is_required` is `true`, this is not included.
 * `maximum` - _various_ - (OPTIONAL) The largest value acceptable for this field by the Server.
-  If `format` is one of `int`, `decimal`, `string`, `string_or_null`, `string_list`, `relative_or_absolute_date`, or `relative_or_absolute_datetime`, this field is REQUIRED.
+  If `format` is one of `int`, `decimal`, `string`, `string_or_null`, `string_list`, `string_list_or_null`, `relative_or_absolute_date`, or `relative_or_absolute_datetime`, this field is REQUIRED.
   If `format` is `int`, this field MUST be an [integer](#integer), representing the field's largest possible value, or the string `"infinite"`, which represents the field's value can be unlimited.
   If `format` is `decimal`, this field MUST be a [decimal](#decimal), representing the field's largest possible value, or the string `"infinite"`, which represents the field's value can be unlimited.
   If `format` is one of `string` or `string_or_null`, this field MUST be an [integer](#integer), which represents the maximum string length if the value is a string.
-  If `format` is `string_list`, this field MUST be an [integer](#integer), representing the maximum combined length of all strings in the array of strings.
+  If `format` is `string_list` or `string_list_or_null`, this field MUST be an [integer](#integer), representing the maximum combined length of all strings in the array of strings.
   If `format` is `relative_or_absolute_date`, this field MUST be a [relative or absolute date](#relative-or-absolute-date), which represents the furthest date out that may be submitted.
   If `format` is `relative_or_absolute_datetime`, this field MUST be a [relative or absolute datetime](#relative-or-absolute-datetime), which represents the furthest datetime out that may be submitted.
   If the authorization details field represents a negative value or historical time period (e.g. how far back of historical data to retrieve), this value represents the most negative or furthest back value that can be set.
@@ -595,7 +607,9 @@ The following values are included in the default list available in authorization
   This field is REQUIRED if the `maximum` field is included.
   When included, this field's value MUST be in the same format as the `maximum` value.
   If the authorization details field represents a negative value or historical time period (e.g. how far back of historical data to retrieve), this value represents the closest to zero or current time value that can be set.
-* `choices` - _Array[[AuthorizationDetailsFieldChoice](#auth-details-field-choice-format)]_ - (OPTIONAL) If `format` is `choice`, this is REQUIRED and MUST be a list of one or more available choice objects.
+* `choices` - _Array[[Choice](#choice-format)]_ - (OPTIONAL) If `format` is `choice`, `choice_or_null`, `choice_list`, or `choice_list_or_null`, this is REQUIRED.
+  If `format` is `choice` or `choice_list`, this MUST be a list of one or more available Choice objects.
+  If `format` is `choice_or_null` or `choice_list_or_null`, this MAY be an empty list (`[]`) if the only available choice is `null`.
 
 ### 3.9. Authorization Details Field Formats <a id="auth-details-field-formats" href="#auth-details-field-formats" class="permalink">🔗</a>
 
@@ -604,10 +618,11 @@ Authorization Details Field formats define the data type of submitted values for
 The following list of strings are an enumerated set of authorization details field formats that are valid `format` values in the [Authorization Details Field objects](#auth-details-fields-format).
 
 * `int` - An [integer](#integer) value.
-* `decimal` - A [decimal](#decimal) value, which can have any number of significant units, but MUST NOT be stored or handled as a float value, in order to retain the precision of the value throughout Server and Client processing.
+* `decimal` - A [decimal](#decimal) value.
 * `string` - A [string](#string) value.
 * `string_or_null` - A [string](#string) value or `null`.
-* `string_list` - An array of [string](#string) values.
+* `string_list` - A non-empty array of [string](#string) values.
+* `string_list_or_null` - Same as `string_list`, only with `null` being an additional possible value which indicates that an empty set of strings is provided.
 * `boolean` - A [boolean](#boolean) value.
 * `relative_or_absolute_date` - A [relative or absolute date](#relative-or-absolute-date) string.
   Relative dates are relative to the current date in the `cds_timezone` listed in the Server's [Metadata](#auth-server-metadata-format), when the authorization was submitted to the Server.
@@ -617,19 +632,22 @@ The following list of strings are an enumerated set of authorization details fie
   Relative datetimes are relative to the current datetime in the `cds_timezone` listed in the Server's [Metadata](#auth-server-metadata-format), when the authorization was submitted to the Server.
   For authorization that use the `authorization_code` grant type, the datetime used is the current datetime when the User submitted an approval for the authorization request.
   For authorization that use the `client_credentials` grant type, the datetime used is the current datetime when the Client submitted the initial token request.
-* `choice` - A [string](#string) value from the `id` parameter in one of the listed available `choices` [Authorization Details Field Choice](#auth-details-field-choice-format) objects.
+* `choice` - A [string](#string) value from the `id` parameter in one of the listed available `choices` [Choice objects](#choice-format).
+* `choice_or_null` - Same as `choice`, only with `null` being an additional possible value which indicates that no choice has been selected.
+* `choice_list` - A non-empty array of [string](#string) values that match `id` values present in the listed available `choices` [Choice objects](#choice-format).
+* `choice_list_or_null` - Same as `choice_list`, only with `null` being an additional possible value which indicates that no choices have been selected.
 * `jwk_or_null` - A [JWK Public Encryption Key](#jwk-enc) object or `null`.
 
-### 3.10. Authorization Details Field Choice Object Format <a id="auth-details-field-choice-format" href="#auth-details-field-choice-format" class="permalink">🔗</a>
+### 3.10. Choice Object Format <a id="choice-format" href="#choice-format" class="permalink">🔗</a>
 
-Authorization Details Field Choice objects are formatted as JSON objects and contain named values.
-The following values are included in the default list available in Authorization Details Field Choice objects.
+Choice objects are formatted as JSON objects and contain named values.
+The following values are included in the default list available in Choice objects.
 
-* `id` - _[string](#string)_ - (REQUIRED) The unique identifier of the authorization details field choice.
-  This is used as the value for the relvant field when that field is included in an object as part of a `authorization_details` list.
+* `id` - _[string](#string)_ - (REQUIRED) The unique identifier of the choice.
+  This is used as the value for the relevant field when that field is included in an object with a `format` value of `choice`, `choice_or_null`, `choice_list`, or `choice_list_or_null`.
 * `name` - _[string](#string)_ - (REQUIRED) A human-readable name of the authorization details field choice.
-* `description` - _[string](#string)_ - (REQUIRED) A human-readable description of what submitting this value for the authorizations details field means.
-* `documentation` - _[URL](#url)_ - (REQUIRED) Where developers can find more information about this authorization details field choice.
+* `description` - _[string](#string)_ - (REQUIRED) A human-readable description of what submitting this value for the field means.
+* `documentation` - _[URL](#url)_ - (REQUIRED) Where developers can find more information about this field choice.
 
 ## 4. Client Registration Process <a id="client-registration-process" href="#client-registration-process" class="permalink">🔗</a>
 
@@ -1259,7 +1277,17 @@ Clients achieved user authorization by following OAuth's Authorization Code Gran
   For example, a Grant could have its `status` value updated from `needs_authorization` to `active` or `pending`.
   Servers MUST NOT wait for the Access Token Request [[RFC 6749 Section 4.1.3](#ref-rfc6749-token-request)] to update the Grant.
 
-### 8.4. Listing Grants <a id="grants-list" href="#grants-list" class="permalink">🔗</a>
+### 8.4. Grants in Token Responses <a id="grant-token-responses" href="#grant-token-responses" class="permalink">🔗</a>
+
+When an authorization request or token request, as part of an OAuth access granting process [[RFC 6749 Section 4](#ref-rfc6749-auth-flows)], creates or updates Grant objects, there needs to be a way for the Client to ascertain which set of Grants were created or modified by the authorization request or token request.
+
+To accomplish this, this specification extends the OAuth token successful response object format [[RFC 6749 Section 5.1](#ref-rfc6749-token-response)] to require that Servers include the following fields in token objects returned as responses to token requests:
+
+* `cds_grant_ids` - _Array[[string](#string)]_ - (OPTIONAL) A list of Grant `grant_id` values for Grant objects that have been created or modified as a result of the Client's authorization request, such as when the token request is part of an Authorization Code Grant flow [[RFC 6749 Section 4.1](#ref-rfc6749-code-grant)], or as the result of the Client's token request, such as when the token request is part of a Client Credentials Grant flow [[RFC 6749 Section 4.4](#ref-rfc6749-client-credentials)].
+  If no Grant objects were created or modified, this field MUST NOT be included.
+  If Grants objects were created or modified, this field MUST be included and the created or modified Grant `grant_id` values MUST be included in this field's array.
+
+### 8.5. Listing Grants <a id="grants-list" href="#grants-list" class="permalink">🔗</a>
 
 Clients may request to list Grant objects that they have access to by making an HTTPS [GET](#get) request, authenticated with a valid Bearer `access_token` scoped to the `cds_client_admin` scope, to the `cds_grants_api` URL included in the [Authorization Server Metadata](#auth-server-metadata-format).
 The Grant listing request responses are formatted as JSON objects and contain the following named values.
@@ -1285,11 +1313,11 @@ Servers MUST support Clients adding any of the following URL parameters to the [
 
 Listings of Grant objects MUST be ordered in reverse chronological order by `modified` timestamp, where the most recently updated relevant Grant MUST be first in each listing.
 
-### 8.5. Retrieving Individual Grants <a id="grants-get" href="#grants-get" class="permalink">🔗</a>
+### 8.6. Retrieving Individual Grants <a id="grants-get" href="#grants-get" class="permalink">🔗</a>
 
 The URL to be used to send [GET](#get) requests for retrieving individual Grant objects MUST be the Grant `uri` provided in the [Grant object](#grant-format).
 
-### 8.6. Modifying Grants <a id="grants-modify" href="#grants-modify" class="permalink">🔗</a>
+### 8.7. Modifying Grants <a id="grants-modify" href="#grants-modify" class="permalink">🔗</a>
 
 Clients may modify fields in the Grants API by sending an authenticated HTTPS [PATCH](#patch) request to the Grant `uri` endpoint with the body of the request formatted a JSON object.
 The fields included in JSON object are the fields the Client intends to update with the submitted fields' values.
@@ -1374,7 +1402,7 @@ Other specifications and Servers MUST NOT remove required parts of this specific
 
 [Scopes Supported](#scopes) MAY be extended to add additional scope values and definitions, according to the requirements listed in [Section 3.3](#scopes).
 
-[Metadata Object](#auth-server-metadata-format), [Scope Descriptions Object](#scope-descriptions-format), [Registration Field Object](#registration-field-format), [Authorization Details Field Object](#auth-details-fields-format), [Authorization Details Field Choice Object](#auth-details-field-choice-format), [Client Object](#client-format), [Client Listing](#clients-list), [Message Object](#message-format), [Client Update Request Object](#client-update-request-format), [Client Grant Request Object](#client-grant-request-format), [Message Attachment Object](#message-attachment-format), [Message Listing](#messages-list), [Credential Object](#credentials-format), [Credential Listing](#credentials-list), [Grant Object](#grant-format), [Grant Listing](#grant-list), [Server-Provided Files Object](#server-provided-files-format), and [Server-Provided Files Listing](#server-provided-files-list) MAY be extended to allow for additional fields to be possible in their objects.
+[Metadata Object](#auth-server-metadata-format), [Scope Descriptions Object](#scope-descriptions-format), [Registration Field Object](#registration-field-format), [Authorization Details Field Object](#auth-details-fields-format), [Choice Object](#choice-format), [Client Object](#client-format), [Client Listing](#clients-list), [Message Object](#message-format), [Client Update Request Object](#client-update-request-format), [Client Grant Request Object](#client-grant-request-format), [Message Attachment Object](#message-attachment-format), [Message Listing](#messages-list), [Credential Object](#credentials-format), [Credential Listing](#credentials-list), [Grant Object](#grant-format), [Grant Listing](#grant-list), [Server-Provided Files Object](#server-provided-files-format), and [Server-Provided Files Listing](#server-provided-files-list) MAY be extended to allow for additional fields to be possible in their objects.
 When extending the object format, other specifications or Server documentation MUST reference the relevant section in this specification and denote that they are extending the object to add a new named field.
 The additional field MUST be specified with a general description, the field value's format, and whether the field is REQUIRED or OPTIONAL.
 
@@ -1685,7 +1713,8 @@ Content-Type: application/json;charset=UTF-8
     "access_token": "vjzia9aP-os_rw-bPvMe--uIniUWdmGmXtHH7XaVbTM_KS8eBYCp7IWyoNDC1KCc7DtkVm8fKYIBaOja_08xEQ",
     "token_type": "bearer",
     "expires_in": 3600,
-    "scope": "cds_client_admin"
+    "scope": "cds_client_admin",
+    "cds_grant_ids": ["17f0cd5c705c4d2b"]
 }
 ```
 
@@ -2378,7 +2407,8 @@ Content-Type: application/json;charset=UTF-8
             "client_id": "7e22b5568893c547",
             "grant_id": "c644a5da13f379db"
         }
-    ]
+    ],
+    "cds_grant_ids": ["3c1a0ff59d947"]
 }
 ```
 
@@ -2523,6 +2553,10 @@ Content-Disposition: attachment; filename="DR_API_docs_v1.0.pdf"
 `RFC 6749 Section 3.2` - Section 3.2: Token Endpoint, "The OAuth 2.0 Authorization Framework", RFC 6749, Internet Engineering Task Force (IETF),  
 [https://www.rfc-editor.org/rfc/rfc6749#section-3.2](https://www.rfc-editor.org/rfc/rfc6749#section-3.2)
 
+<a id="ref-rfc6749-auth-flows" href="#ref-rfc6749-auth-flows" class="permalink">🔗</a>
+`RFC 6749 Section 4` - Section 4. Obtaining Authorization, "The OAuth 2.0 Authorization Framework", RFC 6749, Internet Engineering Task Force (IETF),  
+[https://www.rfc-editor.org/rfc/rfc6749#section-4](https://www.rfc-editor.org/rfc/rfc6749#section-4)
+
 <a id="ref-rfc6749-code-grant" href="#ref-rfc6749-code-grant" class="permalink">🔗</a>
 `RFC 6749 Section 4.1` - Section 4.1. Authorization Code Grant, "The OAuth 2.0 Authorization Framework", RFC 6749, Internet Engineering Task Force (IETF),  
 [https://www.rfc-editor.org/rfc/rfc6749#section-4.1](https://www.rfc-editor.org/rfc/rfc6749#section-4.1)
@@ -2542,6 +2576,10 @@ Content-Disposition: attachment; filename="DR_API_docs_v1.0.pdf"
 <a id="ref-rfc6749-access-tokens" href="#ref-rfc6749-access-tokens" class="permalink">🔗</a>
 `RFC 6749 Section 5` - Section 5. Issuing an Access Token, "The OAuth 2.0 Authorization Framework", RFC 6749, Internet Engineering Task Force (IETF),  
 [https://www.rfc-editor.org/rfc/rfc6749#section-5](https://www.rfc-editor.org/rfc/rfc6749#section-5)
+
+<a id="ref-rfc6749-token-response" href="#ref-rfc6749-token-response" class="permalink">🔗</a>
+`RFC 6749 Section 5.1` - Section 5.1. Successful Response, "The OAuth 2.0 Authorization Framework", RFC 6749, Internet Engineering Task Force (IETF),  
+[https://www.rfc-editor.org/rfc/rfc6749#section-5.1](https://www.rfc-editor.org/rfc/rfc6749#section-5.1)
 
 <a id="ref-rfc6750-auth-header" href="#ref-rfc6750-auth-header" class="permalink">🔗</a>
 `RFC 6750 Section 2.1` - Section 2.1. Authorization Request Header Field, "The OAuth 2.0 Authorization Framework: Bearer Token Usage", RFC 6750, Internet Engineering Task Force (IETF),  
