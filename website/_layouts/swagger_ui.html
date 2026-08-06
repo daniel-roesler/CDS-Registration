@@ -1,0 +1,37 @@
+<!-- /assets/swagger-ui-5.32.12-dist/index.html (modified to jekyll layout) -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+
+    <!--
+    (switch to CDS title)
+    <title>Swagger UI</title>
+    -->
+    <title>CDS WG1 - OpenAPI schemas</title>
+
+    <link rel="stylesheet" type="text/css" href="{{ '/assets/swagger-ui-5.32.12-dist/swagger-ui.css' | relative_url }}" />
+    <link rel="stylesheet" type="text/css" href="{{ '/assets/swagger-ui-5.32.12-dist/index.css' | relative_url }}" />
+
+    <!--
+    (switch to CDS favicon)
+    <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
+    -->
+    <link rel="icon" type="image/png" href="{{ '/assets/favicon.png' | relative_url }}">
+
+  </head>
+
+  <body>
+    <div id="swagger-ui"></div>
+    <script src="{{ '/assets/swagger-ui-5.32.12-dist/swagger-ui-bundle.js' | relative_url }}" charset="UTF-8"> </script>
+    <script src="{{ '/assets/swagger-ui-5.32.12-dist/swagger-ui-standalone-preset.js' | relative_url }}" charset="UTF-8"> </script>
+
+    <!--
+    (switch to putting initializer on the specific jekyll page)
+    <script src="./swagger-initializer.js" charset="UTF-8"> </script>
+    -->
+    {{ content }}
+
+  </body>
+</html>
