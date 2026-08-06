@@ -6,7 +6,7 @@
     "description": "Defines how utilities and other central entities provide structured metadata about themselves, their capabilities, and coverage areas.",
     "contact": {
       "name": "CDS Registration Working Group (WG1) - CDS-WG1-01 (\"Server Metadata\")",
-      "url": "/specs/cds-wg1-01"
+      "url": "/CDS-Registration/specs/cds-wg1-01"
     },
     "license": {
       "name": "Apache-2.0",
@@ -149,3 +149,4 @@
     }
   }
 }
+
