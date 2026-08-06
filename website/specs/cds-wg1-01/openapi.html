@@ -1,0 +1,37 @@
+---
+layout: swagger_ui
+---
+<script>
+    // /assets/swagger-ui-5.32.12-dist/swagger-initializer.js (modified for CDS specs)
+    window.onload = function() {
+        window.ui = SwaggerUIBundle({
+            urls: [
+                {
+                    "name": "CDS-WG1-01 (\"Server Metadata\")",
+                    "url": "/specs/cds-wg1-01/dev/cds-wg1-01_openapi_schema.json",
+                },
+            ],
+            queryConfigEnabled: false,
+            dom_id: '#swagger-ui',
+            deepLinking: true,
+            validatorUrl: null,
+            presets: [
+                SwaggerUIBundle.presets.apis,
+                SwaggerUIStandalonePreset
+            ],
+            plugins: [
+                SwaggerUIBundle.plugins.DownloadUrl
+            ],
+            layout: "StandaloneLayout",
+            onComplete: () => {
+                // change top bar logo to a title
+                const topBarLink = document.querySelector(".topbar-wrapper > a.link");
+                topBarLink.innerHTML = "CDS - OpenAPI schemas";
+            },
+        });
+    };
+</script>
+<style>
+    /* hide the top bar logo */
+    .topbar-wrapper > a.link svg { visibility: hidden; }
+</style>
