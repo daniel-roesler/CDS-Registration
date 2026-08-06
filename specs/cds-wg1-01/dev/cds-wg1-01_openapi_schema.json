@@ -1,0 +1,151 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "CDS-WG1-01 - Server Metadata",
+    "version": "dev",
+    "description": "Defines how utilities and other central entities provide structured metadata about themselves, their capabilities, and coverage areas.",
+    "contact": {
+      "name": "CDS Registration Working Group (WG1) - CDS-WG1-01 (\"Server Metadata\")",
+      "url": "/specs/cds-wg1-01"
+    },
+    "license": {
+      "name": "Apache-2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0"
+    }
+  },
+  "paths": {
+    "/.well-known/cds-server-metadata.json": {
+      "get": {
+        "summary": "Retrieve the CDS Server Metadata object at a well-known endpoint",
+        "description": "Returns structured metadata about the Server (e.g. utility or other central entity), including capabilities, coverage endpoint, and related metadata.",
+        "tags": ["Server Metadata"],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of the Server Metadata object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerMetadata"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/coverage": {
+      "get": {
+        "summary": "Retrieve the Coverage Listing for a Server (NOTE: the actual URL is provided in the `coverage` field of the Server Metadata object)",
+        "description": "Returns a paginated list of Coverage Entry objects. NOTE: the actual URL is provided in the `coverage` field of the Metadata Object.",
+        "tags": ["Coverage"],
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "description": "Space-separated list of Coverage Entry IDs to filter results.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of coverage listing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoverageListing"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ServerMetadata": {
+        "type": "object",
+        "required": ["cds_metadata_version", "cds_metadata_url", "created", "updated", "name", "description", "website", "documentation", "support", "capabilities", "coverage"],
+        "properties": {
+          "cds_metadata_version": { "type": "string", "example": "v1" },
+          "cds_metadata_url": { "type": "string", "format": "uri" },
+          "created": { "type": "string", "format": "date-time" },
+          "updated": { "type": "string", "format": "date-time" },
+          "name": { "type": "string", "description": "Name of the utility or entity" },
+          "description": { "type": "string" },
+          "website": { "type": "string", "format": "uri" },
+          "documentation": { "type": "string", "format": "uri" },
+          "support": { "type": "string", "format": "uri" },
+          "capabilities": { "$ref": "#/components/schemas/ServerCapabilities" },
+          "coverage": { "type": "string", "format": "uri" },
+          "related_metadata": { "type": "array", "items": { "type": "string", "format": "uri" } }
+        }
+      },
+      "ServerCapabilities": {
+        "type": "array",
+        "items": { "type": "string" },
+        "example": ["coverage"]
+      },
+      "CoverageListing": {
+        "type": "object",
+        "required": ["coverage_entries", "next", "previous"],
+        "properties": {
+          "coverage_entries": { "type": "array", "items": { "$ref": "#/components/schemas/CoverageEntry" } },
+          "next": { "type": ["string", "null"], "format": "uri" },
+          "previous": { "type": ["string", "null"], "format": "uri" }
+        }
+      },
+      "CoverageEntry": {
+        "type": "object",
+        "required": ["id", "created", "updated", "entity_name", "entity_abbreviation", "country", "name", "type", "role", "infrastructure_types", "commodity_types", "capabilities"],
+        "properties": {
+          "id": { "type": "string" },
+          "created": { "type": "string", "format": "date-time" },
+          "updated": { "type": "string", "format": "date-time" },
+          "entity_name": { "type": "string" },
+          "entity_abbreviation": { "type": ["string", "null"] },
+          "country": { "type": "string", "description": "ISO 3166 two-character country code" },
+          "name": { "type": "string" },
+          "description": { "type": ["string", "null"] },
+          "type": { "type": "string", "enum": ["geographic", "logical"] },
+          "role": { "type": "string", "enum": ["authoritative", "official", "aggregator"] },
+          "infrastructure_types": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "distribution_utility",
+                "metering_provider",
+                "supplier",
+                "generator",
+                "market_operator",
+                "distribution_system_operator",
+                "transmission_system_operator",
+                "service_provider"
+              ]
+            }
+          },
+          "commodity_types": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "electricity",
+                "natural_gas",
+                "fuel_oil",
+                "water",
+                "wastewater",
+                "trash",
+                "distributed_energy"
+              ]
+            }
+          },
+          "capabilities": { "type": "array", "items": { "type": "string" } },
+          "map_resource": { "type": ["string", "null"], "format": "uri" },
+          "map_content_type": { "type": ["string", "null"] },
+          "geojson_resource": { "type": ["string", "null"], "format": "uri" }
+        }
+      }
+    }
+  }
+}
