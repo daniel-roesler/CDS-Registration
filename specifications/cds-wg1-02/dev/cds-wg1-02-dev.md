@@ -958,7 +958,7 @@ When included, Message object `related_type` values MUST be one of the following
 * `credential_list` - The `related_uri` is to a [Credential list](#credentials-list), which can include request parameters.
 * `credential` - The `related_uri` is to a [individual Credential](#credentials-get).
 
-For `more_info`, `documentation`, and `support` related types, authentication for requests to these resources is unspecified, where Servers MAY allow unauthenticated requests to the resource (e.g. public webpage) or MAY require user authentication (e.g. user login).
+For `more_info`, `documentation`, `support`, `online_form`, `pdf_form`, `payment_form`, and `payment_receipt` related types, authentication for requests to these resources is unspecified, where Servers MAY allow unauthenticated requests to the resource (e.g. public webpage) or MAY require user authentication (e.g. user login).
 
 For `client_list`, `client`, `grant_list`, `grant`, `message_list`, `message`, `credential_list`, and `credential` related types, Clients MUST authenticate requests to the resource with a valid Bearer `access_token` scoped to the `cds_client_admin` scope.
 
