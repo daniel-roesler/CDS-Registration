@@ -502,7 +502,7 @@ curl -v \
 
 #### Example: Using the Grant Admin scope to load data for another Grant <a id="example-grant-admin" href="#example-grant-admin" class="permalink">🔗</a>
 
-You can use the `cds_grant_admin` Client Object to generate an `access_token` that can access data for another Client Object's Grants.
+You can use the `cds_grant_admin_2` Client Object to generate an `access_token` that can access data for another Client Object's Grants.
 
 This is useful for gaining access to data and functionality when Servers create Grants on their side (e.g. the Server-Provided Files API) or when user authorization requests use the Server's default `redirect_uri` (thus you never get a redirect back with a `code`).
 
@@ -564,7 +564,7 @@ GRANT_OBJECT=$(curl -v \
     | jq ".grants | .[0]")
 GRANT_ID=$(echo "$GRANT_OBJECT" | jq -r ".grant_id")
 
-# Get the cds_grant_admin Client details
+# Get the cds_grant_admin_2 Client details
 CUSTOMER_DATA_GRANT_ADMIN_SCOPE=$(echo "$CUSTOMER_DATA_OAUTH_METADATA_OBJECT" | jq -r ".cds_scope_descriptions | .$CUSTOMER_DATA_SCOPE | .grant_admin_scope")
 GRANT_ADMIN_CLIENT_OBJECT=$(curl -v \
     -H "Authorization: Bearer $CLIENT_ADMIN_ACCESS_TOKEN" \
@@ -587,7 +587,7 @@ GRANT_ADMIN_CLIENT_SECRET=$(curl -v \
     "$CDS_CREDENTIALS_API?client_ids=$GRANT_ADMIN_CLIENT_ID" \
     | jq -r ".credentials | .[0] | .client_secret")
 
-# Create an access_token for the grant using the cds_grant_admin
+# Create an access_token for the grant using the cds_grant_admin_2
 curl -v \
     -u "$GRANT_ADMIN_CLIENT_ID:$GRANT_ADMIN_CLIENT_SECRET" \
     -d "grant_type=client_credentials" \
